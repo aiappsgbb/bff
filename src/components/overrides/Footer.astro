@@ -5,7 +5,7 @@ import Pagination from 'virtual:starlight/components/Pagination';
 import { withBase } from '../../data/site';
 
 const { entry } = Astro.locals.starlightRoute;
-const repo = import.meta.env.PUBLIC_REPO_URL ?? 'https://github.com/OWNER/bright-factory-framework';
+const repo = import.meta.env.PUBLIC_REPO_URL ?? 'https://github.com/aiappsgbb/bff';
 const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
 const issue = (kind: string) =>
 	`${repo}/issues/new?${new URLSearchParams({

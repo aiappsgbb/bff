@@ -2,7 +2,7 @@
 
 Self-service docs for the **Bright Factory Framework**, Microsoft's opinionated framework for building agentic software factories. Ideas come to life, agents do the heavy lifting, humans monitor and control.
 
-The Markdown and MDX files in [`src/content/docs`](src/content/docs) are the source of truth. The site is built with [Astro](https://astro.build) and [Starlight](https://starlight.astro.build), styled after GitHub Universe, and deployed to GitHub Pages.
+The Markdown and MDX files in [`src/content/docs`](src/content/docs) are the source of truth. The site is built with [Astro](https://astro.build) and [Starlight](https://starlight.astro.build), styled after GitHub Universe, and published at **https://aiappsgbb.github.io/bff/**.
 
 ## Run it locally
 
@@ -42,25 +42,25 @@ npm run preview    # serve dist/
 `src/data/framework.json` is exported from the deck's Python sources so the deck and the docs stay consistent:
 
 ```sh
-python ../deck/export_framework_data.py src/data/framework.json
+python <path-to-deck>/export_framework_data.py src/data/framework.json
 ```
 
 ## Deploy to GitHub Pages
 
-The [deploy workflow](.github/workflows/deploy.yml) builds and publishes the site on every push to `main`. Enable **Settings → Pages → Source: GitHub Actions** once. The workflow sets:
+The [deploy workflow](.github/workflows/deploy.yml) builds the site on every push to `main` (or on demand from the Actions tab) and publishes it with `actions/upload-pages-artifact` and `actions/deploy-pages`. Only the deploy job gets `pages: write` and `id-token: write`. **Settings → Pages → Source** must be set to **GitHub Actions**. The workflow sets:
 
 | Variable | Purpose | Local default |
 | --- | --- | --- |
 | `SITE` | Site origin, for canonical and Open Graph URLs | `http://localhost:4321` |
-| `BASE_PATH` | Path the site is served from, for example `/bright-factory-framework/` | `/` |
-| `PUBLIC_REPO_URL` | Repository linked from the header and "Edit page" | placeholder |
+| `BASE_PATH` | Path the site is served from, for example `/bff/` | `/` |
+| `PUBLIC_REPO_URL` | Repository linked from the header and "Edit page" | `https://github.com/aiappsgbb/bff` |
 
 To test a project-pages build locally:
 
 ```sh
-BASE_PATH=/bright-factory-framework/ npm run build && npm run preview
+BASE_PATH=/bff/ npm run build && npm run preview
 ```
 
 ## Licence
 
-Fonts: Mona Sans, under the SIL Open Font Licence (see `public/fonts/OFL.txt`).
+[MIT](LICENSE). Fonts: Mona Sans, under the SIL Open Font Licence (see `public/fonts/OFL.txt`).

@@ -8,7 +8,7 @@ import { SIDEBAR } from './src/data/nav.mjs';
 // GitHub Pages: the deploy workflow sets SITE, BASE_PATH and PUBLIC_REPO_URL.
 const site = process.env.SITE ?? 'http://localhost:4321';
 const base = process.env.BASE_PATH ?? '/';
-const repo = process.env.PUBLIC_REPO_URL ?? 'https://github.com/OWNER/bright-factory-framework';
+const repo = process.env.PUBLIC_REPO_URL ?? 'https://github.com/aiappsgbb/bff';
 const withBase = (/** @type {string} */ p) => `${base.replace(/\/$/, '')}${p}`;
 
 export default defineConfig({

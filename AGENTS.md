@@ -2,7 +2,7 @@
 
 Astro + Starlight docs site. Pages live in `src/content/docs/` (MDX); the sidebar is `src/data/nav.mjs`, and every slug there needs a page or the build fails.
 
-- Validate with `npm run build`, and with `BASE_PATH=/bright-factory-framework/ npm run build` for link changes.
+- Validate with `npm run build`, and with `BASE_PATH=/bff/ npm run build` for link changes.
 - Internal links: Markdown links get the base path automatically; JSX `href`s must use `withBase()` from `src/data/site.ts`.
 - Styling follows `DESIGN.md`: use theme tokens for colour, type and radii; no side-tab or top accent bars.
 - Content rules: say "Copilot cloud agent"; no invented statistics; label preview features; the playbooks are drafts.
