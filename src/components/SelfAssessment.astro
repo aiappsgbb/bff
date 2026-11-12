@@ -1,0 +1,459 @@
+---
+import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
+
+const QUESTIONS = [
+	{
+		key: 'gates',
+		q: 'Do people and agents go through the same gates?',
+		hint: 'Rulesets, required reviews, CI and code scanning.',
+		a: ['No, or only in some places', 'In most repositories', 'Everywhere, enforced by policy'],
+		next: 'Put rulesets, CODEOWNERS, CI and code scanning in front of every change, human or agent.',
+		href: '/playbooks/low/',
+	},
+	{
+		key: 'context',
+		q: 'Is your context written down for agents?',
+		hint: 'Custom instructions, agent skills, specs, business context.',
+		a: ['Not yet', 'In a few repositories', 'Versioned, reviewed and shared across teams'],
+		next: 'Add custom instructions and a first agent skill to the repositories you want to automate.',
+		href: '/framework/principles/',
+	},
+	{
+		key: 'where',
+		q: 'Where do agents work today?',
+		hint: 'Singleplayer on a laptop, or multiplayer in the cloud.',
+		a: ['Mostly code completion and chat', 'On developer laptops (Copilot app, CLI, IDE)', 'In the cloud, in parallel, visible to the team'],
+		next: 'Move one work type to Copilot cloud agent sessions the whole team can see and steer.',
+		href: '/framework/multiplayer/',
+	},
+	{
+		key: 'triggers',
+		q: 'What starts agent work?',
+		hint: 'People, events, schedules or production signals.',
+		a: ['A person, every time', 'Some automations on events or schedules', 'Events, schedules and production signals'],
+		next: 'Start one automation on an event or a schedule, for example a weekly dependency upgrade.',
+		href: '/playbooks/medium/',
+	},
+	{
+		key: 'identity',
+		q: 'Do agents have their own identity, permissions and budget?',
+		hint: 'Scoped access, audit trail and cost per agent.',
+		a: ['No, they act as the user', 'Partly', 'Yes, scoped and budgeted per agent'],
+		next: 'Give agents their own identities with least-privilege access and a budget per work type.',
+		href: '/framework/big-picture/#factory-foundations',
+	},
+	{
+		key: 'evidence',
+		q: 'Does every agent change carry evidence?',
+		hint: 'Tests, scans, evals, previews and a summary a reviewer can trust.',
+		a: ['No', 'For some work types', 'Yes, an evidence bundle on every pull request'],
+		next: 'Define the evidence bundle a reviewer needs to approve without reading every line.',
+		href: '/levels/medium/',
+	},
+	{
+		key: 'observe',
+		q: 'Can you see what agents did, and what it cost?',
+		hint: 'Sessions, tool calls, decisions and spend.',
+		a: ['Not really', 'Per session, when someone looks', 'Across the organisation, with traces and cost'],
+		next: 'Trace sessions and tool calls end to end and review cost per work type.',
+		href: '/framework/principles/',
+	},
+	{
+		key: 'reverse',
+		q: 'Can you move a work type back to human approvals in minutes?',
+		hint: 'Dim back up without stopping the business.',
+		a: ['No', 'Yes, by hand', 'Yes, one switch, and rehearsed'],
+		next: 'Write down how to dim each work type back up, and rehearse it once.',
+		href: '/levels/dim-back-up/',
+	},
+];
+---
+
+<div class="bff-assess not-content" data-assess>
+	<form class="bff-assess-form" novalidate>
+		<p class="bff-assess-intro">
+			Answer for <strong>one work type</strong>, for example dependency upgrades or feature work. Different work types can sit at
+			different levels. Nothing leaves your browser.
+		</p>
+		<ol class="bff-assess-qs">
+			{
+				QUESTIONS.map((item, i) => (
+					<li>
+						<fieldset data-key={item.key}>
+							<legend>
+								<span class="bff-assess-n">{String(i + 1).padStart(2, '0')}</span>
+								<span>{item.q}</span>
+							</legend>
+							<p class="bff-assess-hint">{item.hint}</p>
+							<div class="bff-assess-options">
+								{item.a.map((label, v) => (
+									<label>
+										<input type="radio" name={item.key} value={v} />
+										<span class="bff-assess-score" aria-hidden="true">
+											{v}
+										</span>
+										<span>{label}</span>
+									</label>
+								))}
+							</div>
+						</fieldset>
+					</li>
+				))
+			}
+		</ol>
+	</form>
+
+	<aside class="bff-assess-result" aria-labelledby="bff-assess-title">
+		<div class="bff-assess-sticky">
+			<p class="bff-eyebrow"><span class="bff-eyebrow-square"></span>Your level</p>
+			<div class="bff-assess-meter" aria-hidden="true"><i></i></div>
+			<p class="bff-assess-progress" aria-live="polite"><span data-answered>0</span> of {QUESTIONS.length} answered</p>
+			<div class="bff-assess-empty" data-empty>
+				<h3 id="bff-assess-title">Answer the questions to see where you are.</h3>
+				<p>You'll get a level, the reason, and the next three moves.</p>
+			</div>
+			{
+				LEVEL_ORDER.map((k) => (
+					<div class="bff-assess-level" data-result={k} data-level-accent={k} hidden>
+						<h3>
+							{LEVELS[k].name} · <span>{LEVELS[k].gait}</span>
+						</h3>
+						<p class="bff-assess-tag">{LEVELS[k].tagline}</p>
+					</div>
+				))
+			}
+			<p class="bff-assess-why" data-why hidden></p>
+			<div data-next hidden>
+				<h4>Next moves</h4>
+				<ol class="bff-assess-next"></ol>
+			</div>
+			<div class="bff-assess-actions" data-actions hidden>
+				<a class="bff-btn bff-btn-primary bff-btn-small" data-go="level" href={withBase('/levels/')}>
+					Explore your level
+				</a>
+				<a class="bff-btn bff-btn-small" data-go="playbook" href={withBase('/playbooks/')}>
+					Open the playbook
+				</a>
+			</div>
+			<button type="button" class="bff-btn bff-btn-ghost bff-btn-small" data-reset>Start over</button>
+		</div>
+	</aside>
+	<script type="application/json" is:inline data-questions set:html={JSON.stringify(QUESTIONS.map(({ key, next, href }) => ({ key, next, href: withBase(href) })))} />
+	<script type="application/json" is:inline data-base set:html={JSON.stringify({ levels: withBase('/levels/'), playbooks: withBase('/playbooks/') })} />
+</div>
+
+<script>
+	import { shareLevel } from '../lib/tabs';
+
+	type Level = 'low' | 'medium' | 'high';
+	const STORE = 'bff:assess';
+
+	document.querySelectorAll<HTMLElement>('[data-assess]').forEach((root) => {
+		const form = root.querySelector('form')!;
+		const qs: { key: string; next: string; href: string }[] = JSON.parse(root.querySelector('[data-questions]')!.textContent!);
+		const base: { levels: string; playbooks: string } = JSON.parse(root.querySelector('[data-base]')!.textContent!);
+		const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
+		const meter = $('.bff-assess-meter i');
+
+		const read = () => {
+			const scores: Record<string, number> = {};
+			for (const { key } of qs) {
+				const el = form.querySelector<HTMLInputElement>(`input[name="${key}"]:checked`);
+				if (el) scores[key] = Number(el.value);
+			}
+			return scores;
+		};
+
+		const render = () => {
+			const s = read();
+			const answered = Object.keys(s).length;
+			const total = Object.values(s).reduce((a, b) => a + b, 0);
+			$('[data-answered]').textContent = String(answered);
+			meter.style.inlineSize = `${(total / (qs.length * 2)) * 100}%`;
+			try {
+				localStorage.setItem(STORE, JSON.stringify(s));
+			} catch {}
+			const done = answered === qs.length;
+			$('[data-empty]').hidden = done;
+			['[data-why]', '[data-next]', '[data-actions]'].forEach((sel) => ($(sel).hidden = !done));
+			root.querySelectorAll<HTMLElement>('[data-result]').forEach((el) => (el.hidden = true));
+			if (!done) {
+				delete root.dataset.level;
+				return;
+			}
+
+			let level: Level = total <= 5 ? 'low' : total <= 11 ? 'medium' : 'high';
+			let why = `You scored ${total} of ${qs.length * 2}.`;
+			if (s.gates === 0) {
+				level = 'low';
+				why += ' Shared gates come first: without them, agents should stay in the Crawl lane.';
+			} else if (s.evidence < 2 && level === 'high') {
+				level = 'medium';
+				why += ' Lights-off needs evidence on every change, so this work type stays at Walk for now.';
+			}
+			root.dataset.level = level;
+			$(`[data-result="${level}"]`).hidden = false;
+			$('[data-why]').textContent = why;
+			$<HTMLAnchorElement>('[data-go="level"]').href = `${base.levels}${level}/`;
+			$<HTMLAnchorElement>('[data-go="playbook"]').href = `${base.playbooks}${level}/`;
+
+			const weakest = qs
+				.map((q, i) => ({ ...q, v: s[q.key], i }))
+				.filter((q) => q.v < 2)
+				.sort((a, b) => a.v - b.v || a.i - b.i)
+				.slice(0, 3);
+			const list = $('.bff-assess-next');
+			list.replaceChildren(
+				...(weakest.length
+					? weakest.map((q) => {
+							const li = document.createElement('li');
+							const a = document.createElement('a');
+							a.href = q.href;
+							a.textContent = q.next;
+							li.append(a);
+							return li;
+						})
+					: [Object.assign(document.createElement('li'), { textContent: 'Rehearse dimming back up, then pick the next work type.' })]),
+			);
+			shareLevel(level, root);
+		};
+
+		try {
+			const saved = JSON.parse(localStorage.getItem(STORE) ?? '{}') as Record<string, number>;
+			for (const [k, v] of Object.entries(saved)) {
+				const el = form.querySelector<HTMLInputElement>(`input[name="${k}"][value="${v}"]`);
+				if (el) el.checked = true;
+			}
+		} catch {}
+		form.addEventListener('change', render);
+		$('[data-reset]').addEventListener('click', () => {
+			form.reset();
+			render();
+			form.querySelector<HTMLInputElement>('input')?.focus();
+		});
+		render();
+	});
+</script>
+
+<style>
+	.bff-assess {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 20rem;
+		gap: clamp(1.5rem, 3vw, 2.5rem);
+		align-items: start;
+		margin-block: 2rem;
+	}
+	.bff-assess-intro {
+		margin: 0 0 1.25rem;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-assess-qs {
+		display: grid;
+		gap: 0.75rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-assess-qs > li {
+		margin: 0;
+	}
+	fieldset {
+		margin: 0;
+		padding: 1rem 1.1rem 1.1rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+	}
+	legend {
+		display: flex;
+		gap: 0.6rem;
+		float: left;
+		inline-size: 100%;
+		padding: 0;
+		font-size: var(--bff-text-lg);
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	legend + * {
+		clear: both;
+	}
+	.bff-assess-n {
+		padding-top: 0.2rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-4);
+	}
+	.bff-assess-hint {
+		margin: 0.2rem 0 0.75rem 1.6rem;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-assess-options {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.5rem;
+	}
+	label {
+		position: relative;
+		display: flex;
+		gap: 0.55rem;
+		align-items: flex-start;
+		padding: 0.6rem 0.7rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-sm);
+		background: var(--sl-color-black);
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-2);
+		cursor: pointer;
+		transition:
+			border-color 0.2s var(--bff-ease-soft),
+			background-color 0.2s var(--bff-ease-soft);
+	}
+	label:hover {
+		border-color: var(--sl-color-gray-4);
+	}
+	input {
+		position: absolute;
+		opacity: 0;
+		pointer-events: none;
+	}
+	.bff-assess-score {
+		display: grid;
+		place-items: center;
+		flex: none;
+		inline-size: 1.3rem;
+		block-size: 1.3rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: var(--bff-radius-pill);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	label:has(input:checked) {
+		border-color: var(--sl-color-accent);
+		background: var(--sl-color-accent-low);
+		color: var(--sl-color-white);
+	}
+	label:has(input:checked) .bff-assess-score {
+		border-color: var(--sl-color-accent);
+		background: var(--sl-color-accent);
+		color: var(--bff-on-accent);
+	}
+	label:has(input:focus-visible) {
+		outline: 2px solid var(--sl-color-accent-high);
+		outline-offset: 2px;
+	}
+
+	.bff-assess-result {
+		position: sticky;
+		top: calc(var(--sl-nav-height) + 1.5rem);
+	}
+	.bff-assess-sticky {
+		display: grid;
+		gap: 0.75rem;
+		padding: 1.25rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+	}
+	.bff-assess-sticky :is(h3, h4, p) {
+		margin: 0;
+	}
+	.bff-assess-meter {
+		block-size: 0.4rem;
+		border-radius: var(--bff-radius-pill);
+		background: var(--sl-color-gray-6);
+		overflow: hidden;
+	}
+	.bff-assess-meter i {
+		display: block;
+		block-size: 100%;
+		inline-size: 0;
+		background: linear-gradient(90deg, var(--bff-yellow), var(--bff-green), var(--bff-blue));
+		background-size: 20rem 100%;
+		transition: inline-size 0.5s var(--bff-ease-out);
+	}
+	.bff-assess-progress {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-assess-empty h3 {
+		font-size: var(--bff-text-lg);
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-assess-empty p,
+	.bff-assess-why {
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-assess-level {
+		display: grid;
+		gap: 0.25rem;
+		padding: 0.9rem;
+		border: 1px solid color-mix(in oklab, var(--accent) 55%, transparent);
+		border-radius: var(--bff-radius-md);
+		background: color-mix(in oklab, var(--accent) 12%, transparent);
+	}
+	.bff-assess-level h3 {
+		font-size: var(--bff-text-xl);
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-assess-level h3 span {
+		color: var(--accent);
+	}
+	.bff-assess-tag {
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-2);
+	}
+	.bff-assess-sticky h4 {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		font-weight: 500;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-assess-next {
+		display: grid;
+		gap: 0.4rem;
+		margin: 0.4rem 0 0;
+		padding-left: 1.1rem;
+		font-size: var(--bff-text-sm);
+	}
+	.bff-assess-next :global(a) {
+		color: var(--sl-color-gray-2);
+	}
+	.bff-assess-next :global(a:hover) {
+		color: var(--sl-color-accent-high);
+	}
+	.bff-assess-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+	.bff-assess-actions[hidden],
+	.bff-assess-level[hidden],
+	[data-next][hidden] {
+		display: none;
+	}
+	[data-reset] {
+		justify-self: start;
+	}
+
+	@media (max-width: 62em) {
+		.bff-assess {
+			grid-template-columns: 1fr;
+		}
+		.bff-assess-result {
+			position: static;
+		}
+	}
+	@media (max-width: 40em) {
+		.bff-assess-options {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

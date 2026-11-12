@@ -1,0 +1,219 @@
+---
+import { data, productUrl } from '../data/site';
+import PauseButton from './PauseButton.astro';
+
+interface Props {
+	caption?: string;
+}
+const { caption = 'One workflow, four stations. Observed signals feed the next plan, so the line never stops learning.' } = Astro.props;
+const accents = ['yellow', 'green', 'blue', 'orange'];
+const stations = data.workflow.map((s, i) => ({ ...s, x: 125 + i * 250, accent: accents[i] }));
+const bricks = [0, 1, 2, 3];
+---
+
+<figure class="bff-figure bff-wl not-content" aria-labelledby="bff-wl-cap" data-pausable>
+	<div class="bff-figure-bar">
+		<p class="bff-eyebrow" data-accent="green"><span class="bff-eyebrow-square" aria-hidden="true"></span>factory.floor.workflow()</p>
+		<PauseButton />
+	</div>
+	<svg class="bff-wl-svg" viewBox="0 0 1000 300" role="img" aria-labelledby="bff-wl-title">
+		<title id="bff-wl-title">The factory floor workflow: Plan, Build, Verify and Observe, with signals looping back to Plan.</title>
+		<path class="bff-wl-loop" d="M 875 74 C 875 14, 800 18, 700 18 L 300 18 C 200 18, 125 14, 125 66" />
+		<path class="bff-wl-loop-head" d="M 116 58 L 125 74 L 134 58" />
+		<text class="bff-wl-loop-label" x="500" y="46" text-anchor="middle">signals become new work</text>
+		{
+			stations.map((s) => (
+				<g class="bff-wl-station" data-accent={s.accent}>
+					<line class="bff-wl-arm" x1={s.x} y1="168" x2={s.x} y2="196" />
+					<rect class="bff-wl-box" x={s.x - 100} y="74" width="200" height="94" rx="12" />
+					<rect class="bff-wl-bar" x={s.x - 100} y="74" width="200" height="6" />
+					<text class="bff-wl-name" x={s.x} y="122" text-anchor="middle">{s.name}</text>
+					<text class="bff-wl-task" x={s.x} y="152" text-anchor="middle">{s.task}</text>
+				</g>
+			))
+		}
+		<rect class="bff-wl-belt" x="24" y="220" width="952" height="30" rx="15" />
+		<line class="bff-wl-belt-tread" x1="40" y1="235" x2="960" y2="235" />
+		{
+			[60, 180, 300, 420, 540, 660, 780, 900].map((x) => (
+				<circle class="bff-wl-roller" cx={x} cy="235" r="8" />
+			))
+		}
+		{
+			bricks.map((i) => (
+				<g class="bff-wl-brick" style={`--i: ${i}`}>
+					<rect x="0" y="198" width="44" height="22" rx="3" />
+					<rect class="bff-wl-stud" x="7" y="191" width="11" height="8" rx="2" />
+					<rect class="bff-wl-stud" x="26" y="191" width="11" height="8" rx="2" />
+				</g>
+			))
+		}
+	</svg>
+	<ol class="bff-wl-steps">
+		{
+			stations.map((s) => (
+				<li data-accent={s.accent}>
+					<p class="bff-wl-step-name">{s.name}</p>
+					<p class="bff-wl-step-task">{s.task}</p>
+					<ul class="bff-chips" aria-label={`${s.name} products`}>
+						{s.products.map((p) => {
+							const url = productUrl(p.parts[0]);
+							return (
+								<li>
+									{url ? (
+										<a class="bff-chip" data-vendor={p.vendor} href={url} rel="noopener" target="_blank">
+											{p.name}
+										</a>
+									) : (
+										<span class="bff-chip" data-vendor={p.vendor}>{p.name}</span>
+									)}
+								</li>
+							);
+						})}
+					</ul>
+				</li>
+			))
+		}
+	</ol>
+	<figcaption id="bff-wl-cap">{caption}</figcaption>
+</figure>
+
+<style>
+	.bff-wl-svg {
+		display: block;
+		inline-size: 100%;
+		block-size: auto;
+		overflow: visible;
+	}
+	.bff-wl-loop {
+		fill: none;
+		stroke: var(--bff-floor);
+		stroke-width: 2.5;
+		stroke-dasharray: 8 8;
+		animation: bff-wl-dash 1.2s linear infinite;
+	}
+	.bff-wl-loop-head {
+		fill: none;
+		stroke: var(--bff-floor);
+		stroke-width: 2.5;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.bff-wl-loop-label {
+		fill: var(--bff-floor);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-xl);
+	}
+	.bff-wl-box {
+		fill: var(--sl-color-black);
+		stroke: var(--sl-color-gray-5);
+		stroke-width: 1.5;
+	}
+	.bff-wl-bar {
+		fill: var(--accent);
+	}
+	.bff-wl-arm {
+		stroke: var(--sl-color-gray-4);
+		stroke-width: 4;
+		stroke-linecap: round;
+	}
+	.bff-wl-name {
+		fill: var(--sl-color-white);
+		font-size: calc(var(--bff-text-xl) * 1.5);
+		font-weight: 600;
+	}
+	.bff-wl-task {
+		fill: var(--sl-color-gray-3);
+		font-size: var(--bff-text-lg);
+	}
+	.bff-wl-belt {
+		fill: var(--sl-color-gray-6);
+		stroke: var(--sl-color-gray-5);
+		stroke-width: 1.5;
+	}
+	.bff-wl-belt-tread {
+		stroke: var(--sl-color-gray-4);
+		stroke-width: 2;
+		stroke-dasharray: 4 16;
+		animation: bff-wl-tread 0.8s linear infinite;
+	}
+	.bff-wl-roller {
+		fill: var(--sl-color-gray-5);
+		stroke: var(--sl-color-gray-4);
+		stroke-width: 1.5;
+	}
+	.bff-wl-brick {
+		--dur: 12s;
+		fill: var(--sl-color-gray-4);
+		animation:
+			bff-wl-move var(--dur) linear infinite,
+			bff-wl-paint var(--dur) linear infinite;
+		animation-delay: calc(var(--i) * var(--dur) / -4);
+	}
+	.bff-wl-stud {
+		filter: brightness(1.15);
+	}
+	@keyframes bff-wl-move {
+		from { transform: translateX(20px); }
+		to { transform: translateX(936px); }
+	}
+	@keyframes bff-wl-paint {
+		0%, 9% { fill: var(--sl-color-gray-4); }
+		12%, 34% { fill: var(--bff-yellow); }
+		37%, 61% { fill: var(--bff-green); }
+		64%, 88% { fill: var(--bff-blue); }
+		91%, 100% { fill: var(--bff-orange); }
+	}
+	@keyframes bff-wl-dash {
+		to { stroke-dashoffset: -16; }
+	}
+	@keyframes bff-wl-tread {
+		to { stroke-dashoffset: -20; }
+	}
+	.bff-wl-steps {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 1rem;
+		margin: 1.25rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-wl-steps > li {
+		display: grid;
+		align-content: start;
+		gap: 0.4rem;
+		margin: 0;
+		padding-top: 0.75rem;
+		border-top: 3px solid var(--accent);
+	}
+	.bff-wl-steps p {
+		margin: 0;
+	}
+	.bff-wl-step-name {
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-wl-step-task {
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	@media (max-width: 50em) {
+		.bff-wl-task {
+			display: none;
+		}
+		.bff-wl-steps {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.bff-wl-loop,
+		.bff-wl-belt-tread,
+		.bff-wl-brick {
+			animation: none;
+		}
+		.bff-wl-brick {
+			transform: translateX(calc(103px + var(--i) * 250px));
+			fill: var(--bff-green);
+		}
+	}
+</style>

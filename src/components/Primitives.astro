@@ -1,0 +1,120 @@
+---
+import { data, LAYER_META, productRole, productUrl, type LevelKey } from '../data/site';
+
+interface Props {
+	level: LevelKey;
+}
+const { level } = Astro.props;
+const prims = data.levels[level].primitives;
+const cols = [
+	{ key: 'hq', layer: 'hq', items: prims.hq },
+	{ key: 'floor', layer: 'floor', items: prims.floor },
+	{ key: 'found', layer: 'foundations', items: prims.found },
+] as const;
+---
+
+<div class="bff-prims not-content">
+	{
+		cols.map((c) => (
+			<section class="bff-prims-col" data-layer={c.layer} aria-labelledby={`bff-prims-${level}-${c.key}`}>
+				<h3 id={`bff-prims-${level}-${c.key}`}>{LAYER_META[c.layer].label}</h3>
+				<ul>
+					{c.items.map((p) => {
+						const url = productUrl(p.name);
+						const role = productRole(p.name) ?? p.role;
+						return (
+							<li>
+								<p class="bff-prims-name">
+									{url ? (
+										<a href={url} target="_blank" rel="noopener" data-vendor={p.vendor}>
+											{p.name}
+										</a>
+									) : (
+										<span data-vendor={p.vendor}>{p.name}</span>
+									)}
+									{p.new && <span class="bff-pill">new</span>}
+								</p>
+								<p class="bff-prims-card">{p.card}</p>
+								{role && <p class="bff-prims-role">{role}</p>}
+							</li>
+						);
+					})}
+				</ul>
+			</section>
+		))
+	}
+</div>
+
+<style>
+	.bff-prims {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 0.75rem;
+		margin-block: 1.5rem;
+	}
+	.bff-prims-col {
+		padding: 1rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+	}
+	.bff-prims-col h3 {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0 0 0.75rem;
+		font-size: var(--bff-text-md);
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-prims-col h3::before {
+		content: '';
+		inline-size: 0.6rem;
+		block-size: 0.6rem;
+		background: var(--accent);
+	}
+	.bff-prims-col ul {
+		display: grid;
+		gap: 0.85rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-prims-col li {
+		margin: 0;
+	}
+	.bff-prims-col p {
+		margin: 0;
+	}
+	.bff-prims-name {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.4rem;
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-prims-name a {
+		color: inherit;
+		text-decoration-color: var(--sl-color-gray-5);
+		text-underline-offset: 0.2em;
+	}
+	.bff-prims-name a:hover {
+		text-decoration-color: currentColor;
+	}
+	.bff-prims-card {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-prims-role {
+		margin-top: 0.2rem !important;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-2);
+	}
+	@media (max-width: 50em) {
+		.bff-prims {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

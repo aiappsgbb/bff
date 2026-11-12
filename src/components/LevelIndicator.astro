@@ -1,0 +1,153 @@
+---
+import { LEVELS, LEVEL_ORDER, withBase, type LevelKey } from '../data/site';
+
+interface Props {
+	level: LevelKey;
+	/** Which page family the dimmer links between. */
+	kind?: 'levels' | 'playbooks';
+}
+const { level, kind = 'levels' } = Astro.props;
+const other = kind === 'levels' ? 'playbooks' : 'levels';
+---
+
+<nav class="bff-li not-content" aria-label="Automation level" data-level-accent={level}>
+	<div class="bff-li-dimmer">
+		<span class="bff-li-label">Dimmer</span>
+		<ol class="bff-li-track">
+			{
+				LEVEL_ORDER.map((k) => (
+					<li>
+						<a href={withBase(`/${kind}/${k}/`)} aria-current={k === level ? 'page' : undefined} data-level-accent={k}>
+							<span class="bff-li-gait">{LEVELS[k].gait}</span>
+							<span class="bff-li-floor">{LEVELS[k].floor}</span>
+						</a>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+	<p class="bff-li-meta">
+		<span><strong>{LEVELS[level].mode}</strong> · {LEVELS[level].approvals.toLowerCase()}</span>
+		<a href={withBase(`/${other}/${level}/`)}>
+			{kind === 'levels' ? `Open the ${LEVELS[level].gait.toLowerCase()} playbook →` : `About ${LEVELS[level].name.toLowerCase()} →`}
+		</a>
+	</p>
+</nav>
+
+<style>
+	.bff-li {
+		display: grid;
+		gap: 0.6rem;
+		margin-block: 0 2rem;
+		padding: 0.75rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+	}
+	.bff-li-dimmer {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+	.bff-li-label {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-li-track {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		flex: 1;
+		gap: 0.25rem;
+		margin: 0;
+		padding: 0.25rem 0.25rem 0.75rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-md);
+		background: var(--sl-color-black);
+		list-style: none;
+	}
+	.bff-li-track::after {
+		content: '';
+		position: absolute;
+		inset: auto 0.6rem 0.3rem;
+		block-size: 3px;
+		border-radius: var(--bff-radius-pill);
+		background: linear-gradient(90deg, var(--bff-light-warm), var(--bff-light-cool) 50%, var(--bff-light-violet));
+		opacity: 0.8;
+	}
+	.bff-li-track li {
+		margin: 0;
+	}
+	.bff-li-track a {
+		display: grid;
+		gap: 0.05rem;
+		padding: 0.35rem 0.6rem;
+		border-radius: var(--bff-radius-sm);
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+		transition:
+			background-color 0.2s var(--bff-ease-soft),
+			color 0.2s var(--bff-ease-soft);
+	}
+	.bff-li-track a:hover {
+		background: var(--bff-surface);
+		color: var(--sl-color-white);
+	}
+	.bff-li-track a[aria-current='page'] {
+		background: var(--bff-surface-2);
+		color: var(--sl-color-white);
+		box-shadow: var(--bff-shadow-sm), inset 0 0 0 2px var(--accent);
+	}
+	.bff-li-track a::before {
+		content: '';
+		inline-size: 0.6rem;
+		block-size: 0.6rem;
+		margin-bottom: 0.2rem;
+		border-radius: var(--bff-radius-pill);
+		border: 1px solid var(--sl-color-gray-4);
+	}
+	.bff-li-track a[data-level-accent='low']::before {
+		background: var(--bff-light-warm);
+		box-shadow: 0 0 8px var(--bff-light-warm);
+	}
+	.bff-li-track a[data-level-accent='medium']::before {
+		background: linear-gradient(90deg, var(--bff-light-warm) 50%, transparent 50%);
+	}
+	.bff-li-track a[data-level-accent='high']::before {
+		background: transparent;
+	}
+	.bff-li-gait {
+		font-size: var(--bff-text-sm);
+		font-weight: 700;
+	}
+	.bff-li-floor {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		opacity: 0.85;
+	}
+	.bff-li-meta {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: 0.25rem 1rem;
+		margin: 0;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-li-meta strong {
+		color: var(--sl-color-white);
+	}
+	.bff-li-meta a {
+		font-weight: 600;
+		color: var(--sl-color-accent-high);
+		text-decoration: none;
+	}
+	@media (max-width: 36em) {
+		.bff-li-label {
+			display: none;
+		}
+	}
+</style>

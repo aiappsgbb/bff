@@ -1,0 +1,53 @@
+---
+interface Props {
+	text: string;
+	accent?: string;
+	class?: string;
+}
+const { text, accent = 'green', class: className } = Astro.props;
+---
+
+<p class:list={['bff-eyebrow', className]} data-accent={accent}>
+	<span class="bff-eyebrow-square" aria-hidden="true"></span>
+	<span class="bff-eyebrow-text" aria-hidden="true" data-decode={text}>{text}</span>
+	<span class="sr-only">{text}</span>
+</p>
+
+<script>
+	const GLYPHS = 'abcdefghijklmnopqrstuvwxyz0123456789._-/()<>';
+	const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+	function decode(el: HTMLElement) {
+		const target = el.dataset.decode ?? '';
+		const start = performance.now();
+		const duration = Math.min(900, 220 + target.length * 28);
+		const frame = (now: number) => {
+			const t = Math.min(1, (now - start) / duration);
+			const revealed = Math.floor(t * target.length);
+			let out = '';
+			for (let i = 0; i < target.length; i++) {
+				const c = target[i];
+				out += i < revealed || c === ' ' ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+			}
+			el.textContent = out;
+			if (t < 1) requestAnimationFrame(frame);
+			else el.textContent = target;
+		};
+		requestAnimationFrame(frame);
+	}
+
+	if (!reduce) {
+		const io = new IntersectionObserver(
+			(entries) => {
+				for (const e of entries) {
+					if (e.isIntersecting) {
+						decode(e.target as HTMLElement);
+						io.unobserve(e.target);
+					}
+				}
+			},
+			{ threshold: 0.6 }
+		);
+		document.querySelectorAll<HTMLElement>('.bff-eyebrow-text[data-decode]').forEach((el) => io.observe(el));
+	}
+</script>

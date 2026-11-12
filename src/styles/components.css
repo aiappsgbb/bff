@@ -1,0 +1,606 @@
+/*
+ * Shared component primitives. Component-specific styles live in each .astro file.
+ * Tokens come from theme.css; see DESIGN.md.
+ */
+
+/* ---------- Accent mapping (eyebrow squares, title bars, cards) ---------- */
+[data-accent='green'] { --accent: var(--bff-green); }
+[data-accent='blue'] { --accent: var(--bff-blue); }
+[data-accent='purple'] { --accent: var(--bff-purple); }
+[data-accent='pink'] { --accent: var(--bff-pink); }
+[data-accent='orange'] { --accent: var(--bff-orange); }
+[data-accent='yellow'] { --accent: var(--bff-yellow); }
+[data-layer='hq'] { --accent: var(--bff-hq); }
+[data-layer='floor'] { --accent: var(--bff-floor); }
+[data-layer='foundations'] { --accent: var(--bff-found); }
+[data-layer='engineering'] { --accent: var(--bff-eng); }
+
+.bff-mono {
+	font-family: var(--bff-font-mono);
+}
+
+/* ---------- Eyebrow ---------- */
+.bff-eyebrow {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	margin: 0;
+	font-family: var(--bff-font-mono);
+	font-size: var(--bff-text-sm);
+	font-weight: 425;
+	line-height: 1.4;
+	color: var(--sl-color-gray-3);
+}
+.bff-eyebrow-square {
+	inline-size: 0.75rem;
+	block-size: 0.75rem;
+	flex: none;
+	background: var(--accent, var(--bff-green));
+}
+
+/* ---------- Page title (PageTitle override) ---------- */
+.bff-title {
+	position: relative;
+	padding-bottom: 1.75rem;
+	margin-bottom: 0.5rem;
+}
+.bff-title h1 {
+	margin: 0.75rem 0 0;
+	font-size: var(--sl-text-h1);
+	font-weight: 450;
+	line-height: var(--sl-line-height-headings);
+	letter-spacing: -0.02em;
+	color: var(--sl-color-white);
+	text-wrap: balance;
+}
+.bff-title::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	inline-size: 4rem;
+	block-size: 4px;
+	background: var(--accent, var(--bff-green));
+}
+.bff-lede {
+	margin: 1rem 0 0;
+	max-width: 44rem;
+	font-size: var(--bff-text-lede);
+	line-height: 1.35;
+	color: var(--sl-color-gray-3);
+	text-wrap: pretty;
+}
+
+/* ---------- Page actions ---------- */
+.bff-page-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+	margin-top: 1.25rem;
+}
+.bff-action {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	min-height: 2rem;
+	padding: 0.25rem 0.7rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius-sm);
+	background: var(--bff-surface);
+	color: var(--sl-color-gray-2);
+	font: inherit;
+	font-size: var(--bff-text-xs);
+	font-weight: 500;
+	text-decoration: none;
+	cursor: pointer;
+	transition:
+		background-color 0.2s var(--bff-ease-soft),
+		border-color 0.2s var(--bff-ease-soft);
+}
+.bff-action:hover {
+	background: var(--bff-surface-2);
+	border-color: var(--sl-color-gray-5);
+	color: var(--sl-color-white);
+}
+.bff-action svg {
+	flex: none;
+}
+
+/* ---------- Buttons ---------- */
+.bff-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	min-height: 2.75rem;
+	padding: 0.5rem 1.15rem;
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: var(--bff-radius-sm);
+	background: var(--sl-color-black);
+	color: var(--sl-color-white);
+	font: inherit;
+	font-size: var(--bff-text-md);
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	cursor: pointer;
+	transition:
+		background-color 0.2s var(--bff-ease-soft),
+		border-color 0.2s var(--bff-ease-soft),
+		transform 0.2s var(--bff-ease-out);
+}
+.bff-btn:hover {
+	border-color: var(--sl-color-gray-4);
+	background: var(--bff-surface-2);
+}
+.bff-btn:active {
+	transform: translateY(1px);
+}
+.bff-btn-primary {
+	border-color: var(--sl-color-accent);
+	background: var(--sl-color-accent);
+	color: var(--bff-on-accent);
+}
+.bff-btn-primary:hover {
+	border-color: var(--sl-color-accent-high);
+	background: var(--sl-color-accent-high);
+	color: var(--sl-color-black);
+}
+.bff-btn-ghost {
+	border-color: transparent;
+	background: transparent;
+	color: var(--sl-color-accent-high);
+}
+.bff-btn-ghost:hover {
+	background: var(--sl-color-accent-low);
+	border-color: transparent;
+}
+.bff-btn-small {
+	min-height: 2.25rem;
+	padding: 0.35rem 0.85rem;
+	font-size: var(--bff-text-sm);
+}
+.bff-btn:disabled {
+	opacity: 0.45;
+	cursor: not-allowed;
+	transform: none;
+}
+
+/* ---------- Pills and chips ---------- */
+.bff-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.1rem 0.6rem;
+	border-radius: var(--bff-radius-pill);
+	background: var(--sl-color-accent-low);
+	color: var(--sl-color-accent-high);
+	font-family: var(--bff-font-mono);
+	font-size: var(--bff-text-2xs);
+	font-weight: 500;
+	white-space: nowrap;
+}
+.bff-chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.2rem 0.6rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius-sm);
+	background: var(--sl-color-black);
+	color: var(--sl-color-gray-2);
+	font-size: var(--bff-text-xs);
+	font-weight: 500;
+	line-height: 1.4;
+	text-decoration: none;
+}
+a.bff-chip:hover {
+	border-color: var(--vendor, var(--sl-color-gray-4));
+	color: var(--sl-color-white);
+}
+.bff-chip::before {
+	content: '';
+	inline-size: 0.5rem;
+	block-size: 0.5rem;
+	background: var(--vendor, var(--sl-color-gray-4));
+	flex: none;
+}
+.bff-chip[data-vendor='github'] { --vendor: var(--bff-vendor-github); }
+.bff-chip[data-vendor='microsoft'] { --vendor: var(--bff-vendor-microsoft); }
+.bff-chip[data-vendor='third-party'] { --vendor: var(--bff-vendor-third); }
+.bff-chip .new {
+	font-family: var(--bff-font-mono);
+	font-size: var(--bff-text-2xs);
+	color: var(--sl-color-accent-high);
+}
+.bff-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.4rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.bff-chips > li {
+	margin: 0;
+}
+.bff-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+	font-size: var(--bff-text-xs);
+	color: var(--sl-color-gray-3);
+}
+
+/* ---------- Sections (home and wide pages) ---------- */
+.bff-section {
+	padding-block: clamp(3rem, 7vw, 6rem);
+	border-top: 1px solid var(--sl-color-hairline);
+}
+.bff-section-head {
+	display: grid;
+	gap: 0.75rem;
+	max-width: 52rem;
+	margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+.bff-section-head h2 {
+	margin: 0;
+	font-size: var(--sl-text-h2);
+	font-weight: 440;
+	line-height: 1.15;
+	letter-spacing: -0.015em;
+	color: var(--sl-color-white);
+	text-wrap: balance;
+}
+.bff-section-head p:not(.bff-eyebrow) {
+	margin: 0;
+	font-size: var(--bff-text-lg);
+	color: var(--sl-color-gray-3);
+	text-wrap: pretty;
+}
+
+/* ---------- Cards ---------- */
+.bff-grid {
+	display: grid;
+	gap: 1rem;
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+}
+.bff-grid[data-cols='2'] {
+	grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
+}
+.bff-card {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: 0.6rem;
+	padding: 1.25rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius);
+	background: var(--bff-surface);
+	color: inherit;
+	text-decoration: none;
+	transition:
+		border-color 0.25s var(--bff-ease-soft),
+		transform 0.35s var(--bff-ease-out);
+}
+a.bff-card:hover {
+	border-color: var(--accent, var(--sl-color-gray-4));
+	transform: translateY(-2px);
+}
+.bff-card h3 {
+	margin: 0;
+	font-size: var(--bff-text-xl);
+	font-weight: 560;
+	line-height: 1.25;
+	color: var(--sl-color-white);
+}
+.bff-card p {
+	margin: 0;
+	color: var(--sl-color-gray-3);
+	font-size: var(--bff-text-md);
+}
+.bff-card-media {
+	margin: -0.25rem -0.25rem 0.25rem;
+	border-radius: var(--bff-radius-md);
+	overflow: hidden;
+	background: var(--sl-color-black);
+	aspect-ratio: 4 / 3;
+}
+.bff-card-media img {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: contain;
+}
+.bff-card-more {
+	margin-top: auto;
+	padding-top: 0.25rem;
+	font-size: var(--bff-text-sm);
+	font-weight: 600;
+	color: var(--sl-color-accent-high);
+}
+
+/* ---------- Footer (Footer override) ---------- */
+.bff-footer {
+	display: grid;
+	gap: 1.5rem;
+	margin-top: 3rem;
+}
+.bff-feedback {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem 1rem;
+	padding: 1rem 1.25rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius-md);
+	background: var(--bff-surface);
+}
+.bff-feedback p {
+	margin: 0;
+}
+#bff-feedback-q {
+	font-weight: 600;
+	color: var(--sl-color-white);
+}
+.bff-feedback-buttons {
+	display: flex;
+	gap: 0.5rem;
+}
+.bff-feedback-note {
+	flex-basis: 100%;
+	font-size: var(--bff-text-xs);
+	color: var(--sl-color-gray-3);
+}
+.bff-footer-meta {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 0.5rem 1.5rem;
+	font-size: var(--bff-text-sm);
+	color: var(--sl-color-gray-3);
+}
+.bff-site-footer {
+	display: grid;
+	gap: 0.75rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--sl-color-hairline);
+	font-size: var(--bff-text-sm);
+	color: var(--sl-color-gray-3);
+}
+.bff-site-footer p {
+	margin: 0;
+}
+.bff-site-footer-tag {
+	color: var(--sl-color-gray-2);
+}
+.bff-site-footer-tag .bff-mono {
+	margin-right: 0.5rem;
+	color: var(--sl-color-accent-high);
+}
+.bff-site-footer nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem 1.25rem;
+}
+.bff-site-footer nav a {
+	color: var(--sl-color-gray-2);
+	text-decoration: none;
+}
+.bff-site-footer nav a:hover {
+	color: var(--sl-color-accent-high);
+	text-decoration: underline;
+}
+.bff-site-footer-note {
+	font-size: var(--bff-text-xs);
+}
+
+/* ---------- Site title (SiteTitle override) ---------- */
+.bff-site-title {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6rem;
+	color: var(--sl-color-white);
+	text-decoration: none;
+	font-size: var(--bff-text-lg);
+	white-space: nowrap;
+}
+.bff-site-title strong {
+	font-weight: 650;
+}
+.bff-site-title-text span {
+	font-weight: 400;
+	color: var(--sl-color-gray-3);
+}
+.bff-logo {
+	flex: none;
+}
+@media (max-width: 30em) {
+	.bff-site-title-text span {
+		display: none;
+	}
+}
+
+/* ---------- Pause control for looping visuals ---------- */
+.bff-pause {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	min-height: 2rem;
+	padding: 0.2rem 0.6rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius-sm);
+	background: var(--sl-color-black);
+	color: var(--sl-color-gray-2);
+	font: inherit;
+	font-size: var(--bff-text-xs);
+	cursor: pointer;
+}
+.bff-pause:hover {
+	color: var(--sl-color-white);
+	border-color: var(--sl-color-gray-4);
+}
+[data-paused] * {
+	animation-play-state: paused !important;
+}
+@media (prefers-reduced-motion: reduce) {
+	.bff-pause {
+		display: none;
+	}
+}
+
+/* ---------- Figure frames ---------- */
+.bff-figure {
+	margin: 1.5rem 0;
+	padding: clamp(0.75rem, 2vw, 1.25rem);
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius);
+	background: var(--bff-surface);
+}
+.bff-figure figcaption {
+	margin-top: 0.75rem;
+	font-size: var(--bff-text-sm);
+	color: var(--sl-color-gray-3);
+}
+.bff-figure-bar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.5rem 1rem;
+	margin-bottom: 0.75rem;
+}
+
+/* ---------- Tabs and segmented controls ---------- */
+.bff-tabs {
+	display: inline-flex;
+	flex-wrap: wrap;
+	gap: 0.25rem;
+	padding: 0.25rem;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius-md);
+	background: var(--sl-color-black);
+}
+.bff-tab {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.4rem;
+	min-height: 2.25rem;
+	padding: 0.35rem 0.85rem;
+	border: 0;
+	border-radius: var(--bff-radius-sm);
+	background: transparent;
+	color: var(--sl-color-gray-3);
+	font: inherit;
+	font-size: var(--bff-text-sm);
+	font-weight: 600;
+	cursor: pointer;
+	transition:
+		background-color 0.2s var(--bff-ease-soft),
+		color 0.2s var(--bff-ease-soft);
+}
+.bff-tab:hover {
+	color: var(--sl-color-white);
+}
+.bff-tab[aria-selected='true'],
+.bff-tab[aria-pressed='true'] {
+	background: var(--bff-surface-2);
+	color: var(--sl-color-white);
+	box-shadow: var(--bff-shadow-sm);
+}
+.bff-tab-sub {
+	font-family: var(--bff-font-mono);
+	font-size: var(--bff-text-2xs);
+	font-weight: 500;
+	color: var(--sl-color-gray-3);
+}
+[role='tabpanel']:focus-visible {
+	outline: 2px solid var(--sl-color-accent);
+	outline-offset: 4px;
+	border-radius: var(--bff-radius-sm);
+}
+
+/* ---------- Data tables ---------- */
+.bff-table-wrap {
+	overflow-x: auto;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius-md);
+}
+.bff-table {
+	inline-size: 100%;
+	margin: 0;
+	border-collapse: collapse;
+	font-size: var(--bff-text-sm);
+}
+.bff-table :is(th, td) {
+	padding: 0.65rem 0.85rem;
+	border: 0;
+	border-bottom: 1px solid var(--sl-color-hairline);
+	text-align: left;
+	vertical-align: top;
+}
+.bff-table tr:last-child :is(th, td) {
+	border-bottom: 0;
+}
+.bff-table thead th {
+	background: var(--sl-color-black);
+	font-family: var(--bff-font-mono);
+	font-size: var(--bff-text-2xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--sl-color-gray-3);
+}
+.bff-table tbody th {
+	font-weight: 600;
+	color: var(--sl-color-white);
+	white-space: nowrap;
+}
+.bff-table td {
+	color: var(--sl-color-gray-2);
+}
+.bff-table [data-current] {
+	background: var(--sl-color-accent-low);
+	color: var(--sl-color-white);
+}
+.bff-dot {
+	display: inline-block;
+	inline-size: 0.6rem;
+	block-size: 0.6rem;
+	margin-right: 0.4rem;
+	border-radius: var(--bff-radius-pill);
+	background: var(--accent, var(--sl-color-gray-4));
+	vertical-align: 0.05em;
+}
+
+/* ---------- Level accents (low → medium → high) ---------- */
+[data-level-accent='low'] { --accent: var(--bff-yellow); }
+[data-level-accent='medium'] { --accent: var(--bff-green); }
+[data-level-accent='high'] { --accent: var(--bff-blue); }
+
+/* ---------- Section footer link ---------- */
+.bff-section-more {
+	margin: 1.25rem 0 0;
+	font-size: var(--bff-text-sm);
+	font-weight: 600;
+}
+.bff-section-more a {
+	color: var(--sl-color-accent-high);
+	text-decoration: none;
+}
+.bff-section-more a:hover {
+	text-decoration: underline;
+}
+
+/* "Ready to move up when" statement on level pages */
+.bff-ready {
+	font-size: var(--bff-text-lg);
+	line-height: 1.45;
+	max-width: 40em;
+	color: var(--sl-color-white);
+	padding: 1rem 1.25rem;
+	border: 1px solid var(--accent, var(--sl-color-gray-5));
+	border-radius: var(--bff-radius-md);
+	background: color-mix(in oklab, var(--accent, transparent) 8%, transparent);
+}

@@ -1,0 +1,147 @@
+---
+title: Playbook · Run
+description: Govern with policy as code, run fleets per work type, prove every change end to end and approve by exception. Multiplayer at scale.
+eyebrow: playbook.run()
+accent: blue
+tableOfContents:
+  maxHeadingLevel: 2
+---
+import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import LevelIndicator from '../../../components/LevelIndicator.astro';
+import PlaybookProgress from '../../../components/PlaybookProgress.astro';
+import StepDone from '../../../components/StepDone.astro';
+
+<LevelIndicator level="high" kind="playbooks" />
+
+<Aside type="caution" title="Draft playbook">
+This playbook is a placeholder. The steps and exit criteria are set; detailed UI and CLI instructions are coming. Features marked **preview** may change.
+</Aside>
+
+**Time:** Weeks, one work type at a time, after Walk.
+
+## Before you start
+
+- The Walk playbook done for the work types in scope, with stable SLOs.
+- An agent registry and an owner for each fleet.
+- End-to-end test environments that agents can create and tear down.
+- A rehearsed switch to dim back up for every work type in scope.
+
+<PlaybookProgress level="high" />
+
+## 1. Write policy as code
+
+Turn guardrails, approvals and budgets into versioned, reviewed policy that applies to every agent.
+
+<Tabs syncKey="track">
+	<TabItem label="UI" icon="laptop">
+		*Coming soon.* Manage organisation rulesets and Copilot policies from github.com.
+	</TabItem>
+	<TabItem label="CLI" icon="seti:shell">
+		*Coming soon.* Keep policies in a repository and apply them from CI.
+	</TabItem>
+</Tabs>
+
+<StepDone level="high" n={1} />
+
+## 2. Register and govern agents
+
+Register every agent, its owner, permissions and evals in one place.
+
+<Tabs syncKey="track">
+	<TabItem label="UI" icon="laptop">
+		*Coming soon.* Register agents in Microsoft Agent 365.
+	</TabItem>
+	<TabItem label="CLI" icon="seti:shell">
+		*Coming soon.* Automate registration from your deployment pipeline.
+	</TabItem>
+</Tabs>
+
+<StepDone level="high" n={2} />
+
+## 3. Run fleets per work type
+
+Give each work type its own fleet, sandbox and firewall rules.
+
+<Tabs syncKey="track">
+	<TabItem label="UI" icon="laptop">
+		*Coming soon.* Configure fleets and automations in the Copilot app.
+	</TabItem>
+	<TabItem label="CLI" icon="seti:shell">
+		*Coming soon.* Define fleets and agentic workflows in the repository.
+	</TabItem>
+</Tabs>
+
+<StepDone level="high" n={3} />
+
+## 4. Prove every change end to end
+
+Every pull request carries an evidence bundle: tests, scans, evals, previews and cost.
+
+<Tabs syncKey="track">
+	<TabItem label="UI" icon="laptop">
+		*Coming soon.* Add required checks and preview environments.
+	</TabItem>
+	<TabItem label="CLI" icon="seti:shell">
+		*Coming soon.* Add evidence jobs to your workflows.
+	</TabItem>
+</Tabs>
+
+<StepDone level="high" n={4} />
+
+## 5. Evaluate the agents
+
+Run evaluations for every agent and block releases on regressions.
+
+<Tabs syncKey="track">
+	<TabItem label="UI" icon="laptop">
+		*Coming soon.* Set up evaluations in Microsoft Foundry.
+	</TabItem>
+	<TabItem label="CLI" icon="seti:shell">
+		*Coming soon.* Run evaluations from CI with the Foundry SDK.
+	</TabItem>
+</Tabs>
+
+<StepDone level="high" n={5} />
+
+## 6. Release progressively
+
+Ship behind flags, in rings, with automatic rollback on SLO breaches.
+
+<Tabs syncKey="track">
+	<TabItem label="UI" icon="laptop">
+		*Coming soon.* Configure environments and deployment protection rules.
+	</TabItem>
+	<TabItem label="CLI" icon="seti:shell">
+		*Coming soon.* Drive releases from workflows with `gh` and `az`.
+	</TabItem>
+</Tabs>
+
+<StepDone level="high" n={6} />
+
+## 7. Approve by exception
+
+People approve only what policy flags. Everything else merges and ships on evidence.
+
+*Coming soon.*
+
+<StepDone level="high" n={7} />
+
+## 8. Rehearse dimming back up
+
+Pull the switch for one work type, keep the business running, then move back down on evidence.
+
+*Coming soon.*
+
+<StepDone level="high" n={8} />
+
+## Evidence to move up
+
+- SLOs hold for lights-off work types, release after release.
+- Every change has an evidence bundle and a full trace.
+- Dimming back up has been rehearsed and takes minutes.
+
+Run is not the end. Keep tuning trust, automation and foundations with the [engineering loop](/framework/engineering/), and move the next work type.
+
+## If you need to dim back up
+
+Return approvals for this work type to people and pause its automations. Work continues from Git. [How to dim back up →](/levels/dim-back-up/)

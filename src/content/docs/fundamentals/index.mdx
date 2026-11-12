@@ -1,0 +1,105 @@
+---
+title: Software factory fundamentals
+description: What a software factory is, what agents change, and why the factory you want is bright, not dark.
+eyebrow: fundamentals.intro()
+wide: true
+tableOfContents: false
+---
+import Scrolly from '../../../components/Scrolly.astro';
+import ScrollyStep from '../../../components/ScrollyStep.astro';
+import { PATTERNS, INDUSTRY_PILLARS, OUTCOMES } from '../../../data/content';
+
+<Scrolly>
+<ScrollyStep frame="line">
+
+## Every team already runs a factory
+
+A software factory is the system that turns ideas into running software: people, process, tools and platform working as one line. Ideas go in, running software comes out, and what you learn in production comes back in as new ideas.
+
+Every line has the same four stations. **Plan** turns intent into specs. **Build** turns specs into code. **Verify** turns code into evidence. **Observe** turns production signals into new work.
+
+Most teams already have this line, spread across trackers, chats, pipelines and scripts. The question is not whether you have a factory. It's how much of it you designed.
+
+</ScrollyStep>
+<ScrollyStep frame="agents">
+
+## Agents change the economics
+
+Agents can now plan, write, review, test and fix code. They work in parallel, around the clock, and never tire of the jobs people put off.
+
+The line can carry many changes at once. The bottleneck moves from writing code to **deciding what to build** and **checking what was built**. A factory that ignores this gets more code, not more value.
+
+</ScrollyStep>
+<ScrollyStep frame="patterns">
+
+## Four patterns teams automate first
+
+Across the industry, the same four patterns show up again and again. Each one needs something from the platform.
+
+<ol>
+	{PATTERNS.map((p) => (
+		<li><strong>{p.title}.</strong> {p.text} <em>Needs: {p.needs}</em></li>
+	))}
+</ol>
+
+</ScrollyStep>
+<ScrollyStep frame="pillars">
+
+## Six capabilities every agentic factory needs
+
+Behind those patterns sit six platform capabilities. Miss one and the factory stalls at the first incident, the first audit or the first bill.
+
+<ul>
+	{INDUSTRY_PILLARS.map((p) => (
+		<li><strong>{p.title}:</strong> {p.text}</li>
+	))}
+</ul>
+
+</ScrollyStep>
+<ScrollyStep frame="dark">
+
+## The dark factory trap
+
+In manufacturing, a *dark factory* runs with the lights off: fully automated, nobody on the floor. **Robots don't need light to work. People do.**
+
+Applied to software, the dark factory is tempting on paper and risky in practice: decisions nobody can explain, risks nobody sees, and no way back when something goes wrong. Lights out at once means humans out of the loop.
+
+</ScrollyStep>
+<ScrollyStep frame="bright">
+
+## The bright factory
+
+The Bright Factory Framework takes the opposite view. **Ideas come to life. Agents do the heavy lifting. Humans monitor and control.**
+
+The factory floor, where agents work, can dim. The **Factory HQ**, where people work, stays bright: ideas, creativity, building the factory, and monitoring and control. Every action on the floor is traced and visible from the HQ.
+
+**The floor can go dark. The factory never does.**
+
+</ScrollyStep>
+<ScrollyStep frame="dimmer">
+
+## A dimmer, not a switch
+
+Automation isn't on or off. It's set per work type, on a dimmer with three positions:
+
+- **Crawl**, low automation: lights on. Humans drive every step, agents assist.
+- **Walk**, medium automation: dimmed. Agents do the work, people approve.
+- **Run**, high automation: lights-off. The floor runs on its own, the HQ stays bright.
+
+Each work type moves up when the evidence says so, and can dim back up in minutes when signals say otherwise.
+
+</ScrollyStep>
+<ScrollyStep frame="outcomes">
+
+## What you get
+
+<ul>
+	{OUTCOMES.map((o) => (
+		<li><strong>{o.title}.</strong> {o.text}</li>
+	))}
+</ul>
+
+Ready for the details? [Explore the framework](/framework/) or [find your level](/get-started/find-your-level/).
+
+</ScrollyStep>
+</Scrolly>

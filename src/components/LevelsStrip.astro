@@ -1,0 +1,150 @@
+---
+import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
+import FactoryThumb from './FactoryThumb.astro';
+---
+
+<div class="bff-levels-strip not-content">
+	<div class="bff-ls-rail" aria-hidden="true">
+		<span>More human control</span>
+		<i></i>
+		<span>More automation</span>
+	</div>
+	<ol class="bff-ls-list">
+		{
+			LEVEL_ORDER.map((k) => (
+				<li data-level-accent={k}>
+					<a class="bff-ls-card" href={withBase(`/levels/${k}/`)}>
+						<FactoryThumb level={k} alt={`The factory with its floor ${LEVELS[k].floor.toLowerCase()}`} sizes="(min-width: 60em) 22rem, 92vw" />
+						<span class="bff-ls-meta">
+							<span class="bff-ls-gait">{LEVELS[k].gait}</span>
+							<span class="bff-ls-floor">{LEVELS[k].floor}</span>
+						</span>
+						<strong>{LEVELS[k].name}</strong>
+						<span class="bff-ls-tag">{LEVELS[k].tagline}</span>
+						<span class="bff-ls-mode">{LEVELS[k].mode}</span>
+					</a>
+					<a class="bff-ls-pb" href={withBase(`/playbooks/${k}/`)}>
+						{LEVELS[k].gait} playbook →
+					</a>
+				</li>
+			))
+		}
+	</ol>
+	<p class="bff-ls-back">
+		The dimmer goes both ways. <a href={withBase('/levels/dim-back-up/')}>Dim back up in minutes →</a>
+	</p>
+</div>
+
+<style>
+	.bff-ls-rail {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		gap: 1rem;
+		align-items: center;
+		margin-bottom: 1rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-ls-rail i {
+		block-size: 2px;
+		background: linear-gradient(90deg, var(--bff-yellow), var(--bff-green), var(--bff-blue));
+	}
+	.bff-ls-list {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-ls-list > li {
+		display: grid;
+		grid-template-rows: 1fr auto;
+		gap: 0.5rem;
+		margin: 0;
+		container-type: inline-size;
+	}
+	.bff-ls-card {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		align-content: start;
+		gap: 0.5rem;
+		padding: 0.75rem 0.75rem 1.1rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+		color: inherit;
+		text-decoration: none;
+		transition:
+			border-color 0.25s var(--bff-ease-soft),
+			transform 0.35s var(--bff-ease-out);
+	}
+	.bff-ls-card:hover {
+		border-color: var(--accent);
+		transform: translateY(-2px);
+	}
+	.bff-ls-card :global(.bff-thumb) {
+		margin-bottom: 0.4rem;
+	}
+	.bff-ls-meta {
+		display: grid;
+		justify-items: start;
+		gap: 0.35rem;
+		padding-inline: 0.25rem;
+	}
+	.bff-ls-gait {
+		font-size: var(--bff-text-card-display);
+		font-weight: 500;
+		line-height: 1;
+		letter-spacing: -0.02em;
+		color: var(--accent);
+	}
+	.bff-ls-floor {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-ls-card strong,
+	.bff-ls-tag,
+	.bff-ls-mode {
+		padding-inline: 0.25rem;
+	}
+	.bff-ls-card strong {
+		font-size: var(--bff-text-lg);
+		color: var(--sl-color-white);
+	}
+	.bff-ls-tag {
+		font-size: var(--bff-text-md);
+		color: var(--sl-color-gray-2);
+	}
+	.bff-ls-mode {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-ls-pb,
+	.bff-ls-back a {
+		padding-inline: 0.25rem;
+		font-size: var(--bff-text-sm);
+		font-weight: 600;
+		color: var(--sl-color-accent-high);
+		text-decoration: none;
+	}
+	.bff-ls-pb:hover,
+	.bff-ls-back a:hover {
+		text-decoration: underline;
+	}
+	.bff-ls-back {
+		margin: 1.25rem 0 0;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	@media (max-width: 56em) {
+		.bff-ls-list {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

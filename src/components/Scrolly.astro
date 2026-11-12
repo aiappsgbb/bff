@@ -1,0 +1,80 @@
+---
+// Sticky visual + scrolling prose. Each <ScrollyStep frame="..."> switches the visual's frame
+// when it crosses the middle of the viewport. Without JS, every step stays readable.
+import FundamentalsVisual from './FundamentalsVisual.astro';
+---
+
+<div class="bff-scrolly" data-frame="line">
+	<div class="bff-scrolly-visual not-content" aria-hidden="true">
+		<FundamentalsVisual />
+	</div>
+	<div class="bff-scrolly-steps">
+		<slot />
+	</div>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.bff-scrolly').forEach((root) => {
+		const steps = [...root.querySelectorAll<HTMLElement>('.bff-scrolly-step')];
+		if (!steps.length || !('IntersectionObserver' in window)) return;
+		root.dataset.js = '';
+		const activate = (step: HTMLElement) => {
+			steps.forEach((s) => s.toggleAttribute('data-active', s === step));
+			const frame = step.dataset.frame!;
+			if (root.dataset.frame === frame) return;
+			root.dataset.frame = frame;
+			root.dispatchEvent(new CustomEvent('bff:frame', { detail: frame }));
+		};
+		let io: IntersectionObserver | undefined;
+		const observe = () => {
+			io?.disconnect();
+			const mobile = matchMedia('(max-width: 62em)').matches;
+			io = new IntersectionObserver(
+				(entries) => entries.forEach((e) => e.isIntersecting && activate(e.target as HTMLElement)),
+				{ rootMargin: mobile ? '-62% 0px -30% 0px' : '-45% 0px -45% 0px' },
+			);
+			steps.forEach((s) => io!.observe(s));
+		};
+		observe();
+		matchMedia('(max-width: 62em)').addEventListener('change', observe);
+		activate(steps[0]);
+	});
+</script>
+
+<style>
+	.bff-scrolly {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+		gap: clamp(1.5rem, 4vw, 3.5rem);
+		margin-block: 2rem;
+	}
+	.bff-scrolly-steps {
+		grid-column: 1;
+		grid-row: 1;
+	}
+	.bff-scrolly-visual {
+		grid-column: 2;
+		grid-row: 1;
+		position: sticky;
+		top: calc(var(--sl-nav-height) + 1.5rem);
+		align-self: start;
+		block-size: min(36rem, calc(100vh - var(--sl-nav-height) - 3rem));
+	}
+	@media (max-width: 62em) {
+		.bff-scrolly {
+			grid-template-columns: 1fr;
+		}
+		.bff-scrolly-visual {
+			grid-column: 1;
+			z-index: 2;
+			top: var(--sl-nav-height);
+			block-size: 42vh;
+			margin-inline: calc(-1 * var(--sl-content-pad-x));
+			padding: 0.5rem var(--sl-content-pad-x);
+			background: var(--sl-color-bg);
+		}
+		.bff-scrolly-steps {
+			grid-row: 2;
+		}
+	}
+</style>

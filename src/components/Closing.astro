@@ -1,0 +1,64 @@
+---
+import { Image } from 'astro:assets';
+import box from '../assets/lego/factory_box.png';
+import { LEGO_ALT } from '../lib/images';
+import { withBase } from '../data/site';
+import Eyebrow from './Eyebrow.astro';
+---
+
+<section class="bff-closing not-content" aria-labelledby="bff-closing-title">
+	<div class="bff-closing-copy">
+		<Eyebrow text="factory.build()" accent="green" />
+		<h2 id="bff-closing-title">Everything's in the box. The factory is yours to build.</h2>
+		<p>Start with one team and one work type. Bring your own tools, or a partner who builds on the framework.</p>
+		<div class="bff-closing-ctas">
+			<a class="bff-btn bff-btn-primary" href={withBase('/get-started/')}>Get started <span aria-hidden="true">→</span></a>
+			<a class="bff-btn" href={withBase('/get-started/find-your-level/')}>Find your level</a>
+		</div>
+	</div>
+	<Image src={box} alt={LEGO_ALT.factory_box} widths={[400, 640, 900]} sizes="(min-width: 60em) 28rem, 80vw" loading="lazy" />
+</section>
+
+<style>
+	.bff-closing {
+		display: grid;
+		grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+		gap: clamp(1.5rem, 4vw, 3rem);
+		align-items: center;
+		padding-block: clamp(3rem, 7vw, 6rem);
+		border-top: 1px solid var(--sl-color-hairline);
+	}
+	.bff-closing-copy {
+		display: grid;
+		gap: 1rem;
+	}
+	h2 {
+		margin: 0;
+		font-size: var(--bff-text-display);
+		font-weight: 440;
+		line-height: 1.08;
+		letter-spacing: -0.02em;
+		color: var(--sl-color-white);
+		text-wrap: balance;
+	}
+	p:not(.bff-eyebrow) {
+		margin: 0;
+		font-size: var(--bff-text-lg);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-closing-ctas {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 0.5rem;
+	}
+	img {
+		inline-size: 100%;
+		block-size: auto;
+	}
+	@media (max-width: 50em) {
+		.bff-closing {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

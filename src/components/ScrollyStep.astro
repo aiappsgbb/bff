@@ -1,0 +1,43 @@
+---
+interface Props {
+	frame: 'line' | 'agents' | 'patterns' | 'pillars' | 'dark' | 'bright' | 'dimmer' | 'outcomes';
+}
+const { frame } = Astro.props;
+---
+
+<section class="bff-scrolly-step" data-frame={frame}>
+	<slot />
+</section>
+
+<style>
+	.bff-scrolly-step {
+		padding-block: 2rem;
+	}
+	.bff-scrolly-step + .bff-scrolly-step {
+		border-top: 1px solid var(--sl-color-hairline);
+	}
+	:global(.bff-scrolly[data-js]) .bff-scrolly-step {
+		min-block-size: 70vh;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		opacity: 0.4;
+		transition: opacity 0.4s var(--bff-ease-soft);
+	}
+	:global(.bff-scrolly[data-js]) .bff-scrolly-step[data-active] {
+		opacity: 1;
+	}
+	:global(.bff-scrolly[data-js]) .bff-scrolly-step:first-child {
+		justify-content: flex-start;
+		padding-top: 0;
+	}
+	.bff-scrolly-step > :global(:first-child) {
+		margin-top: 0;
+	}
+	@media (max-width: 62em) {
+		:global(.bff-scrolly[data-js]) .bff-scrolly-step {
+			min-block-size: 60vh;
+			justify-content: flex-start;
+		}
+	}
+</style>

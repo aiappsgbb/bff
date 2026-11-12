@@ -1,0 +1,133 @@
+---
+import { LEVELS } from '../data/site';
+
+interface Props {
+	level: 'low' | 'medium' | 'high';
+}
+const { level } = Astro.props;
+---
+
+<div class="bff-pb-progress not-content" data-pb-progress={level} data-level-accent={level}>
+	<div class="bff-pb-progress-text">
+		<strong>{LEVELS[level].gait} playbook</strong>
+		<span aria-live="polite"><span data-done>0</span> of <span data-total>0</span> steps done</span>
+	</div>
+	<div class="bff-pb-meter" aria-hidden="true"><i></i></div>
+	<button type="button" class="bff-btn bff-btn-ghost bff-btn-small" data-pb-reset hidden>Reset</button>
+</div>
+
+<script>
+	const key = (id: string) => `bff:pb:${id}`;
+	const get = (id: string) => {
+		try {
+			return localStorage.getItem(key(id)) === '1';
+		} catch {
+			return false;
+		}
+	};
+	const set = (id: string, on: boolean) => {
+		try {
+			on ? localStorage.setItem(key(id), '1') : localStorage.removeItem(key(id));
+		} catch {}
+	};
+
+	const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-step-done]')];
+	const paint = (b: HTMLButtonElement, on: boolean) => {
+		b.setAttribute('aria-pressed', String(on));
+		b.querySelector<HTMLElement>('[data-on]')!.hidden = !on;
+		b.querySelector<HTMLElement>('[data-off]')!.hidden = on;
+	};
+
+	const update = () => {
+		document.querySelectorAll<HTMLElement>('[data-pb-progress]').forEach((bar) => {
+			const level = bar.dataset.pbProgress;
+			const mine = buttons.filter((b) => b.dataset.stepDone!.startsWith(`${level}:`));
+			const done = mine.filter((b) => b.getAttribute('aria-pressed') === 'true').length;
+			bar.querySelector('[data-done]')!.textContent = String(done);
+			bar.querySelector('[data-total]')!.textContent = String(mine.length);
+			bar.querySelector<HTMLElement>('.bff-pb-meter i')!.style.inlineSize = mine.length ? `${(done / mine.length) * 100}%` : '0';
+			bar.querySelector<HTMLElement>('[data-pb-reset]')!.hidden = done === 0;
+			bar.toggleAttribute('data-complete', mine.length > 0 && done === mine.length);
+		});
+	};
+
+	buttons.forEach((b) => {
+		paint(b, get(b.dataset.stepDone!));
+		b.addEventListener('click', () => {
+			const on = b.getAttribute('aria-pressed') !== 'true';
+			set(b.dataset.stepDone!, on);
+			paint(b, on);
+			update();
+		});
+	});
+	document.querySelectorAll<HTMLElement>('[data-pb-reset]').forEach((r) =>
+		r.addEventListener('click', () => {
+			const level = r.closest<HTMLElement>('[data-pb-progress]')!.dataset.pbProgress;
+			buttons
+				.filter((b) => b.dataset.stepDone!.startsWith(`${level}:`))
+				.forEach((b) => {
+					set(b.dataset.stepDone!, false);
+					paint(b, false);
+				});
+			update();
+		}),
+	);
+	update();
+</script>
+
+<style>
+	.bff-pb-progress {
+		position: sticky;
+		top: calc(var(--sl-nav-height) + 0.5rem);
+		z-index: 2;
+		display: grid;
+		grid-template-columns: auto minmax(6rem, 1fr) auto;
+		align-items: center;
+		gap: 1rem;
+		margin-block: 1.5rem;
+		padding: 0.6rem 0.9rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-md);
+		background: color-mix(in oklab, var(--bff-surface) 88%, transparent);
+		backdrop-filter: blur(10px);
+	}
+	.bff-pb-progress-text {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.75rem;
+		align-items: baseline;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-pb-progress-text strong {
+		color: var(--sl-color-white);
+	}
+	.bff-pb-meter {
+		block-size: 0.4rem;
+		border-radius: var(--bff-radius-pill);
+		background: var(--sl-color-gray-6);
+		overflow: hidden;
+	}
+	.bff-pb-meter i {
+		display: block;
+		block-size: 100%;
+		inline-size: 0;
+		background: var(--accent);
+		transition: inline-size 0.5s var(--bff-ease-out);
+	}
+	.bff-pb-progress[data-complete] {
+		border-color: color-mix(in oklab, var(--accent) 60%, transparent);
+	}
+	[data-pb-reset][hidden] {
+		display: none;
+	}
+	@media (max-width: 40em) {
+		.bff-pb-progress {
+			grid-template-columns: 1fr auto;
+		}
+		.bff-pb-meter {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+	}
+</style>

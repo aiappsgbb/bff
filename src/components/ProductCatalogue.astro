@@ -1,0 +1,354 @@
+---
+import { LAYER_META, LEVELS, LEVEL_ORDER, VENDOR_LABEL, productIndex, type Vendor } from '../data/site';
+
+const items = productIndex();
+const vendors = Object.keys(VENDOR_LABEL) as Vendor[];
+const count = (v: Vendor) => items.filter((i) => i.vendor === v).length;
+const layers = ['hq', 'floor', 'foundations'] as const;
+---
+
+<div class="bff-cat not-content" data-catalogue>
+	<div class="bff-cat-tools" role="search">
+		<label class="bff-cat-search">
+			<span class="sr-only">Search products</span>
+			<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="7" cy="7" r="4.5"></circle><path d="M10.5 10.5 14 14"></path></svg>
+			<input type="search" placeholder="Search products and roles" autocomplete="off" data-q />
+		</label>
+		<fieldset class="bff-cat-group">
+			<legend class="sr-only">Vendor</legend>
+			{
+				vendors.map((v) => (
+					<label class="bff-cat-toggle" data-vendor={v}>
+						<input type="checkbox" name="vendor" value={v} checked />
+						<span>
+							{VENDOR_LABEL[v]} <span class="bff-cat-n">{count(v)}</span>
+						</span>
+					</label>
+				))
+			}
+		</fieldset>
+		<label class="bff-cat-select">
+			<span>Layer</span>
+			<select data-layer-filter>
+				<option value="">All layers</option>
+				{layers.map((l) => <option value={l}>{LAYER_META[l].label}</option>)}
+			</select>
+		</label>
+		<label class="bff-cat-select">
+			<span>Level</span>
+			<select data-level-filter>
+				<option value="">All levels</option>
+				{LEVEL_ORDER.map((k) => <option value={k}>{`${LEVELS[k].name} · ${LEVELS[k].gait}`}</option>)}
+			</select>
+		</label>
+	</div>
+	<p class="bff-cat-status" aria-live="polite" data-status>Showing {items.length} of {items.length} products.</p>
+
+	<ul class="bff-cat-list">
+		{
+			items.map((p) => (
+				<li
+					data-vendor={p.vendor}
+					data-layers={p.layers.join(' ')}
+					data-levels={p.levels.join(' ')}
+					data-text={`${p.name} ${p.role ?? ''} ${p.components.join(' ')}`.toLowerCase()}
+				>
+					<div class="bff-cat-name">
+						{p.url ? (
+							<a href={p.url} target="_blank" rel="noopener" class="bff-chip" data-vendor={p.vendor}>
+								{p.name}
+								<span class="sr-only"> (opens in a new tab)</span>
+							</a>
+						) : (
+							<span class="bff-chip" data-vendor={p.vendor}>
+								{p.name}
+							</span>
+						)}
+						{p.new && <span class="bff-pill">new</span>}
+					</div>
+					<p class="bff-cat-role">{p.role}</p>
+					<div class="bff-cat-where">
+						{p.layers.map((l) => (
+							<span class="bff-cat-layer" data-layer={l}>
+								{LAYER_META[l].short}
+							</span>
+						))}
+						<span class="bff-cat-levels" title={`Used at: ${p.levels.map((k) => LEVELS[k].gait).join(', ') || 'framework'}`}>
+							{LEVEL_ORDER.map((k) => (
+								<span data-k={k} data-on={p.levels.includes(k) ? '' : undefined}>
+									{LEVELS[k].gait[0]}
+								</span>
+							))}
+						</span>
+					</div>
+				</li>
+			))
+		}
+	</ul>
+	<p class="bff-cat-empty" data-empty hidden>No products match. Try another search or clear a filter.</p>
+	<p class="bff-cat-legend">
+		<span class="bff-chip" data-vendor="github">GitHub</span>
+		<span class="bff-chip" data-vendor="microsoft">Microsoft</span>
+		<span class="bff-chip" data-vendor="third-party">Third-party</span>
+		<span>C · W · R: used at Crawl, Walk or Run.</span>
+	</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('[data-catalogue]').forEach((root) => {
+		const q = root.querySelector<HTMLInputElement>('[data-q]')!;
+		const layer = root.querySelector<HTMLSelectElement>('[data-layer-filter]')!;
+		const level = root.querySelector<HTMLSelectElement>('[data-level-filter]')!;
+		const vendorBoxes = [...root.querySelectorAll<HTMLInputElement>('input[name="vendor"]')];
+		const rows = [...root.querySelectorAll<HTMLElement>('.bff-cat-list > li')];
+		const status = root.querySelector<HTMLElement>('[data-status]')!;
+		const empty = root.querySelector<HTMLElement>('[data-empty]')!;
+
+		const params = new URL(location.href).searchParams;
+		if (params.get('q')) q.value = params.get('q')!;
+		if (params.get('layer')) layer.value = params.get('layer')!;
+		if (params.get('level')) level.value = params.get('level')!;
+
+		const apply = () => {
+			const terms = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+			const vendors = vendorBoxes.filter((b) => b.checked).map((b) => b.value);
+			let shown = 0;
+			rows.forEach((r) => {
+				const ok =
+					vendors.includes(r.dataset.vendor!) &&
+					(!layer.value || r.dataset.layers!.split(' ').includes(layer.value)) &&
+					(!level.value || r.dataset.levels!.split(' ').includes(level.value)) &&
+					terms.every((t) => r.dataset.text!.includes(t));
+				r.hidden = !ok;
+				if (ok) shown++;
+			});
+			status.textContent = `Showing ${shown} of ${rows.length} products.`;
+			empty.hidden = shown > 0;
+			const url = new URL(location.href);
+			for (const [k, v] of [['q', q.value.trim()], ['layer', layer.value], ['level', level.value]] as const)
+				v ? url.searchParams.set(k, v) : url.searchParams.delete(k);
+			history.replaceState(null, '', url);
+		};
+		root.addEventListener('input', apply);
+		root.addEventListener('change', apply);
+		apply();
+	});
+</script>
+
+<style>
+	.bff-cat {
+		margin-block: 1.5rem 2rem;
+	}
+	.bff-cat-tools {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		align-items: end;
+		padding: 0.9rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+	}
+	.bff-cat-search {
+		position: relative;
+		flex: 1 1 16rem;
+	}
+	.bff-cat-search svg {
+		position: absolute;
+		inset: 50% auto auto 0.7rem;
+		translate: 0 -50%;
+		inline-size: 1rem;
+		fill: none;
+		stroke: var(--sl-color-gray-3);
+		stroke-width: 1.6;
+		stroke-linecap: round;
+	}
+	input[type='search'],
+	select {
+		inline-size: 100%;
+		min-block-size: 2.5rem;
+		padding: 0.4rem 0.75rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: var(--bff-radius-sm);
+		background: var(--sl-color-black);
+		color: var(--sl-color-white);
+		font: inherit;
+		font-size: var(--bff-text-sm);
+	}
+	input[type='search'] {
+		padding-left: 2.2rem;
+	}
+	input[type='search']:focus-visible,
+	select:focus-visible {
+		outline: 2px solid var(--sl-color-accent-high);
+		outline-offset: 1px;
+	}
+	.bff-cat-group {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0;
+		padding: 0;
+		border: 0;
+	}
+	.bff-cat-toggle {
+		display: inline-flex;
+		align-items: center;
+		min-block-size: 2.5rem;
+		padding: 0 0.75rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: var(--bff-radius-sm);
+		background: var(--sl-color-black);
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+		cursor: pointer;
+	}
+	.bff-cat-toggle input {
+		position: absolute;
+		opacity: 0;
+	}
+	.bff-cat-toggle > span::before {
+		content: '';
+		display: inline-block;
+		inline-size: 0.6rem;
+		block-size: 0.6rem;
+		margin-right: 0.45rem;
+		border: 1px solid var(--vendor);
+	}
+	.bff-cat-toggle[data-vendor='github'] { --vendor: var(--bff-vendor-github); }
+	.bff-cat-toggle[data-vendor='microsoft'] { --vendor: var(--bff-vendor-microsoft); }
+	.bff-cat-toggle[data-vendor='third-party'] { --vendor: var(--bff-vendor-third); }
+	.bff-cat-toggle:has(input:checked) {
+		border-color: var(--vendor);
+		color: var(--sl-color-white);
+	}
+	.bff-cat-toggle:has(input:checked) > span::before {
+		background: var(--vendor);
+	}
+	.bff-cat-toggle:has(input:focus-visible) {
+		outline: 2px solid var(--sl-color-accent-high);
+		outline-offset: 2px;
+	}
+	.bff-cat-n {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-cat-select {
+		display: grid;
+		gap: 0.2rem;
+		flex: 0 1 11rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-cat-select select {
+		font-family: var(--sl-font);
+		text-transform: none;
+		letter-spacing: 0;
+	}
+	.bff-cat-status {
+		margin: 0.9rem 0 0.5rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-cat-list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		border-top: 1px solid var(--sl-color-hairline);
+	}
+	.bff-cat-list > li {
+		display: grid;
+		grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr) auto;
+		gap: 0.4rem 1.25rem;
+		align-items: center;
+		margin: 0;
+		padding: 0.65rem 0.25rem;
+		border-bottom: 1px solid var(--sl-color-hairline);
+	}
+	.bff-cat-list > li[hidden] {
+		display: none;
+	}
+	.bff-cat-name {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		align-items: center;
+	}
+	.bff-cat-name .bff-chip {
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-white);
+	}
+	.bff-cat-role {
+		margin: 0;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-cat-where {
+		display: flex;
+		gap: 0.35rem;
+		align-items: center;
+		justify-content: end;
+	}
+	.bff-cat-layer {
+		padding: 0.05rem 0.45rem;
+		border: 1px solid color-mix(in oklab, var(--accent) 55%, transparent);
+		border-radius: var(--bff-radius-pill);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-2);
+	}
+	.bff-cat-levels {
+		display: inline-flex;
+		gap: 0.15rem;
+		margin-left: 0.25rem;
+	}
+	.bff-cat-levels span {
+		display: grid;
+		place-items: center;
+		inline-size: 1.25rem;
+		block-size: 1.25rem;
+		border-radius: var(--bff-radius-sm);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-5);
+		background: var(--sl-color-gray-6);
+	}
+	.bff-cat-levels [data-on] {
+		color: var(--bff-on-accent);
+		font-weight: 700;
+	}
+	.bff-cat-levels [data-k='low'][data-on] { background: var(--bff-yellow); }
+	.bff-cat-levels [data-k='medium'][data-on] { background: var(--bff-green); }
+	.bff-cat-levels [data-k='high'][data-on] { background: var(--bff-blue); }
+	.bff-cat-empty {
+		padding: 2rem 0;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-cat-legend {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		align-items: center;
+		margin-top: 1rem;
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	@media (max-width: 50em) {
+		.bff-cat-list > li {
+			grid-template-columns: 1fr auto;
+		}
+		.bff-cat-role {
+			grid-column: 1 / -1;
+			grid-row: 2;
+		}
+		.bff-cat-where {
+			grid-row: 1;
+			grid-column: 2;
+		}
+	}
+</style>

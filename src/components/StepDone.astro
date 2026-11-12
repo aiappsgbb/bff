@@ -1,0 +1,63 @@
+---
+interface Props {
+	level: 'low' | 'medium' | 'high';
+	n: number;
+}
+const { level, n } = Astro.props;
+---
+
+<button type="button" class="bff-step-done not-content" data-step-done={`${level}:${n}`} aria-pressed="false">
+	<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3.5 8.5l3 3 6-7"></path></svg>
+	<span data-off>Mark step {n} done</span>
+	<span data-on hidden>Step {n} done</span>
+</button>
+
+<style>
+	.bff-step-done {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin-block: 1rem 0.5rem;
+		padding: 0.35rem 0.8rem 0.35rem 0.45rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: var(--bff-radius-pill);
+		background: var(--sl-color-black);
+		color: var(--sl-color-gray-2);
+		font: inherit;
+		font-size: var(--bff-text-sm);
+		font-weight: 600;
+		cursor: pointer;
+		transition:
+			border-color 0.2s var(--bff-ease-soft),
+			background-color 0.2s var(--bff-ease-soft);
+	}
+	.bff-step-done:hover {
+		border-color: var(--sl-color-gray-4);
+	}
+	svg {
+		inline-size: 1.15rem;
+		block-size: 1.15rem;
+		padding: 0.15rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: var(--bff-radius-pill);
+	}
+	path {
+		fill: none;
+		stroke: transparent;
+		stroke-width: 2;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.bff-step-done[aria-pressed='true'] {
+		border-color: var(--bff-green);
+		background: color-mix(in oklab, var(--bff-green) 14%, transparent);
+		color: var(--sl-color-white);
+	}
+	.bff-step-done[aria-pressed='true'] svg {
+		border-color: var(--bff-green);
+		background: var(--bff-green);
+	}
+	.bff-step-done[aria-pressed='true'] path {
+		stroke: var(--bff-on-accent);
+	}
+</style>

@@ -1,0 +1,281 @@
+---
+import { MULTIPLAYER } from '../data/content';
+import { LEVELS } from '../data/site';
+import PauseButton from './PauseButton.astro';
+
+const uid = 'bff-mp';
+const grid = (x0: number, y0: number, cols: number, rows: number, step = 26) =>
+	Array.from({ length: cols * rows }, (_, i) => ({ x: x0 + (i % cols) * step, y: y0 + Math.floor(i / cols) * step, d: (i * 0.37) % 2.4 }));
+const multiAgents = grid(222, 92, 6, 2, 28);
+const fleets = [
+	{ x: 40, label: 'Fixes' },
+	{ x: 225, label: 'Features' },
+	{ x: 410, label: 'Upgrades' },
+].map((f) => ({ ...f, agents: grid(f.x + 22, 112, 5, 3, 24) }));
+const multiPeople = [120, 240, 360, 480];
+---
+
+<figure class="bff-figure bff-mp not-content" data-pausable data-selected="medium" aria-labelledby={`${uid}-cap`}>
+	<div class="bff-figure-bar">
+		<div class="bff-tabs" role="tablist" aria-label="Collaboration mode">
+			{
+				MULTIPLAYER.modes.map((m) => (
+					<button
+						class="bff-tab"
+						type="button"
+						role="tab"
+						id={`${uid}-tab-${m.key}`}
+						aria-controls={`${uid}-panel-${m.key}`}
+						aria-selected={m.level === 'medium' ? 'true' : 'false'}
+						tabindex={m.level === 'medium' ? 0 : -1}
+						data-level={m.level}
+					>
+						{m.title} <span class="bff-tab-sub">{LEVELS[m.level].gait}</span>
+					</button>
+				))
+			}
+		</div>
+		<PauseButton />
+	</div>
+
+	<div class="bff-mp-stage">
+		<svg viewBox="0 0 600 300" aria-hidden="true" class="bff-mp-svg">
+			<!-- Singleplayer: one person, one laptop, agents assisting locally -->
+			<g class="bff-mp-state" data-state="low">
+				<g class="bff-mp-person" transform="translate(190 168)">
+					<circle cx="0" cy="-34" r="16" /><path d="M -28 18 Q -28 -12 0 -12 Q 28 -12 28 18 Z" />
+				</g>
+				<rect class="bff-mp-device" x="250" y="110" width="170" height="104" rx="8" />
+				<rect class="bff-mp-base" x="232" y="214" width="206" height="10" rx="4" />
+				{
+					[0, 1, 2].map((i) => (
+						<rect class="bff-mp-agent" x={282 + i * 40} y="148" width="26" height="26" rx="5" style={`--d:${i * 0.6}s`} />
+					))
+				}
+				<text class="bff-mp-label" x="335" y="262" text-anchor="middle">one developer · one laptop · local agents</text>
+			</g>
+
+			<!-- Multiplayer: a team steering shared cloud sessions -->
+			<g class="bff-mp-state" data-state="medium">
+				<path
+					class="bff-mp-cloud"
+					d="M 190 160 Q 160 160 160 130 Q 160 98 196 96 Q 204 58 252 60 Q 284 36 326 54 Q 366 36 396 66 Q 440 64 444 100 Q 470 108 466 134 Q 462 160 432 160 Z"
+				/>
+				{multiAgents.map((a) => <rect class="bff-mp-agent" x={a.x} y={a.y} width="20" height="20" rx="4" style={`--d:${a.d}s`} />)}
+				{
+					multiPeople.map((x, i) => (
+						<g>
+							<path class="bff-mp-link" d={`M ${x} 214 Q ${x} 186 ${300 + (x - 300) * 0.4} 162`} style={`--d:${i * 0.5}s`} />
+							<g class="bff-mp-person" transform={`translate(${x} 240) scale(0.75)`}>
+								<circle cx="0" cy="-34" r="16" />
+								<path d="M -28 18 Q -28 -12 0 -12 Q 28 -12 28 18 Z" />
+							</g>
+						</g>
+					))
+				}
+				<text class="bff-mp-label" x="300" y="288" text-anchor="middle">a team · shared cloud sessions · visible to everyone</text>
+			</g>
+
+			<!-- Multiplayer at scale: fleets per work type, under policy -->
+			<g class="bff-mp-state" data-state="high">
+				<g class="bff-mp-policy">
+					<rect x="150" y="22" width="300" height="34" rx="17" />
+					<text x="300" y="44" text-anchor="middle">policy · agent registry · evals · audit</text>
+				</g>
+				{
+					fleets.map((f) => (
+						<g>
+							<rect class="bff-mp-fleet" x={f.x} y="80" width="150" height="128" rx="12" />
+							<text class="bff-mp-fleet-label" x={f.x + 14} y="100">
+								{f.label}
+							</text>
+							{f.agents.map((a) => (
+								<rect class="bff-mp-agent" x={a.x} y={a.y} width="16" height="16" rx="3" style={`--d:${a.d}s`} />
+							))}
+							<path class="bff-mp-link" d={`M ${f.x + 75} 56 L ${f.x + 75} 80`} style="--d:0s" />
+						</g>
+					))
+				}
+				{
+					[210, 390].map((x, i) => (
+						<g>
+							<g class="bff-mp-person" transform={`translate(${x} 250) scale(0.62)`}>
+								<circle cx="0" cy="-34" r="16" />
+								<path d="M -28 18 Q -28 -12 0 -12 Q 28 -12 28 18 Z" />
+							</g>
+							<rect class="bff-mp-phone" x={x + 18} y="232" width="14" height="24" rx="3" />
+						</g>
+					))
+				}
+				<text class="bff-mp-label" x="300" y="288" text-anchor="middle">fleets per work type · approve by exception, from any device</text>
+			</g>
+		</svg>
+
+		{
+			MULTIPLAYER.modes.map((m) => (
+				<div class="bff-mp-panel" role="tabpanel" id={`${uid}-panel-${m.key}`} aria-labelledby={`${uid}-tab-${m.key}`} hidden={m.level !== 'medium'}>
+					<p class="bff-mp-where">{m.where}</p>
+					<p>{LEVELS[m.level].modeDetail}</p>
+				</div>
+			))
+		}
+	</div>
+
+	<div class="bff-table-wrap">
+		<table class="bff-table">
+			<caption class="sr-only">Singleplayer, multiplayer and multiplayer at scale compared</caption>
+			<thead>
+				<tr>
+					<td></td>
+					{
+						MULTIPLAYER.modes.map((m) => (
+							<th scope="col" data-col={m.level}>
+								{m.title}
+							</th>
+						))
+					}
+				</tr>
+			</thead>
+			<tbody>
+				{
+					MULTIPLAYER.rows.map((r) => (
+						<tr>
+							<th scope="row">{r.label}</th>
+							{r.values.map((v, i) => (
+								<td data-col={MULTIPLAYER.modes[i].level}>{v}</td>
+							))}
+						</tr>
+					))
+				}
+			</tbody>
+		</table>
+	</div>
+	<figcaption id={`${uid}-cap`}>
+		From singleplayer to multiplayer: the same factory, from one developer on a laptop to fleets of agents the whole organisation can see
+		and steer.
+	</figcaption>
+</figure>
+
+<script>
+	import { bindTabs } from '../lib/tabs';
+	document.querySelectorAll<HTMLElement>('.bff-mp').forEach((el) => bindTabs(el, { syncLevel: true }));
+</script>
+
+<style>
+	.bff-mp-stage {
+		display: grid;
+		grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+		align-items: center;
+		gap: 1.5rem;
+		margin-bottom: 1rem;
+	}
+	.bff-mp-svg {
+		display: block;
+		inline-size: 100%;
+		block-size: auto;
+		border-radius: var(--bff-radius-md);
+		background: var(--sl-color-black);
+	}
+	.bff-mp-state {
+		opacity: 0;
+		transition: opacity 0.5s var(--bff-ease-soft);
+	}
+	.bff-mp[data-selected='low'] [data-state='low'],
+	.bff-mp[data-selected='medium'] [data-state='medium'],
+	.bff-mp[data-selected='high'] [data-state='high'] {
+		opacity: 1;
+	}
+	.bff-mp-person {
+		fill: var(--bff-hq);
+	}
+	.bff-mp-device {
+		fill: var(--bff-surface-2);
+		stroke: var(--sl-color-gray-4);
+		stroke-width: 2;
+	}
+	.bff-mp-base,
+	.bff-mp-phone {
+		fill: var(--sl-color-gray-5);
+		stroke: var(--sl-color-gray-4);
+	}
+	.bff-mp-cloud {
+		fill: color-mix(in oklab, var(--bff-floor) 10%, transparent);
+		stroke: var(--bff-floor);
+		stroke-width: 2;
+		stroke-dasharray: 6 6;
+	}
+	.bff-mp-fleet {
+		fill: color-mix(in oklab, var(--bff-floor) 8%, transparent);
+		stroke: color-mix(in oklab, var(--bff-floor) 60%, transparent);
+		stroke-width: 1.5;
+	}
+	.bff-mp-fleet-label {
+		fill: var(--sl-color-gray-2);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-sm);
+	}
+	.bff-mp-agent {
+		fill: var(--bff-floor);
+		animation: bff-mp-work 2.4s var(--bff-ease-soft) var(--d, 0s) infinite;
+	}
+	.bff-mp-link {
+		fill: none;
+		stroke: var(--bff-hq);
+		stroke-width: 2;
+		stroke-dasharray: 4 6;
+		animation: bff-mp-flow 1.6s linear var(--d, 0s) infinite;
+	}
+	.bff-mp-policy rect {
+		fill: color-mix(in oklab, var(--bff-found) 14%, transparent);
+		stroke: var(--bff-found);
+		stroke-width: 1.5;
+	}
+	.bff-mp-policy text {
+		fill: var(--sl-color-white);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-sm);
+	}
+	.bff-mp-label {
+		fill: var(--sl-color-gray-3);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-sm);
+	}
+	@keyframes bff-mp-work {
+		0%,
+		100% { opacity: 1; }
+		50% { opacity: 0.35; }
+	}
+	@keyframes bff-mp-flow {
+		to { stroke-dashoffset: -20; }
+	}
+	.bff-mp-panel p {
+		margin: 0;
+		color: var(--sl-color-gray-2);
+	}
+	.bff-mp-where {
+		margin-bottom: 0.4rem !important;
+		font-size: var(--bff-text-xl);
+		font-weight: 600;
+		color: var(--sl-color-white) !important;
+	}
+	.bff-mp[data-selected='low'] [data-col='low'],
+	.bff-mp[data-selected='medium'] [data-col='medium'],
+	.bff-mp[data-selected='high'] [data-col='high'] {
+		background: var(--sl-color-accent-low);
+		color: var(--sl-color-white);
+	}
+	@media (max-width: 50em) {
+		.bff-mp-stage {
+			grid-template-columns: 1fr;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.bff-mp-agent,
+		.bff-mp-link {
+			animation: none;
+		}
+		.bff-mp-state {
+			transition: none;
+		}
+	}
+</style>

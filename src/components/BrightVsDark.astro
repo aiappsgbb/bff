@@ -1,0 +1,114 @@
+---
+import FactoryThumb from './FactoryThumb.astro';
+
+const rows = [
+	['Who decides', 'Agents decide and ship on their own', 'People set intent and approve consequences'],
+	['What you see', 'Activity without explanation', 'Every session visible and steerable, from any device'],
+	['Who is accountable', 'Unclear once something breaks', 'A named owner at every gate'],
+	['How it improves', 'Self-modifies without review', 'Reviewed changes to skills and process'],
+	['When things go wrong', 'Stop the line, or hope', 'Dim back up for that work type and keep going'],
+];
+---
+
+<figure class="bff-figure bff-bvd not-content" data-mode="bright" aria-labelledby="bff-bvd-cap">
+	<div class="bff-figure-bar">
+		<div class="bff-tabs" role="group" aria-label="Factory type">
+			<button class="bff-tab" type="button" aria-pressed="false" data-mode-btn="dark">Dark factory</button>
+			<button class="bff-tab" type="button" aria-pressed="true" data-mode-btn="bright">Bright factory</button>
+		</div>
+		<p class="bff-bvd-motto" aria-live="polite">
+			<span data-when="bright">The floor can go dark. The factory never does.</span>
+			<span data-when="dark">Lights out at once. Humans out of the loop.</span>
+		</p>
+	</div>
+	<div class="bff-bvd-grid">
+		<FactoryThumb
+			level="high"
+			alt="The LEGO factory. In the bright factory, the floor dims while the HQ and the people stay lit; in a dark factory everything goes dark."
+			sizes="(min-width: 60em) 30rem, 92vw"
+		/>
+		<div class="bff-table-wrap">
+			<table class="bff-table">
+				<caption class="sr-only">Dark factory compared with the Bright Factory</caption>
+				<thead>
+					<tr>
+						<td></td>
+						<th scope="col" data-col="dark">Dark factory</th>
+						<th scope="col" data-col="bright">Bright factory</th>
+					</tr>
+				</thead>
+				<tbody>
+					{
+						rows.map(([label, dark, bright]) => (
+							<tr>
+								<th scope="row">{label}</th>
+								<td data-col="dark">{dark}</td>
+								<td data-col="bright">{bright}</td>
+							</tr>
+						))
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<figcaption id="bff-bvd-cap">
+		Robots don't need light to work. People do. In the Bright Factory, ideas come to life, agents do the heavy lifting and humans monitor
+		and control.
+	</figcaption>
+</figure>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.bff-bvd').forEach((root) => {
+		const thumb = root.querySelector<HTMLElement>('.bff-thumb')!;
+		const btns = [...root.querySelectorAll<HTMLButtonElement>('[data-mode-btn]')];
+		btns.forEach((b) =>
+			b.addEventListener('click', () => {
+				const mode = b.dataset.modeBtn!;
+				root.dataset.mode = mode;
+				thumb.dataset.level = mode === 'dark' ? 'dark' : 'high';
+				btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+			}),
+		);
+	});
+</script>
+
+<style>
+	.bff-bvd-motto {
+		margin: 0;
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-bvd[data-mode='bright'] [data-when='dark'],
+	.bff-bvd[data-mode='dark'] [data-when='bright'] {
+		display: none;
+	}
+	.bff-bvd-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+		gap: clamp(1rem, 3vw, 2rem);
+		align-items: center;
+	}
+	.bff-bvd [data-col] {
+		transition:
+			background-color 0.3s var(--bff-ease-soft),
+			color 0.3s var(--bff-ease-soft),
+			opacity 0.3s var(--bff-ease-soft);
+	}
+	.bff-bvd[data-mode='bright'] [data-col='bright'] {
+		background: color-mix(in oklab, var(--bff-green) 14%, transparent);
+		color: var(--sl-color-white);
+	}
+	.bff-bvd[data-mode='dark'] [data-col='dark'] {
+		background: color-mix(in oklab, var(--bff-alert) 12%, transparent);
+		color: var(--sl-color-white);
+	}
+	.bff-bvd[data-mode='bright'] td[data-col='dark'],
+	.bff-bvd[data-mode='dark'] td[data-col='bright'] {
+		opacity: 0.6;
+	}
+	@media (max-width: 50em) {
+		.bff-bvd-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

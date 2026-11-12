@@ -1,0 +1,314 @@
+/*
+ * Bright Factory Framework theme for Starlight.
+ * Look and feel follows GitHub Universe recap: light canvas, hairline blueprint grid,
+ * Mona Sans, mono "code-like" eyebrows, green primary, generous whitespace.
+ */
+
+:root {
+	--sl-font: 'Mona Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	--sl-font-mono: 'Mona Sans Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+	--bff-font-mono: var(--sl-font-mono);
+
+	--bff-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+	--bff-ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+	--bff-radius: 16px;
+	--bff-radius-md: 12px;
+	--bff-radius-sm: 6px;
+	--bff-radius-pill: 999px;
+	--bff-max: 80rem;
+
+	/* Type ramp. Starlight's --sl-text-h1..h4 cover headings. */
+	--bff-text-2xs: 0.75rem;
+	--bff-text-xs: 0.8125rem;
+	--bff-text-sm: 0.875rem;
+	--bff-text-md: 1rem;
+	--bff-text-lg: 1.125rem;
+	--bff-text-xl: 1.25rem;
+	--bff-text-lede: clamp(1.25rem, 1rem + 0.9vw, 1.75rem);
+	--bff-text-display: clamp(2.75rem, 1.4rem + 5.2vw, 5.5rem);
+	/* Display size for cards: scales with the card (needs an inline-size container). */
+	--bff-text-card-display: clamp(2.25rem, 21cqi, 4.5rem);
+
+	/* Scene tokens: light and LEGO plastic drawn on top of renders, identical in both themes. */
+	--bff-light-warm: #ffd866;
+	--bff-light-cool: #7cc4ff;
+	--bff-light-core: #e8f6ff;
+	--bff-light-violet: #8f7bff;
+	--bff-light-night: #0b1a3a;
+	--bff-brick-white: #f4f7f5;
+	--bff-brick-shade: #c9d2cc;
+	--bff-shadow-ink: #000000;
+	--bff-shadow-sm: 0 6px 18px -6px color-mix(in srgb, var(--bff-shadow-ink) 35%, transparent);
+	--bff-shadow-lg: 0 8px 24px -6px color-mix(in srgb, var(--bff-shadow-ink) 40%, transparent);
+	--bff-alert: #f85149;
+
+	/* Layer semantics (shared with the deck): HQ orange, Floor green, Foundations blue, Engineering violet. */
+	--bff-hq: #f0883e;
+	--bff-floor: #5fed83;
+	--bff-found: #58a6ff;
+	--bff-eng: #a371f7;
+	--bff-vendor-github: #5fed83;
+	--bff-vendor-microsoft: #58a6ff;
+	--bff-vendor-third: #8b949e;
+
+	/* Universe accents */
+	--bff-green: #0fbf3e;
+	--bff-pink: #ff5c93;
+	--bff-blue: #3fa4ff;
+	--bff-yellow: #e3c72a;
+	--bff-purple: #ae85ff;
+	--bff-orange: #f0883e;
+
+	/* Dark (default Starlight mode) */
+	--sl-color-white: #ffffff;
+	--sl-color-gray-1: #eef2ef;
+	--sl-color-gray-2: #d2d9d4;
+	--sl-color-gray-3: #a3ada6;
+	--sl-color-gray-4: #6e7a72;
+	--sl-color-gray-5: #2a332d;
+	--sl-color-gray-6: #141a16;
+	--sl-color-black: #0a0d0b;
+	--sl-color-accent-low: #0d3024;
+	--sl-color-accent: #0fbf3e;
+	--sl-color-accent-high: #8cf2a6;
+	--sl-color-bg-nav: rgb(10 13 11 / 0.82);
+	--sl-color-bg-sidebar: #0a0d0b;
+	--sl-color-hairline: #1d241f;
+	--sl-color-hairline-light: #2a332d;
+	--bff-surface: #0f1511;
+	--bff-surface-2: #151c17;
+	--bff-grid-line: rgb(255 255 255 / 0.045);
+	--bff-on-accent: #04130a;
+
+	--sl-text-h1: clamp(2.5rem, 1.6rem + 2.6vw, 3.5rem);
+	--sl-text-h2: 2rem;
+	--sl-text-h3: 1.5rem;
+	--sl-text-h4: 1.25rem;
+	--sl-line-height: 1.65;
+	--sl-line-height-headings: 1.12;
+	--sl-content-width: 46rem;
+	--sl-nav-height: 4rem;
+}
+
+:root[data-theme='light'] {
+	--sl-color-white: #000000;
+	--sl-color-gray-1: #111612;
+	--sl-color-gray-2: #262d28;
+	--sl-color-gray-3: #58635b;
+	--sl-color-gray-4: #7d877f;
+	--sl-color-gray-5: #c9d2cc;
+	--sl-color-gray-6: #e4ebe6;
+	--sl-color-gray-7: #f2f5f3;
+	--sl-color-black: #ffffff;
+	--sl-color-accent-low: #ebf9f4;
+	--sl-color-accent: #08872b;
+	--sl-color-accent-high: #0d6731;
+	--sl-color-bg-nav: rgb(255 255 255 / 0.85);
+	--sl-color-bg-sidebar: #ffffff;
+	--sl-color-hairline: #e4ebe6;
+	--sl-color-hairline-light: #e4ebe6;
+	--sl-color-bg-inline-code: #f2f5f3;
+	--bff-surface: #f6f8f7;
+	--bff-surface-2: #eef3f0;
+	--bff-grid-line: rgb(13 48 36 / 0.055);
+	--bff-on-accent: #ffffff;
+
+	--bff-hq: #bc4c00;
+	--bff-floor: #08872b;
+	--bff-found: #0969da;
+	--bff-eng: #8250df;
+	--bff-vendor-github: #08872b;
+	--bff-vendor-microsoft: #0969da;
+	--bff-vendor-third: #6e7781;
+	--bff-alert: #cf222e;
+
+	--bff-green: #08872b;
+	--bff-pink: #f73678;
+	--bff-blue: #168ffb;
+	--bff-yellow: #bba00a;
+	--bff-purple: #8a63d2;
+	--bff-orange: #d4650f;
+}
+
+/* ---------- Base ---------- */
+html {
+	font-optical-sizing: auto;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+body {
+	font-weight: 400;
+	font-variation-settings: 'wdth' 100;
+	background-color: var(--sl-color-black);
+}
+
+/* Hairline blueprint grid behind every page, fading out towards the bottom. */
+body::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background-image:
+		linear-gradient(to right, var(--bff-grid-line) 1px, transparent 1px),
+		linear-gradient(to bottom, var(--bff-grid-line) 1px, transparent 1px);
+	background-size: 48px 48px;
+	mask-image: linear-gradient(to bottom, black 0, black 40vh, transparent 100vh);
+}
+.page,
+.main-frame,
+main {
+	background: transparent;
+}
+
+/* Header */
+header.header {
+	backdrop-filter: saturate(1.4) blur(12px);
+	-webkit-backdrop-filter: saturate(1.4) blur(12px);
+	border-bottom: 1px solid var(--sl-color-hairline);
+}
+
+/* Sidebar */
+nav.sidebar .sidebar-pane {
+	border-inline-end: 1px solid var(--sl-color-hairline);
+}
+.sidebar-content .large {
+	font-family: var(--bff-font-mono);
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--sl-color-gray-3);
+}
+.sidebar-content a {
+	border-radius: var(--bff-radius-sm);
+	font-size: 0.9375rem;
+}
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+	background: var(--sl-color-accent-low);
+	color: var(--sl-color-accent-high);
+	font-weight: 600;
+}
+
+/* Headings, Universe-style: light weights, balanced wrapping */
+.sl-markdown-content :is(h1, h2, h3, h4) {
+	text-wrap: balance;
+	letter-spacing: -0.01em;
+}
+.sl-markdown-content h2 {
+	font-weight: 500;
+	margin-top: 3.25rem;
+}
+.sl-markdown-content h3 {
+	font-weight: 560;
+}
+.sl-markdown-content p,
+.sl-markdown-content li {
+	text-wrap: pretty;
+}
+.sl-markdown-content a:not(.bff-btn, .bff-card, .bff-chip, .sl-link-card *, [class*='bff-']) {
+	color: var(--sl-color-accent-high);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+}
+.sl-markdown-content strong {
+	font-weight: 640;
+	color: var(--sl-color-white);
+}
+.sl-markdown-content code:not(pre code) {
+	font-size: 0.875em;
+	padding: 0.1em 0.35em;
+	border-radius: 4px;
+	border: 1px solid var(--sl-color-hairline);
+}
+
+/* Tables */
+.sl-markdown-content table:not(:where(.not-content *)) {
+	display: table;
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	border: 1px solid var(--sl-color-hairline);
+	border-radius: var(--bff-radius-md);
+	overflow: hidden;
+	font-size: 0.9375rem;
+}
+.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+	border: 0;
+	border-bottom: 1px solid var(--sl-color-hairline);
+	padding: 0.75rem 1rem;
+	vertical-align: top;
+}
+.sl-markdown-content tr:last-child td:not(:where(.not-content *)) {
+	border-bottom: 0;
+}
+.sl-markdown-content th:not(:where(.not-content *)) {
+	background: var(--bff-surface);
+	font-family: var(--bff-font-mono);
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--sl-color-gray-3);
+	text-align: start;
+}
+
+/* Starlight cards and link cards */
+.sl-markdown-content .card,
+.sl-link-card {
+	border-radius: var(--bff-radius);
+	border-color: var(--sl-color-hairline);
+	background: var(--bff-surface);
+	transition:
+		border-color 0.25s var(--bff-ease-soft),
+		transform 0.35s var(--bff-ease-out),
+		box-shadow 0.35s var(--bff-ease-out);
+}
+.sl-link-card:hover {
+	border-color: var(--sl-color-accent);
+	transform: translateY(-2px);
+	box-shadow: 0 10px 30px -12px color-mix(in srgb, var(--sl-color-accent) 35%, transparent);
+}
+
+/* Asides */
+.starlight-aside {
+	border-radius: var(--bff-radius-md);
+}
+
+/* Tabs (UI / CLI tracks) */
+starlight-tabs [role='tablist'] {
+	border-bottom: 1px solid var(--sl-color-hairline);
+}
+starlight-tabs [role='tab'] {
+	font-family: var(--bff-font-mono);
+	font-size: 0.8125rem;
+	letter-spacing: 0.04em;
+}
+
+/* Wide pages: scrollytelling, big picture, catalogues */
+html:has(.bff-wide-page) {
+	--sl-content-width: 72rem;
+}
+/* Splash pages (home) */
+html:not([data-has-sidebar]) {
+	--sl-content-width: var(--bff-max);
+}
+
+/* Focus visibility (WCAG 2.2 focus appearance) */
+:focus-visible {
+	outline: 2px solid var(--sl-color-accent);
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.001ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.001ms !important;
+		scroll-behavior: auto !important;
+	}
+}

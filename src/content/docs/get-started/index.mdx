@@ -1,0 +1,56 @@
+---
+title: Get started
+description: Four steps from curiosity to your first bright factory. Pick the route that fits where you are today.
+eyebrow: start.here()
+---
+import { CardGrid, LinkCard, Steps, Aside } from '@astrojs/starlight/components';
+import JourneySteps from '../../../components/JourneySteps.astro';
+
+## Pick your route
+
+<CardGrid>
+	<LinkCard title="New to software factories?" description="Start with the fundamentals: what a factory is, what agents change and why the HQ stays bright." href="/fundamentals/" />
+	<LinkCard title="Know the basics?" description="Go straight to the framework: six principles, the big picture and how the factory grows from singleplayer to multiplayer." href="/framework/" />
+	<LinkCard title="Ready to act?" description="Take the eight-question self-assessment and open the playbook for your level." href="/get-started/find-your-level/" />
+	<LinkCard title="Want to see it working?" description="Six short demo acts, from an idea on the commute to production feeding the next idea." href="/get-started/demos/" />
+</CardGrid>
+
+## The journey
+
+Every factory in this framework is built the same way: one team, one work type, one level at a time.
+
+<JourneySteps />
+
+## Your first hour
+
+<Steps>
+
+1. **Read the fundamentals.** Fifteen minutes on [what a software factory is](/fundamentals/) and why this one is [bright, not dark](/fundamentals/bright-vs-dark/).
+
+2. **Pick one work type.** Dependency upgrades, bug fixes, test coverage or a small feature area. Something frequent, low-risk and easy to measure.
+
+3. **Find its level.** Answer the [self-assessment](/get-started/find-your-level/) for that work type. Your result is saved in this browser and every page follows it.
+
+4. **Read your level.** See who does what at each station, which primitives you need and what evidence lets you move up: [Crawl](/levels/low/), [Walk](/levels/medium/) or [Run](/levels/high/).
+
+5. **Open the playbook.** Step-by-step instructions for your level, with a UI track and a CLI track. Then [rehearse dimming back up](/levels/dim-back-up/) before you go further.
+
+</Steps>
+
+## What you need
+
+- **A GitHub organisation with GitHub Copilot.** Everything starts here: repositories, pull requests, Actions and Copilot in the IDE, the CLI and the Copilot app.
+- **Your existing tools.** The framework is composable. Keep the tracker, chat, CI and cloud you already use where they fit, and connect them through open standards like MCP.
+- **Optional, and better with Microsoft.** Azure, Microsoft Foundry, Microsoft Entra and Microsoft 365 add business context, agent identities, evals and a cloud that runs and learns from what ships.
+
+<Aside type="note" title="Plans and previews">
+Some capabilities in the framework are in preview or need a specific plan. The [product catalogue](/reference/products/) links every product to its official page so you can check availability.
+</Aside>
+
+## Build it yourself, or with a partner
+
+You can apply the framework directly, or work with a specialized partner who builds their own IP on top of it: accelerators, skills, agents and managed factory operations. [How partners fit in →](/get-started/partners/)
+
+## For agents and tools
+
+Every page is also available as Markdown. Use the **Copy page** and **View as Markdown** actions at the top of each page, or point your agent at [`/llms.txt`](/llms.txt) for the full index.

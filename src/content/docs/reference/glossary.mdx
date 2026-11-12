@@ -1,0 +1,89 @@
+---
+title: Glossary
+description: The words the framework uses, in one place.
+eyebrow: reference.glossary()
+---
+
+## Agentic software factory
+
+A software delivery system where agents do most of the work of planning, building, verifying and operating software, and people steer it. The Bright Factory Framework is an opinionated way to build one.
+
+## Bright factory
+
+A software factory where the HQ stays lit: people keep intent, creativity and control, while agents do the heavy lifting on the floor. The opposite of a dark factory.
+
+## Dark factory
+
+A factory that runs without people. In software, a dark factory hides the decisions people used to make. The bright factory lets the floor dim, never the HQ.
+
+## Factory HQ
+
+The layer where people work: dev tools, ideation and design, collaboration, planning and tracking, controls and observability. It stays bright at every level.
+
+## Factory floor
+
+The layer where agents work: models, agents, delivery and production environments, automations and security. It dims as automation goes up.
+
+## Factory foundations
+
+What the factory is built on and keeps from every loop: code artifacts, tools, context, and identity and access.
+
+## Engineering loop
+
+The work of building the factory itself: tune trust and control, expand automation, strengthen foundations. Always lit.
+
+## Line, or workflow line
+
+The four stations every change crosses: **Plan** (intent becomes specs), **Build** (agents work in parallel), **Verify** (checks produce evidence) and **Observe** (signals become new work).
+
+## Dimmer
+
+The control that sets how much the floor is automated, per work type. It has three positions, and it goes both ways.
+
+## Automation level
+
+A position on the dimmer: **Crawl** (low), **Walk** (medium) or **Run** (high). See [automation levels](/levels/).
+
+## Dim back up
+
+Returning a work type to human approvals, in minutes, when a trigger fires. Work continues from Git. See [dim back up](/levels/dim-back-up/).
+
+## Work type
+
+A kind of change with its own risk and evidence, such as dependency upgrades, bug fixes, new features or infrastructure changes. Levels are set per work type.
+
+## Singleplayer, multiplayer
+
+How many people can see and steer agent sessions. **Singleplayer:** one developer on a laptop. **Multiplayer:** shared cloud sessions the team can steer. **Multiplayer at scale:** fleets across the organisation. See [singleplayer to multiplayer](/framework/multiplayer/).
+
+## Session continuity
+
+Continuing the same agent session, with its history, across people and devices: phone, chat, the Copilot app and the IDE.
+
+## Evidence bundle
+
+What a change carries for its reviewer: tests, scans, evals, previews, cost and a summary.
+
+## Approval by risk, approval by exception
+
+**By risk:** the approvers a change needs depend on what it touches. **By exception:** people approve only what policy flags.
+
+## Context
+
+Everything agents need to do the right thing: specs, instructions, skills, memory, business knowledge and goals. In the bright factory it is versioned, governed and shared.
+
+## Agent skill
+
+A reusable package of instructions, scripts and resources that teaches an agent how to do one job well. See [Agent Skills](https://agentskills.io).
+
+## MCP
+
+The Model Context Protocol: an open standard for connecting agents to tools and data. See [modelcontextprotocol.io](https://modelcontextprotocol.io).
+
+## Agent identity
+
+A first-class identity for an agent, with least privilege, an owner and an audit trail.
+
+## Policy as code
+
+Guardrails, approvals and budgets written as versioned, reviewed code that applies to people and agents alike.

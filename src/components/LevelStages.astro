@@ -1,0 +1,134 @@
+---
+import { data, LEVELS, type LevelKey } from '../data/site';
+import ProductChip from './ProductChip.astro';
+
+interface Props {
+	level: LevelKey;
+}
+const { level } = Astro.props;
+const stages = data.levels[level].stages;
+---
+
+<div class="bff-ls not-content" role="list" aria-label={`${LEVELS[level].name}: the workflow, stage by stage`}>
+	{
+		stages.map((s, i) => (
+			<article class="bff-ls-stage" role="listitem" aria-labelledby={`bff-ls-${level}-${i}`}>
+				<h3 id={`bff-ls-${level}-${i}`}>
+					<span class="bff-ls-num" aria-hidden="true">
+						{String(i + 1).padStart(2, '0')}
+					</span>
+					{s.name}
+				</h3>
+				<section class="bff-ls-cell" data-layer="hq">
+					<p class="bff-ls-label">HQ · people</p>
+					<p>
+						<span class="bff-ls-k">In</span> {s.hq.in}
+					</p>
+					<p>
+						<span class="bff-ls-k">Out</span> {s.hq.out}
+					</p>
+				</section>
+				<section class="bff-ls-cell" data-layer="floor">
+					<p class="bff-ls-label">Floor · agents</p>
+					<p class="bff-ls-task">{s.task}</p>
+					<ul class="bff-chips">
+						{s.products.map((p) => (
+							<li>
+								<ProductChip product={p} />
+							</li>
+						))}
+					</ul>
+				</section>
+				<section class="bff-ls-cell" data-layer="foundations">
+					<p class="bff-ls-label">Foundations · platform</p>
+					<p>
+						<span class="bff-ls-k">In</span> {s.foundations.in}
+					</p>
+					<p>
+						<span class="bff-ls-k">Out</span> {s.foundations.out}
+					</p>
+				</section>
+			</article>
+		))
+	}
+</div>
+
+<style>
+	.bff-ls {
+		display: grid;
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-template-rows: auto auto auto auto;
+		gap: 0.6rem;
+		margin-block: 1.5rem;
+	}
+	.bff-ls-stage {
+		display: grid;
+		grid-row: span 4;
+		grid-template-rows: subgrid;
+		gap: 0.6rem;
+	}
+	.bff-ls-stage h3 {
+		display: flex;
+		align-items: baseline;
+		gap: 0.5rem;
+		margin: 0;
+		font-size: var(--bff-text-xl);
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-ls-num {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-ls-cell {
+		display: grid;
+		align-content: start;
+		gap: 0.35rem;
+		padding: 0.75rem;
+		border: 1px solid color-mix(in oklab, var(--accent) 35%, var(--sl-color-hairline));
+		border-radius: var(--bff-radius-md);
+		background: color-mix(in oklab, var(--accent) 6%, var(--bff-surface));
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-2);
+	}
+	.bff-ls-cell p {
+		margin: 0;
+	}
+	.bff-ls-label {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--accent);
+	}
+	.bff-ls-k {
+		display: inline-block;
+		min-inline-size: 2.2em;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-ls-task {
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-ls-cell .bff-chips {
+		margin-top: 0.25rem;
+	}
+	@media (max-width: 62em) {
+		.bff-ls {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-rows: none;
+		}
+		.bff-ls-stage {
+			grid-row: auto;
+			grid-template-rows: none;
+		}
+	}
+	@media (max-width: 36em) {
+		.bff-ls {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

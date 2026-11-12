@@ -1,0 +1,81 @@
+---
+title: Six principles
+description: The rules that hold at every automation level, for every work type, whatever tools you bring.
+eyebrow: framework.principles()
+---
+import { Image } from 'astro:assets';
+import { LEGO, LEGO_ALT } from '../../../lib/images';
+
+export const Pic = ({ k, caption }) => (
+	<figure class="bff-figure">
+		<Image src={LEGO[k]} alt={LEGO_ALT[k]} widths={[480, 760, 1080]} sizes="(min-width: 60em) 44rem, 92vw" />
+		{caption && <figcaption>{caption}</figcaption>}
+	</figure>
+);
+
+## Humans stay in control
+
+<Pic k="build_together" caption="The Factory HQ stays bright at every level." />
+
+People set intent, guardrails and SLOs, and approve the consequences. Agents do the heavy lifting. Accountability never moves to the floor.
+
+- **Intent** lives in issues, specs and goals that people write or approve.
+- **Guardrails** live in rulesets, policies and budgets that people own.
+- **Approvals** move from every change, to by risk, to by exception. Never to nobody.
+- **Every agent** acts under an identity a person is accountable for.
+
+## Composable by design
+
+<Pic k="composable" caption="Every capability is a brick you can swap." />
+
+GitHub and Microsoft primitives by default, the tools you already use where they fit. Build the factory you need, one brick at a time, and change it without starting over.
+
+- Each component in the [big picture](/framework/big-picture/) is a **capability with a contract**, not a product.
+- Bring your own tracker, chat, CI, cloud or agent. Connect it through **MCP**, **Agent Skills** and agent-to-agent protocols.
+- Add capabilities when a work type needs them, not all at once.
+- Partners can package bricks as their own IP: skills, agents, accelerators and managed operations.
+
+## Context-centric
+
+<Pic k="context" caption="Agents are only as good as their context." />
+
+Specs, skills, memory, business context and goals live in the foundations: versioned, governed and shared by people and agents. Every loop makes them stronger.
+
+- **Repository context:** custom instructions, `AGENTS.md`, agent skills and specs, reviewed like code.
+- **Team context:** Copilot Spaces and Copilot Memory, per product.
+- **Business context:** knowledge, data and goals from Microsoft 365, Fabric and Foundry, reached through governed tools.
+- **Learning:** incidents, reviews and evals turn into reviewed updates to skills and instructions.
+
+## Not a black box
+
+<Pic k="glass" caption="Lights-off never means unseen." />
+
+Every session, tool call, decision and cost is traced. Evidence travels with each change, so people can inspect the floor at any moment and approve with confidence.
+
+- **Sessions** are visible and steerable in mission control and the Copilot app.
+- **Evidence bundles** on each pull request: tests, scans, evals, previews and a summary a reviewer can trust.
+- **Traces and cost** flow through OpenTelemetry into the observability tools the HQ already uses.
+- **Audit** covers people and agents alike.
+
+## A reversible dimmer
+
+<Pic k="reversible" caption="Dim the floor, and dim it back up in minutes." />
+
+Automation is set per work type and can be undone. When signals say so, approvals return to people and work continues from Git, so the business never stops.
+
+- One switch **per work type**, not per factory.
+- **Triggers** include SLO breaches, eval regressions, cost spikes, security findings, outages and a simple human call.
+- **Work survives** in issues, pull requests and specs, with the same gates and identities.
+- **Rehearse it** before you need it. [How to dim back up →](/levels/dim-back-up/)
+
+## From singleplayer to multiplayer
+
+<Pic k="multiplayer" caption="From one laptop to the whole organisation." />
+
+Start with one developer and their agents on a laptop. Move to shared cloud sessions the team can see and steer, then to fleets of agents at organisation scale.
+
+- **Singleplayer** (Crawl): agents run locally in the IDE, the Copilot CLI and the Copilot app.
+- **Multiplayer** (Walk): Copilot cloud agent sessions the whole team can see, steer and continue on any device.
+- **Multiplayer at scale** (Run): fleets per work type, governed by policy, steered by exception.
+
+[See how the factory goes multiplayer →](/framework/multiplayer/)

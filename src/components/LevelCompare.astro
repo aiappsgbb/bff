@@ -1,0 +1,66 @@
+---
+import { LEVELS, LEVEL_ORDER, withBase, type LevelKey } from '../data/site';
+
+interface Props {
+	current?: LevelKey;
+}
+const { current } = Astro.props;
+const rows = [
+	['Floor', 'floor'],
+	['Mode', 'mode'],
+	['People', 'people'],
+	['Agents', 'agents'],
+	['Approvals', 'approvals'],
+	['Ready to move up when', 'readyWhen'],
+] as const;
+---
+
+<div class="bff-table-wrap not-content">
+	<table class="bff-table bff-lc">
+		<caption class="sr-only">Automation levels compared</caption>
+		<thead>
+			<tr>
+				<td></td>
+				{
+					LEVEL_ORDER.map((k) => (
+						<th scope="col" data-current={k === current ? '' : undefined} data-level-accent={k}>
+							<a href={withBase(`/levels/${k}/`)}>
+								<span class="bff-dot" aria-hidden="true" />
+								{LEVELS[k].gait} · {LEVELS[k].name}
+							</a>
+						</th>
+					))
+				}
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<th scope="row">In one line</th>
+				{LEVEL_ORDER.map((k) => <td data-current={k === current ? '' : undefined}>{LEVELS[k].tagline}</td>)}
+			</tr>
+			{
+				rows.map(([label, field]) => (
+					<tr>
+						<th scope="row">{label}</th>
+						{LEVEL_ORDER.map((k) => (
+							<td data-current={k === current ? '' : undefined}>{LEVELS[k][field]}</td>
+						))}
+					</tr>
+				))
+			}
+		</tbody>
+	</table>
+</div>
+
+<style>
+	.bff-lc thead a {
+		color: inherit;
+		text-decoration: none;
+	}
+	.bff-lc thead a:hover {
+		color: var(--sl-color-white);
+	}
+	.bff-lc td {
+		min-inline-size: 12rem;
+	}
+</style>

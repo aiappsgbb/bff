@@ -1,0 +1,60 @@
+---
+import EditLink from 'virtual:starlight/components/EditLink';
+import LastUpdated from 'virtual:starlight/components/LastUpdated';
+import Pagination from 'virtual:starlight/components/Pagination';
+import { withBase } from '../../data/site';
+
+const { entry } = Astro.locals.starlightRoute;
+const repo = import.meta.env.PUBLIC_REPO_URL ?? 'https://github.com/OWNER/bright-factory-framework';
+const pageUrl = new URL(Astro.url.pathname, Astro.site).href;
+const issue = (kind: string) =>
+	`${repo}/issues/new?${new URLSearchParams({
+		title: `Docs feedback (${kind}): ${entry.data.title}`,
+		labels: 'docs-feedback',
+		body: `Page: ${pageUrl}\n\nWhat worked or what was missing?\n\n`,
+	})}`;
+const isHome = entry.id === 'index' || entry.id === '';
+---
+
+<footer class="bff-footer">
+	{
+		!isHome && (
+			<section class="bff-feedback" aria-labelledby="bff-feedback-q">
+				<p id="bff-feedback-q">Was this page helpful?</p>
+				<div class="bff-feedback-buttons">
+					<a class="bff-action" href={issue('helpful')} target="_blank" rel="noopener">
+						Yes
+					</a>
+					<a class="bff-action" href={issue('needs work')} target="_blank" rel="noopener">
+						Not yet
+					</a>
+				</div>
+				<p class="bff-feedback-note">Opens a prefilled GitHub issue. Thank you for helping us improve.</p>
+			</section>
+		)
+	}
+	{
+		!isHome && (
+			<div class="bff-footer-meta">
+				<EditLink />
+				<LastUpdated />
+			</div>
+		)
+	}
+	{!isHome && <Pagination />}
+	<div class="bff-site-footer">
+		<p class="bff-site-footer-tag">
+			<span class="bff-mono">bright-factory</span> Humans set direction. Agents close the loop.
+		</p>
+		<nav aria-label="Footer">
+			<a href={withBase('/get-started/')}>Get started</a>
+			<a href={withBase('/reference/glossary/')}>Glossary</a>
+			<a href={withBase('/llms.txt')}>llms.txt</a>
+			<a href={repo}>Source</a>
+		</nav>
+		<p class="bff-site-footer-note">
+			Some capabilities are in preview; verify availability for your plan and region. Product names link to official
+			documentation.
+		</p>
+	</div>
+</footer>

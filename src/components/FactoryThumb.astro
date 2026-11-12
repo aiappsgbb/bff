@@ -1,0 +1,58 @@
+---
+// The cover factory with its floor dimmed to a given level. Same technique as the hero:
+// a clipped copy of the image over the floor region, with a CSS filter per level.
+import { getImage } from 'astro:assets';
+import factory from '../assets/lego/cover_factory.png';
+
+interface Props {
+	level: 'low' | 'medium' | 'high' | 'dark';
+	alt?: string;
+	sizes?: string;
+	class?: string;
+}
+const { level, alt = '', sizes = '(min-width: 60em) 24rem, 92vw', class: className } = Astro.props;
+const img = await getImage({ src: factory, widths: [480, 760, 1080], format: 'webp' });
+---
+
+<div class:list={['bff-thumb', className]} data-level={level}>
+	<img src={img.src} srcset={img.srcSet.attribute} sizes={sizes} width={factory.width} height={factory.height} alt={alt} loading="lazy" decoding="async" />
+	<img class="bff-thumb-floor" src={img.src} srcset={img.srcSet.attribute} sizes={sizes} width={factory.width} height={factory.height} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+</div>
+
+<style>
+	.bff-thumb {
+		position: relative;
+		overflow: hidden;
+		border-radius: var(--bff-radius-md);
+		background: var(--bff-light-night);
+		aspect-ratio: 1483 / 932;
+	}
+	.bff-thumb img {
+		position: absolute;
+		inset: 0;
+		inline-size: 100%;
+		block-size: 100%;
+		object-fit: cover;
+		transition: filter 0.6s var(--bff-ease-soft), opacity 0.6s var(--bff-ease-soft);
+	}
+	.bff-thumb-floor {
+		clip-path: inset(42.06% 32.57% 30.79% 5.93%);
+		opacity: 0;
+	}
+	.bff-thumb[data-level='low'] .bff-thumb-floor {
+		filter: brightness(1.75) saturate(0.85);
+		opacity: 1;
+	}
+	.bff-thumb[data-level='high'] .bff-thumb-floor {
+		filter: brightness(0.38) saturate(0.9);
+		opacity: 1;
+	}
+	.bff-thumb[data-level='dark'] img {
+		filter: brightness(0.22) saturate(0.6);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.bff-thumb img {
+			transition: none;
+		}
+	}
+</style>

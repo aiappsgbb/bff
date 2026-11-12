@@ -1,0 +1,35 @@
+---
+title: Dim back up
+description: The dimmer goes both ways. Any work type can return to human approvals in minutes, and work continues from Git, so the business never stops.
+eyebrow: dimmer.undo()
+accent: pink
+---
+import ReversibleDimmer from '../../../components/ReversibleDimmer.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+<ReversibleDimmer />
+
+## Why it matters
+
+Moving down the dimmer is only safe if you can move back up. A dark factory has no way back: when it fails, it fails with nobody watching. A bright factory treats dimming back up as a normal operation, like a rollback, so teams can automate boldly and recover calmly.
+
+## What changes, and what doesn't
+
+When a work type dims back up:
+
+- **Approvals return to people** for that work type. Other work types keep their level.
+- **Automations pause** or switch to opening drafts for a person to pick up.
+- **Agents keep helping** in the HQ, as assistants, while people drive.
+- **Nothing is lost.** Issues, pull requests, specs and sessions live in Git, with the same gates and identities.
+
+## Before you need it
+
+<Aside type="caution" title="Rehearse it">
+Treat dimming back up like a disaster-recovery drill. A switch nobody has used is a switch nobody trusts.
+</Aside>
+
+- Write down **one switch per work type**: the rulesets, automation settings and approval rules that change.
+- Name **who can pull it**. Anyone with the role, no justification needed first.
+- Wire the **triggers** into alerts the HQ already watches.
+- **Rehearse** once per level change, and after every incident.
+- Decide what **evidence** lets the work type move back down.

@@ -1,0 +1,46 @@
+---
+title: High automation · Run
+description: Lights-off on the floor, bright in the HQ. Fleets plan, build, verify, release and fix. People set goals, guardrails and SLOs, and decide exceptions.
+eyebrow: level.run()
+accent: blue
+---
+import LevelIndicator from '../../../components/LevelIndicator.astro';
+import LevelStages from '../../../components/LevelStages.astro';
+import Primitives from '../../../components/Primitives.astro';
+import LevelCompare from '../../../components/LevelCompare.astro';
+import { LEVELS } from '../../../data/site';
+import { LinkCard } from '@astrojs/starlight/components';
+
+<LevelIndicator level="high" />
+
+At Run, the floor runs lights-off for the work types that have earned it. Fleets of agents turn goals and signals into specs, build in isolated sandboxes, test end to end, release progressively and roll back on their own. People set goals, guardrails and SLOs, and decide the exceptions.
+
+This level is about approval by exception, backed by evidence on quality, security and cost for every change. The HQ is brighter than ever: people see more of the factory, not less.
+
+## The line at this level
+
+Who does what at each station, what the HQ puts in and gets back, and what the foundations supply and keep.
+
+<LevelStages level="high" />
+
+## Multiplayer mode
+
+**Multiplayer at scale.** Fleets per work type, org-wide, steered from any device. Policy as code, an agent registry and evals per agent govern who can do what. Work moves across teams and time zones with a full audit trail.
+
+## Primitives
+
+The building blocks for this level, by layer. Products marked **new** are recent or in preview.
+
+<Primitives level="high" />
+
+## Ready to move up when
+
+<p class="bff-ready" data-level-accent="high">{LEVELS.high.readyWhen}</p>
+
+<LevelCompare current="high" />
+
+## See it working
+
+{LEVELS.high.demo} [See the demo acts →](/get-started/demos/)
+
+<LinkCard title="Open the Run playbook" description="Step-by-step instructions for this level, with UI and CLI tracks." href="/playbooks/high/" />

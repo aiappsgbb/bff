@@ -1,0 +1,22 @@
+---
+import Eyebrow from './Eyebrow.astro';
+
+interface Props {
+	id?: string;
+	eyebrow: string;
+	accent?: string;
+	title: string;
+	lede?: string;
+	class?: string;
+}
+const { id, eyebrow, accent = 'green', title, lede, class: className } = Astro.props;
+---
+
+<section class:list={['bff-section not-content', className]} id={id} data-accent={accent} aria-labelledby={id && `${id}-title`}>
+	<div class="bff-section-head">
+		<Eyebrow text={eyebrow} accent={accent} />
+		<h2 id={id && `${id}-title`}>{title}</h2>
+		{lede && <p>{lede}</p>}
+	</div>
+	<slot />
+</section>

@@ -1,0 +1,84 @@
+---
+import { DEMO_ACTS } from '../data/content';
+const stageAccent: Record<string, string> = { Plan: 'yellow', Build: 'green', Verify: 'blue', Observe: 'orange' };
+---
+
+<ol class="bff-acts not-content">
+	{
+		DEMO_ACTS.map((a, i) => (
+			<li data-accent={stageAccent[a.stage]}>
+				<span class="bff-acts-n">Act {i + 1}</span>
+				<span class="bff-acts-stage">{a.stage}</span>
+				<strong>{a.title}</strong>
+				<p>{a.text}</p>
+			</li>
+		))
+	}
+</ol>
+
+<style>
+	.bff-acts {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1rem;
+		margin: 1.5rem 0 2rem;
+		padding: 0;
+		list-style: none;
+	}
+	li {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		align-content: start;
+		gap: 0.5rem 0.75rem;
+		margin: 0;
+		padding: 1.1rem;
+		border: 1px solid color-mix(in oklab, var(--accent) 35%, var(--sl-color-hairline));
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+	}
+	.bff-acts-n {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-acts-stage {
+		justify-self: end;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--sl-color-gray-2);
+	}
+	.bff-acts-stage::before {
+		content: '';
+		inline-size: 0.55rem;
+		block-size: 0.55rem;
+		background: var(--accent);
+	}
+	strong,
+	p {
+		grid-column: 1 / -1;
+		margin: 0;
+	}
+	strong {
+		font-size: var(--bff-text-lg);
+		color: var(--sl-color-white);
+	}
+	p {
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	@media (max-width: 56em) {
+		.bff-acts {
+			grid-template-columns: 1fr 1fr;
+		}
+	}
+	@media (max-width: 34em) {
+		.bff-acts {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

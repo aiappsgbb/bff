@@ -1,0 +1,324 @@
+---
+import { DIM_BACK_UP_STEPS } from '../data/content';
+import { DIM_BACK_UP_TRIGGERS, LEVELS, LEVEL_ORDER } from '../data/site';
+import FactoryThumb from './FactoryThumb.astro';
+
+// Level of the work type at each step of the scenario.
+const stepLevel = ['high', 'medium', 'medium', 'medium', 'high'] as const;
+const uid = 'bff-rd';
+---
+
+<figure class="bff-figure bff-rd not-content" data-step="0" data-level="high" aria-labelledby={`${uid}-cap`}>
+	<div class="bff-figure-bar">
+		<p class="bff-eyebrow" data-accent="pink"><span class="bff-eyebrow-square" aria-hidden="true"></span>work_type: dependency upgrades</p>
+		<div class="bff-rd-controls">
+			<button class="bff-btn bff-btn-ghost bff-btn-small" type="button" data-prev aria-label="Previous step">←</button>
+			<button class="bff-btn bff-btn-primary bff-btn-small" type="button" data-play aria-pressed="false">Play scenario</button>
+			<button class="bff-btn bff-btn-ghost bff-btn-small" type="button" data-next aria-label="Next step">→</button>
+		</div>
+	</div>
+
+	<div class="bff-rd-stage">
+		<div class="bff-rd-visual">
+			<FactoryThumb level="high" alt="The LEGO factory. The floor lights follow the dimmer for this work type." sizes="(min-width: 60em) 28rem, 92vw" />
+			<span class="bff-rd-alert" aria-hidden="true">SLO breach</span>
+			<div class="bff-rd-dimmer" aria-hidden="true">
+				{
+					LEVEL_ORDER.map((k) => (
+						<span data-k={k}>
+							{LEVELS[k].gait}
+						</span>
+					))
+				}
+				<i class="bff-rd-knob"></i>
+			</div>
+		</div>
+		<ol class="bff-rd-steps">
+			{
+				DIM_BACK_UP_STEPS.map((s, i) => (
+					<li data-i={i} data-level={stepLevel[i]}>
+						<button type="button" aria-current={i === 0 ? 'step' : undefined}>
+							<span class="bff-rd-num" aria-hidden="true">
+								{i + 1}
+							</span>
+							<span class="bff-rd-title">{s.title}</span>
+							<span class="bff-rd-lvl">{LEVELS[stepLevel[i]].gait}</span>
+						</button>
+						<p>{s.text}</p>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+	<p class="sr-only" aria-live="polite" data-live></p>
+
+	<div class="bff-rd-triggers">
+		<p class="bff-rd-triggers-title">Triggers that dim a work type back up</p>
+		<ul>
+			{
+				DIM_BACK_UP_TRIGGERS.map((t) => (
+					<li>
+						<strong>{t.name}</strong>
+						<span>{t.detail}</span>
+					</li>
+				))
+			}
+		</ul>
+	</div>
+	<figcaption id={`${uid}-cap`}>
+		The dimmer works both ways. Any work type can go back up a level at any time, without losing work, so the business keeps running.
+	</figcaption>
+</figure>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.bff-rd').forEach((root) => {
+		const steps = [...root.querySelectorAll<HTMLLIElement>('.bff-rd-steps > li')];
+		const thumb = root.querySelector<HTMLElement>('.bff-thumb')!;
+		const live = root.querySelector<HTMLElement>('[data-live]')!;
+		const play = root.querySelector<HTMLButtonElement>('[data-play]')!;
+		const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		let i = 0;
+		let timer: number | undefined;
+		const go = (n: number, announce = true) => {
+			i = (n + steps.length) % steps.length;
+			const li = steps[i];
+			const level = li.dataset.level!;
+			root.dataset.step = String(i);
+			root.dataset.level = level;
+			thumb.dataset.level = level;
+			steps.forEach((s, j) => {
+				const b = s.querySelector('button')!;
+				if (j === i) b.setAttribute('aria-current', 'step');
+				else b.removeAttribute('aria-current');
+				s.toggleAttribute('data-done', j < i);
+			});
+			if (announce) live.textContent = `Step ${i + 1}: ${li.querySelector('.bff-rd-title')!.textContent}. ${li.querySelector('p')!.textContent}`;
+		};
+		const stop = () => {
+			window.clearInterval(timer);
+			timer = undefined;
+			play.setAttribute('aria-pressed', 'false');
+			play.textContent = 'Play scenario';
+		};
+		play.addEventListener('click', () => {
+			if (timer) return stop();
+			play.setAttribute('aria-pressed', 'true');
+			play.textContent = 'Pause';
+			if (i === steps.length - 1) go(0);
+			timer = window.setInterval(() => {
+				if (i === steps.length - 1) return stop();
+				go(i + 1);
+			}, reduce ? 4000 : 2600);
+		});
+		root.querySelector('[data-prev]')!.addEventListener('click', () => (stop(), go(i - 1)));
+		root.querySelector('[data-next]')!.addEventListener('click', () => (stop(), go(i + 1)));
+		steps.forEach((s, j) => s.querySelector('button')!.addEventListener('click', () => (stop(), go(j))));
+		go(0, false);
+	});
+</script>
+
+<style>
+	.bff-rd-controls {
+		display: flex;
+		gap: 0.4rem;
+	}
+	.bff-rd-stage {
+		display: grid;
+		grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+		gap: clamp(1rem, 3vw, 2rem);
+		align-items: start;
+	}
+	.bff-rd-visual {
+		position: relative;
+		display: grid;
+		gap: 0.75rem;
+	}
+	.bff-rd-alert {
+		position: absolute;
+		inset: 0.75rem auto auto 0.75rem;
+		padding: 0.2rem 0.6rem;
+		border-radius: var(--bff-radius-pill);
+		background: var(--bff-alert);
+		color: var(--bff-brick-white);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		font-weight: 700;
+		opacity: 0;
+		transform: translateY(-4px);
+		transition:
+			opacity 0.3s var(--bff-ease-soft),
+			transform 0.3s var(--bff-ease-out);
+	}
+	.bff-rd[data-step='0'] .bff-rd-alert {
+		opacity: 1;
+		transform: none;
+		animation: bff-rd-blink 1.2s steps(2, jump-none) infinite;
+	}
+	@keyframes bff-rd-blink {
+		50% { opacity: 0.4; }
+	}
+	.bff-rd-dimmer {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		padding: 0.25rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-pill);
+		background: var(--sl-color-black);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-xs);
+		text-align: center;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-rd-dimmer span {
+		position: relative;
+		z-index: 1;
+		padding: 0.3rem;
+		transition: color 0.3s var(--bff-ease-soft);
+	}
+	.bff-rd-knob {
+		position: absolute;
+		inset: 0.25rem auto 0.25rem 0.25rem;
+		inline-size: calc((100% - 0.5rem) / 3);
+		border-radius: var(--bff-radius-pill);
+		background: var(--accent);
+		transition: transform 0.6s var(--bff-ease-out);
+	}
+	.bff-rd[data-level='low'] { --accent: var(--bff-yellow); }
+	.bff-rd[data-level='medium'] { --accent: var(--bff-green); }
+	.bff-rd[data-level='high'] { --accent: var(--bff-blue); }
+	.bff-rd[data-level='medium'] .bff-rd-knob { transform: translateX(100%); }
+	.bff-rd[data-level='high'] .bff-rd-knob { transform: translateX(200%); }
+	.bff-rd[data-level='low'] [data-k='low'],
+	.bff-rd[data-level='medium'] [data-k='medium'],
+	.bff-rd[data-level='high'] [data-k='high'] {
+		color: var(--bff-on-accent);
+		font-weight: 700;
+	}
+
+	.bff-rd-steps {
+		display: grid;
+		gap: 0.35rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-rd-steps li {
+		margin: 0;
+	}
+	.bff-rd-steps button {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
+		gap: 0.6rem;
+		inline-size: 100%;
+		padding: 0.5rem 0.6rem;
+		border: 1px solid transparent;
+		border-radius: var(--bff-radius-md);
+		background: transparent;
+		color: var(--sl-color-gray-2);
+		font: inherit;
+		text-align: left;
+		cursor: pointer;
+	}
+	.bff-rd-steps button:hover {
+		background: var(--sl-color-black);
+	}
+	.bff-rd-steps button[aria-current='step'] {
+		border-color: var(--sl-color-hairline);
+		background: var(--sl-color-black);
+		color: var(--sl-color-white);
+	}
+	.bff-rd-num {
+		display: inline-grid;
+		place-items: center;
+		inline-size: 1.6rem;
+		block-size: 1.6rem;
+		border: 1px solid var(--sl-color-gray-4);
+		border-radius: var(--bff-radius-pill);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+	}
+	.bff-rd-steps [aria-current='step'] .bff-rd-num,
+	.bff-rd-steps [data-done] .bff-rd-num {
+		border-color: var(--bff-pink);
+		background: var(--bff-pink);
+		color: var(--bff-on-accent);
+	}
+	.bff-rd-title {
+		font-weight: 600;
+	}
+	.bff-rd-lvl {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-rd-steps p {
+		display: grid;
+		margin: 0;
+		padding-inline: 2.8rem 0.6rem;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-2);
+		overflow: hidden;
+		max-block-size: 0;
+		opacity: 0;
+		transition:
+			max-block-size 0.4s var(--bff-ease-out),
+			opacity 0.3s var(--bff-ease-soft);
+	}
+	.bff-rd-steps li:has([aria-current='step']) p {
+		max-block-size: 10rem;
+		padding-block: 0.25rem 0.5rem;
+		opacity: 1;
+	}
+
+	.bff-rd-triggers {
+		margin-top: 1.25rem;
+		padding-top: 1rem;
+		border-top: 1px solid var(--sl-color-hairline);
+	}
+	.bff-rd-triggers-title {
+		margin: 0 0 0.6rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-rd-triggers ul {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+		gap: 0.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-rd-triggers li {
+		display: grid;
+		gap: 0.15rem;
+		margin: 0;
+		padding: 0.6rem 0.75rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-md);
+		background: var(--sl-color-black);
+		font-size: var(--bff-text-sm);
+	}
+	.bff-rd-triggers strong {
+		color: var(--sl-color-white);
+	}
+	.bff-rd-triggers span {
+		color: var(--sl-color-gray-3);
+	}
+	@media (max-width: 50em) {
+		.bff-rd-stage {
+			grid-template-columns: 1fr;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.bff-rd *,
+		.bff-rd-alert {
+			transition: none !important;
+			animation: none !important;
+		}
+	}
+</style>

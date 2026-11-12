@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import { LEGO, LEGO_ALT } from '../lib/images';
+import { withBase } from '../data/site';
+
+interface Props {
+	title: string;
+	href?: string;
+	image?: string;
+	accent?: string;
+	kicker?: string;
+	more?: string;
+	headingLevel?: 'h3' | 'h4';
+}
+const { title, href, image, accent, kicker, more, headingLevel: H = 'h3' } = Astro.props;
+const Tag = href ? 'a' : 'article';
+const src = image ? LEGO[image] : undefined;
+---
+
+<Tag class="bff-card bff-feature not-content" href={href && withBase(href)} data-accent={accent}>
+	{
+		src && (
+			<div class="bff-card-media">
+				<Image src={src} alt={LEGO_ALT[image!] ?? ''} widths={[360, 560, 760]} sizes="(min-width: 60em) 24rem, 92vw" loading="lazy" />
+			</div>
+		)
+	}
+	{kicker && <p class="bff-feature-kicker bff-mono">{kicker}</p>}
+	<H>{title}</H>
+	<div class="bff-feature-body"><slot /></div>
+	{href && <span class="bff-card-more" aria-hidden="true">{more ?? 'Learn more'} →</span>}
+</Tag>
+
+<style>
+	.bff-feature-kicker {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		margin: 0;
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-2);
+	}
+	.bff-feature-kicker::before {
+		content: '';
+		flex: none;
+		inline-size: 0.55rem;
+		block-size: 0.55rem;
+		background: var(--accent, var(--sl-color-gray-4));
+	}
+	.bff-feature-body {
+		color: var(--sl-color-gray-3);
+		font-size: var(--bff-text-md);
+	}
+	.bff-feature-body :global(p) {
+		margin: 0;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-feature-body :global(p + p) {
+		margin-top: 0.5rem;
+	}
+</style>

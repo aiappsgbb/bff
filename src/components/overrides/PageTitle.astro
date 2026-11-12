@@ -1,0 +1,40 @@
+---
+import Eyebrow from '../Eyebrow.astro';
+import PageActions from '../PageActions.astro';
+
+const { entry } = Astro.locals.starlightRoute;
+const data = entry.data as typeof entry.data & {
+	eyebrow?: string;
+	accent?: string;
+	hideTitle?: boolean;
+	wide?: boolean;
+};
+const [section = 'index', ...rest] = entry.id.split('/');
+const SECTION_ACCENT: Record<string, string> = {
+	fundamentals: 'blue',
+	framework: 'green',
+	levels: 'purple',
+	playbooks: 'pink',
+	'get-started': 'yellow',
+	reference: 'orange',
+};
+const accent = data.accent ?? SECTION_ACCENT[section] ?? 'green';
+const leaf = rest.at(-1) ?? 'overview';
+const eyebrow = data.eyebrow ?? `${section}.${leaf.replace(/-([a-z])/g, (_, c) => c.toUpperCase())}()`;
+---
+
+{
+	data.hideTitle ? (
+		<h1 id="_top" class="sr-only">
+			{data.title}
+		</h1>
+	) : (
+		<header class="bff-title" data-accent={accent}>
+			<Eyebrow text={eyebrow} accent={accent} />
+			<h1 id="_top">{data.title}</h1>
+			{data.description && <p class="bff-lede">{data.description}</p>}
+			<PageActions />
+		</header>
+	)
+}
+{data.wide && <span class="bff-wide-page" hidden />}

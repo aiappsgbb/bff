@@ -1,0 +1,46 @@
+---
+title: Medium automation · Walk
+description: "Dimmed. Agents do the work, people approve. Multiplayer: shared cloud sessions and automations the whole team can see and steer."
+eyebrow: level.walk()
+accent: green
+---
+import LevelIndicator from '../../../components/LevelIndicator.astro';
+import LevelStages from '../../../components/LevelStages.astro';
+import Primitives from '../../../components/Primitives.astro';
+import LevelCompare from '../../../components/LevelCompare.astro';
+import { LEVELS } from '../../../data/site';
+import { LinkCard } from '@astrojs/starlight/components';
+
+<LevelIndicator level="medium" />
+
+At Walk, agents do the work and people approve it. Agents draft specs from issues and signals, Copilot cloud agent builds tasks in parallel, and review agents test and fix. People set priorities, steer sessions and approve the merge.
+
+This level is about scale with control: more work in flight, approvals based on risk, and every agent with its own identity and budget.
+
+## The line at this level
+
+Who does what at each station, what the HQ puts in and gets back, and what the foundations supply and keep.
+
+<LevelStages level="medium" />
+
+## Multiplayer mode
+
+**Multiplayer.** Agents run in cloud sandboxes with Copilot cloud agent. Sessions are shared: anyone on the team can watch, steer or continue them in mission control, the Copilot app or GitHub Mobile. Work starts from issues, events, schedules and production signals.
+
+## Primitives
+
+The building blocks for this level, by layer. Products marked **new** are recent or in preview.
+
+<Primitives level="medium" />
+
+## Ready to move up when
+
+<p class="bff-ready" data-level-accent="medium">{LEVELS.medium.readyWhen}</p>
+
+<LevelCompare current="medium" />
+
+## See it working
+
+{LEVELS.medium.demo} [See the demo acts →](/get-started/demos/)
+
+<LinkCard title="Open the Walk playbook" description="Step-by-step instructions for this level, with UI and CLI tracks." href="/playbooks/medium/" />

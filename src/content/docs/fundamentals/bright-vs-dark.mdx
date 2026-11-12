@@ -1,0 +1,41 @@
+---
+title: Bright vs dark
+description: A dark factory takes people out of the loop. A bright factory lets the floor dim while people keep intent, judgment and control.
+eyebrow: bright.vs(dark)
+---
+import BrightVsDark from '../../../components/BrightVsDark.astro';
+import { Image } from 'astro:assets';
+import glass from '../../../assets/lego/glass.png';
+import { LEGO_ALT } from '../../../lib/images';
+
+<BrightVsDark />
+
+## Why not a dark factory?
+
+A dark factory removes people to remove cost. In software, the people were never the cost. They carry the intent, the judgment and the accountability, and those don't automate away. A dark software factory doesn't remove them, it hides the decisions they used to make.
+
+The bright factory keeps them in charge and moves the heavy lifting to agents.
+
+## What stays lit
+
+The HQ stays bright at every level of automation. Four areas never go dark:
+
+- **Ideas.** People decide what is worth building and why.
+- **Creativity.** Design, product judgment and the unexpected solution.
+- **Building the factory.** Platform engineers shape the line itself: gates, automations, skills and context.
+- **Monitoring and control.** People set guardrails and SLOs, read the evidence and take the decisions that matter.
+
+## The floor is never a black box
+
+<figure class="bff-figure">
+	<Image src={glass} alt={LEGO_ALT.glass} widths={[480, 760, 1080]} sizes="(min-width: 60em) 44rem, 92vw" />
+	<figcaption>Lights-off never means unseen. Every session, tool call, decision and cost is traced.</figcaption>
+</figure>
+
+Dimming the floor changes who approves, not what you can see. Every agent session, tool call, decision and cost is traced, and evidence travels with each change. Anyone in the HQ can inspect the floor at any moment.
+
+## The floor can go dark, and come back
+
+A dark factory is a one-way door. A bright factory uses a dimmer: each work type can move up when the evidence holds, and [dim back up in minutes](/levels/dim-back-up/) when an SLO breaks, an eval regresses or someone simply calls it. Work continues from Git, so the business never stops.
+
+**The floor can go dark. The factory never does.**

@@ -1,0 +1,3168 @@
+{
+  "layers": {
+    "hq": {
+      "key": "sup",
+      "label": "Factory HQ",
+      "tag": "Humans bring clarity: intent, creativity, steering, judgment",
+      "components": [
+        {
+          "name": "Dev tools",
+          "items": [
+            "IDE",
+            "Agent sessions",
+            "Session review"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Copilot app",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot app"
+              ]
+            },
+            {
+              "name": "Mission control",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Mission control"
+              ]
+            },
+            {
+              "name": "VS Code · Visual Studio",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "VS Code",
+                "Visual Studio"
+              ]
+            },
+            {
+              "name": "Copilot CLI",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot CLI"
+              ]
+            },
+            {
+              "name": "JetBrains · Xcode",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "JetBrains",
+                "Xcode"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Ideation + design",
+          "items": [
+            "Ideas",
+            "Wireframes",
+            "Prototypes",
+            "Prompt templates"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Copilot canvases",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot canvases"
+              ]
+            },
+            {
+              "name": "Prompt files",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Prompt files"
+              ]
+            },
+            {
+              "name": "Custom agents",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Custom agents"
+              ]
+            },
+            {
+              "name": "Figma MCP",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Figma MCP"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Collaboration",
+          "items": [
+            "Chat",
+            "Mentions",
+            "Approvals"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Microsoft Teams",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Microsoft Teams"
+              ]
+            },
+            {
+              "name": "Slack",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Slack"
+              ]
+            },
+            {
+              "name": "GitHub Mobile",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub Mobile"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Planning + tracking",
+          "items": [
+            "Issues",
+            "Pull requests",
+            "Tasks",
+            "Projects"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Issues + PRs",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Issues + PRs"
+              ]
+            },
+            {
+              "name": "GitHub Projects",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub Projects"
+              ]
+            },
+            {
+              "name": "Azure Boards",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure Boards"
+              ]
+            },
+            {
+              "name": "Jira · Linear",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Jira",
+                "Linear"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Controls",
+          "items": [
+            "Metrics",
+            "SLAs · SLOs",
+            "OKRs",
+            "Audit",
+            "Policies",
+            "Costs"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Copilot metrics",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot metrics"
+              ]
+            },
+            {
+              "name": "Audit log",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Audit log"
+              ]
+            },
+            {
+              "name": "Rulesets",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Rulesets"
+              ]
+            },
+            {
+              "name": "Budgets",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Budgets"
+              ]
+            },
+            {
+              "name": "Agent 365",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Agent 365"
+              ]
+            },
+            {
+              "name": "Azure Policy",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure Policy"
+              ]
+            },
+            {
+              "name": "Cost Management",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Cost Management"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Observability",
+          "items": [
+            "Live metrics",
+            "Logs",
+            "Traces"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Telemetry analysis",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Telemetry analysis"
+              ]
+            },
+            {
+              "name": "Azure Monitor",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure Monitor"
+              ]
+            },
+            {
+              "name": "Foundry tracing",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Foundry tracing"
+              ]
+            },
+            {
+              "name": "OpenTelemetry",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "OpenTelemetry"
+              ]
+            },
+            {
+              "name": "Datadog",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Datadog"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "floor": {
+      "key": "floor",
+      "label": "Factory Floor",
+      "tag": "Agents do the heavy lifting. This is where the lights dim.",
+      "components": [
+        {
+          "name": "Models",
+          "items": [
+            "Local models",
+            "Self-hosted models",
+            "Cloud models",
+            "Model routing",
+            "Token usage"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Copilot Fusion",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot Fusion"
+              ]
+            },
+            {
+              "name": "Foundry Models",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Foundry Models"
+              ]
+            },
+            {
+              "name": "Model router",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Model router"
+              ]
+            },
+            {
+              "name": "AI Gateway",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "AI Gateway"
+              ]
+            },
+            {
+              "name": "Foundry Local",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Foundry Local"
+              ]
+            },
+            {
+              "name": "AI credits",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "AI credits"
+              ]
+            },
+            {
+              "name": "BYOK",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "BYOK"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Agents",
+          "items": [
+            "Sessions",
+            "Tool calling",
+            "Multi-agent systems"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Copilot cloud agent",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot cloud agent"
+              ]
+            },
+            {
+              "name": "Copilot CLI + SDK",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot CLI + SDK"
+              ]
+            },
+            {
+              "name": "Session continuity",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Session continuity"
+              ]
+            },
+            {
+              "name": "Agent Framework",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Agent Framework"
+              ]
+            },
+            {
+              "name": "Foundry Agent Service",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Foundry Agent Service"
+              ]
+            },
+            {
+              "name": "Claude · Codex",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Claude",
+                "Codex"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Delivery environments",
+          "items": [
+            "Local",
+            "Managed workers",
+            "Agent sandboxes",
+            "Custom infrastructure"
+          ],
+          "stages": "Plan · Build · Verify",
+          "products": [
+            {
+              "name": "Hosted runners",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Hosted runners"
+              ]
+            },
+            {
+              "name": "ARC runners",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "ARC runners"
+              ]
+            },
+            {
+              "name": "Codespaces",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Codespaces"
+              ]
+            },
+            {
+              "name": "Dev Box",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Dev Box"
+              ]
+            },
+            {
+              "name": "ACA sandboxes",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "ACA sandboxes"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Production environments",
+          "items": [
+            "Kubernetes",
+            "Databases",
+            "SaaS",
+            "API management",
+            "Hybrid + multicloud"
+          ],
+          "stages": "Observe",
+          "products": [
+            {
+              "name": "AKS",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "AKS"
+              ]
+            },
+            {
+              "name": "Container Apps",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Container Apps"
+              ]
+            },
+            {
+              "name": "App Service",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "App Service"
+              ]
+            },
+            {
+              "name": "Azure SQL · Cosmos DB",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure SQL",
+                "Cosmos DB"
+              ]
+            },
+            {
+              "name": "API Management",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "API Management"
+              ]
+            },
+            {
+              "name": "Azure Arc",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure Arc"
+              ]
+            },
+            {
+              "name": "AWS · GCP · on-prem",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "AWS",
+                "GCP",
+                "on-prem"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Automations",
+          "items": [
+            "Event triggers",
+            "Schedules (cron)",
+            "Webhooks",
+            "CI/CD"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Copilot automations",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot automations"
+              ]
+            },
+            {
+              "name": "Agentic workflows",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Agentic workflows"
+              ]
+            },
+            {
+              "name": "GitHub Actions",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub Actions"
+              ]
+            },
+            {
+              "name": "Azure Pipelines",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure Pipelines"
+              ]
+            },
+            {
+              "name": "Logic Apps",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Logic Apps"
+              ]
+            },
+            {
+              "name": "Jenkins · GitLab",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Jenkins",
+                "GitLab"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Security",
+          "items": [
+            "Threat protection",
+            "Secrets",
+            "Network egress",
+            "Guardrails",
+            "Code + supply chain"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Advanced Security",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Advanced Security"
+              ]
+            },
+            {
+              "name": "Dependabot",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Dependabot"
+              ]
+            },
+            {
+              "name": "Agent firewall",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Agent firewall"
+              ]
+            },
+            {
+              "name": "Defender for Cloud",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Defender for Cloud"
+              ]
+            },
+            {
+              "name": "Purview",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Purview"
+              ]
+            },
+            {
+              "name": "Snyk",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Snyk"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    "foundations": {
+      "key": "found",
+      "label": "Factory Foundations",
+      "tag": "What the factory is built on, stronger every loop",
+      "components": [
+        {
+          "name": "Code artifacts",
+          "items": [
+            "Code repos",
+            "Libraries + packages",
+            "Specs + docs",
+            "Provenance"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "GitHub repos",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub repos"
+              ]
+            },
+            {
+              "name": "GitHub Packages · npm",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub Packages",
+                "npm"
+              ]
+            },
+            {
+              "name": "Attestations",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Attestations"
+              ]
+            },
+            {
+              "name": "Azure Repos",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure Repos"
+              ]
+            },
+            {
+              "name": "Azure Artifacts",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure Artifacts"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Tools",
+          "items": [
+            "MCP servers",
+            "APIs",
+            "CLIs",
+            "Monitoring tools",
+            "Browser use",
+            "Computer use"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "GitHub MCP Server",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub MCP Server"
+              ]
+            },
+            {
+              "name": "MCP Registry",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "MCP Registry"
+              ]
+            },
+            {
+              "name": "GitHub CLI + APIs",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub CLI + APIs"
+              ]
+            },
+            {
+              "name": "Azure MCP Server",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure MCP Server"
+              ]
+            },
+            {
+              "name": "API Center",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "API Center"
+              ]
+            },
+            {
+              "name": "AI Gateway",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "AI Gateway"
+              ]
+            },
+            {
+              "name": "Playwright MCP",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Playwright MCP"
+              ]
+            },
+            {
+              "name": "Computer use",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Computer use"
+              ]
+            },
+            {
+              "name": "Sentry · Datadog",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Sentry",
+                "Datadog"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Context",
+          "items": [
+            "Skills",
+            "Memory",
+            "Ontologies",
+            "Business context",
+            "Goals + KPIs"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Skills + instructions",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Skills + instructions"
+              ]
+            },
+            {
+              "name": "Copilot Spaces",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot Spaces"
+              ]
+            },
+            {
+              "name": "Copilot Memory",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot Memory"
+              ]
+            },
+            {
+              "name": "Work IQ",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Work IQ"
+              ]
+            },
+            {
+              "name": "Fabric IQ ontology",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Fabric IQ ontology"
+              ]
+            },
+            {
+              "name": "Foundry IQ",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Foundry IQ"
+              ]
+            },
+            {
+              "name": "AGENTS.md",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "AGENTS.md"
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Identity & access management",
+          "items": [
+            "Human identities",
+            "Agent identities",
+            "SSO",
+            "Roles + permissions",
+            "Least privilege"
+          ],
+          "stages": null,
+          "products": [
+            {
+              "name": "Enterprise Managed Users",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Enterprise Managed Users"
+              ]
+            },
+            {
+              "name": "GitHub Apps",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub Apps"
+              ]
+            },
+            {
+              "name": "Custom roles",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Custom roles"
+              ]
+            },
+            {
+              "name": "Entra ID",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Entra ID"
+              ]
+            },
+            {
+              "name": "Entra Agent ID",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Entra Agent ID"
+              ]
+            },
+            {
+              "name": "AI Gateway",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "AI Gateway"
+              ]
+            },
+            {
+              "name": "Okta",
+              "vendor": "third-party",
+              "new": false,
+              "parts": [
+                "Okta"
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "workflow": [
+    {
+      "name": "Plan",
+      "task": "Intent becomes specs",
+      "products": [
+        {
+          "name": "Copilot projects",
+          "vendor": "github",
+          "new": true,
+          "parts": [
+            "Copilot projects"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Build",
+      "task": "Agents work in parallel",
+      "products": [
+        {
+          "name": "Copilot cloud agent",
+          "vendor": "github",
+          "new": false,
+          "parts": [
+            "Copilot cloud agent"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Verify",
+      "task": "Checks produce evidence",
+      "products": [
+        {
+          "name": "Code review",
+          "vendor": "github",
+          "new": false,
+          "parts": [
+            "Code review"
+          ]
+        },
+        {
+          "name": "GHAS + Autofix",
+          "vendor": "github",
+          "new": false,
+          "parts": [
+            "GHAS + Autofix"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Observe",
+      "task": "Signals become new work",
+      "products": [
+        {
+          "name": "Azure SRE Agent",
+          "vendor": "microsoft",
+          "new": false,
+          "parts": [
+            "Azure SRE Agent"
+          ]
+        },
+        {
+          "name": "Foundry evals",
+          "vendor": "microsoft",
+          "new": false,
+          "parts": [
+            "Foundry evals"
+          ]
+        }
+      ]
+    }
+  ],
+  "loop": [
+    {
+      "step": "Tune trust + control",
+      "detail": "SLOs · approvals · policies"
+    },
+    {
+      "step": "Expand automation",
+      "detail": "workflows · triggers · envs"
+    },
+    {
+      "step": "Strengthen foundations",
+      "detail": "skills · tools · context"
+    }
+  ],
+  "levels": {
+    "low": {
+      "stages": [
+        {
+          "name": "Plan",
+          "task": "A person shapes the issue into a spec with Copilot",
+          "products": [
+            {
+              "name": "Copilot projects",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot projects"
+              ]
+            },
+            {
+              "name": "Spec Kit",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Spec Kit"
+              ]
+            },
+            {
+              "name": "HVE",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "HVE"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Idea / issue + acceptance criteria",
+            "out": "Spec + tasks to approve",
+            "cards": [
+              {
+                "name": "Planning + tracking",
+                "products": [
+                  {
+                    "name": "Issues + PRs",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Issues + PRs"
+                    ]
+                  },
+                  {
+                    "name": "Azure Boards",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Azure Boards"
+                    ]
+                  },
+                  {
+                    "name": "Jira",
+                    "vendor": "third-party",
+                    "new": false,
+                    "parts": [
+                      "Jira"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Business context + skills",
+            "out": "Approved spec in the repo",
+            "cards": [
+              {
+                "name": "Context",
+                "products": [
+                  {
+                    "name": "Copilot Spaces",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot Spaces"
+                    ]
+                  },
+                  {
+                    "name": "Work IQ",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Work IQ"
+                    ]
+                  },
+                  {
+                    "name": "Skills + instructions",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Skills + instructions"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Build",
+          "task": "The developer codes with Copilot, accepting each edit",
+          "products": [
+            {
+              "name": "Copilot Fusion",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot Fusion"
+              ]
+            },
+            {
+              "name": "Spec Kit",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Spec Kit"
+              ]
+            },
+            {
+              "name": "HVE",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "HVE"
+              ]
+            },
+            {
+              "name": "Codespaces",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Codespaces"
+              ]
+            },
+            {
+              "name": "Dev Box",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Dev Box"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Picks the task, steers each edit",
+            "out": "Draft pull request",
+            "cards": [
+              {
+                "name": "Dev tools",
+                "products": [
+                  {
+                    "name": "VS Code",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "VS Code"
+                    ]
+                  },
+                  {
+                    "name": "Copilot CLI",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot CLI"
+                    ]
+                  },
+                  {
+                    "name": "JetBrains",
+                    "vendor": "third-party",
+                    "new": false,
+                    "parts": [
+                      "JetBrains"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Code + tools",
+            "out": "Commits on a branch",
+            "cards": [
+              {
+                "name": "Code artifacts",
+                "products": [
+                  {
+                    "name": "GitHub repos",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "GitHub repos"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Tools",
+                "products": [
+                  {
+                    "name": "GitHub MCP Server",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "GitHub MCP Server"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Verify",
+          "task": "CI tests and scans; a person approves every PR",
+          "products": [
+            {
+              "name": "GitHub Actions",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GitHub Actions"
+              ]
+            },
+            {
+              "name": "Hosted runners",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Hosted runners"
+              ]
+            },
+            {
+              "name": "Code review",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Code review"
+              ]
+            },
+            {
+              "name": "GHAS + Autofix",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GHAS + Autofix"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Review + manual approval",
+            "out": "Checks + findings to review",
+            "cards": [
+              {
+                "name": "Planning + tracking",
+                "products": [
+                  {
+                    "name": "Issues + PRs",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Issues + PRs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Controls",
+                "products": [
+                  {
+                    "name": "Rulesets",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Rulesets"
+                    ]
+                  },
+                  {
+                    "name": "Budgets",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Budgets"
+                    ]
+                  },
+                  {
+                    "name": "Copilot metrics",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot metrics"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Test + browser tools",
+            "out": "Signed builds + provenance",
+            "cards": [
+              {
+                "name": "Tools",
+                "products": [
+                  {
+                    "name": "Playwright MCP",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Playwright MCP"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Code artifacts",
+                "products": [
+                  {
+                    "name": "Attestations",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Attestations"
+                    ]
+                  },
+                  {
+                    "name": "GitHub Packages",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "GitHub Packages"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Observe",
+          "task": "Runs in production; the SRE agent only suggests fixes",
+          "products": [
+            {
+              "name": "Container Apps",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Container Apps"
+              ]
+            },
+            {
+              "name": "AKS",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "AKS"
+              ]
+            },
+            {
+              "name": "Azure SRE Agent",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure SRE Agent"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Release approval + triage",
+            "out": "Alerts + incidents as new issues",
+            "cards": [
+              {
+                "name": "Observability",
+                "products": [
+                  {
+                    "name": "Azure Monitor",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Azure Monitor"
+                    ]
+                  },
+                  {
+                    "name": "Datadog",
+                    "vendor": "third-party",
+                    "new": false,
+                    "parts": [
+                      "Datadog"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Collaboration",
+                "products": [
+                  {
+                    "name": "Microsoft Teams",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Microsoft Teams"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Runbooks + monitoring tools",
+            "out": "Incident learnings",
+            "cards": [
+              {
+                "name": "Tools",
+                "products": [
+                  {
+                    "name": "Azure MCP Server",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Azure MCP Server"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Context",
+                "products": [
+                  {
+                    "name": "Copilot Memory",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot Memory"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "engineering": [
+        {
+          "step": "Tune trust + control",
+          "tasks": [
+            "Rulesets + required reviews",
+            "CODEOWNERS per repo",
+            "People approve releases"
+          ]
+        },
+        {
+          "step": "Expand automation",
+          "tasks": [
+            "CI/CD with Actions",
+            "Golden dev environments",
+            "Copilot for every developer"
+          ]
+        },
+        {
+          "step": "Strengthen foundations",
+          "tasks": [
+            "Starter instructions + skills",
+            "Approved MCP servers",
+            "Shared context in Spaces"
+          ]
+        }
+      ],
+      "primitives": {
+        "hq": [
+          {
+            "name": "Copilot app",
+            "vendor": "github",
+            "new": true,
+            "card": "Dev tools",
+            "stages": "Plan · Build",
+            "role": "Desktop home for Copilot sessions; the developer drives each one."
+          },
+          {
+            "name": "VS Code",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Dev tools",
+            "stages": "Build",
+            "role": "Agent mode in the IDE; the developer steers and accepts every edit."
+          },
+          {
+            "name": "Issues + PRs",
+            "vendor": "github",
+            "new": false,
+            "card": "Planning + tracking",
+            "stages": "Plan · Verify",
+            "role": "People write every issue and review every pull request."
+          },
+          {
+            "name": "Rulesets",
+            "vendor": "github",
+            "new": false,
+            "card": "Controls",
+            "stages": "Verify",
+            "role": "Required reviews and checks on every branch, for people and agents."
+          },
+          {
+            "name": "Copilot metrics",
+            "vendor": "github",
+            "new": false,
+            "card": "Controls",
+            "stages": "Verify",
+            "role": "Adoption and usage: the baseline to grow from."
+          }
+        ],
+        "floor": [
+          {
+            "name": "Copilot projects",
+            "vendor": "github",
+            "new": true,
+            "card": "Agents",
+            "stages": "Plan",
+            "role": "Shapes an issue into a spec and tasks for a person to approve."
+          },
+          {
+            "name": "Copilot Fusion",
+            "vendor": "github",
+            "new": true,
+            "card": "Models",
+            "stages": "Build",
+            "role": "Picks a suitable model for each step of a task, at the right cost."
+          },
+          {
+            "name": "Codespaces",
+            "vendor": "github",
+            "new": false,
+            "card": "Delivery environments",
+            "stages": "Build",
+            "role": "Golden, ready-to-code environments for every developer."
+          },
+          {
+            "name": "GitHub Actions",
+            "vendor": "github",
+            "new": false,
+            "card": "Automations",
+            "stages": "Verify",
+            "role": "CI/CD that tests, scans and builds every change."
+          },
+          {
+            "name": "Code review",
+            "vendor": "github",
+            "new": false,
+            "card": "Agents",
+            "stages": "Verify",
+            "role": "Copilot reviews each pull request; a person still approves."
+          }
+        ],
+        "found": [
+          {
+            "name": "Skills + instructions",
+            "vendor": "github",
+            "new": false,
+            "card": "Context",
+            "stages": "All stages",
+            "role": "Starter team conventions every Copilot session reads."
+          },
+          {
+            "name": "Copilot Spaces",
+            "vendor": "github",
+            "new": false,
+            "card": "Context",
+            "stages": "Plan",
+            "role": "Shared, curated context for a product or team."
+          },
+          {
+            "name": "GitHub MCP Server",
+            "vendor": "github",
+            "new": false,
+            "card": "Tools",
+            "stages": "Build",
+            "role": "Safe access for Copilot to repos, issues and pull requests."
+          },
+          {
+            "name": "Attestations",
+            "vendor": "github",
+            "new": false,
+            "card": "Code artifacts",
+            "stages": "Verify",
+            "role": "Signed provenance for every build."
+          }
+        ]
+      }
+    },
+    "medium": {
+      "stages": [
+        {
+          "name": "Plan",
+          "task": "Agents draft specs and tasks from issues and signals; a person approves",
+          "products": [
+            {
+              "name": "Copilot projects",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot projects"
+              ]
+            },
+            {
+              "name": "Copilot automations",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot automations"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Goals, priorities + ideas",
+            "out": "Specs + tasks to approve",
+            "cards": [
+              {
+                "name": "Planning + tracking",
+                "products": [
+                  {
+                    "name": "Issues + PRs",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Issues + PRs"
+                    ]
+                  },
+                  {
+                    "name": "GitHub Projects",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "GitHub Projects"
+                    ]
+                  },
+                  {
+                    "name": "Azure Boards",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Azure Boards"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Context, memory + skills",
+            "out": "Approved spec in the repo",
+            "cards": [
+              {
+                "name": "Context",
+                "products": [
+                  {
+                    "name": "Copilot Spaces",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot Spaces"
+                    ]
+                  },
+                  {
+                    "name": "Copilot Memory",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot Memory"
+                    ]
+                  },
+                  {
+                    "name": "Work IQ",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Work IQ"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Build",
+          "task": "Copilot cloud agent builds tasks in parallel; people steer sessions",
+          "products": [
+            {
+              "name": "Copilot cloud agent",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot cloud agent"
+              ]
+            },
+            {
+              "name": "Copilot Fusion",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot Fusion"
+              ]
+            },
+            {
+              "name": "ACA sandboxes",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "ACA sandboxes"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Steer + review sessions",
+            "out": "Pull requests to review",
+            "cards": [
+              {
+                "name": "Dev tools",
+                "products": [
+                  {
+                    "name": "Copilot app",
+                    "vendor": "github",
+                    "new": true,
+                    "parts": [
+                      "Copilot app"
+                    ]
+                  },
+                  {
+                    "name": "Mission control",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Mission control"
+                    ]
+                  },
+                  {
+                    "name": "VS Code",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "VS Code"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Code, tools + skills",
+            "out": "Branches + new skills",
+            "cards": [
+              {
+                "name": "Code artifacts",
+                "products": [
+                  {
+                    "name": "GitHub repos",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "GitHub repos"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Tools",
+                "products": [
+                  {
+                    "name": "MCP Registry",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "MCP Registry"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Verify",
+          "task": "Agents review, test and fix; a person approves the merge",
+          "products": [
+            {
+              "name": "Agentic workflows",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Agentic workflows"
+              ]
+            },
+            {
+              "name": "Code review",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Code review"
+              ]
+            },
+            {
+              "name": "GHAS + Autofix",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GHAS + Autofix"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Merge approval",
+            "out": "Evidence + findings",
+            "cards": [
+              {
+                "name": "Planning + tracking",
+                "products": [
+                  {
+                    "name": "Issues + PRs",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Issues + PRs"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Controls",
+                "products": [
+                  {
+                    "name": "Rulesets",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Rulesets"
+                    ]
+                  },
+                  {
+                    "name": "Budgets",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Budgets"
+                    ]
+                  },
+                  {
+                    "name": "Copilot metrics",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot metrics"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Test + browser tools",
+            "out": "Signed builds + provenance",
+            "cards": [
+              {
+                "name": "Tools",
+                "products": [
+                  {
+                    "name": "Playwright MCP",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Playwright MCP"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Code artifacts",
+                "products": [
+                  {
+                    "name": "Attestations",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Attestations"
+                    ]
+                  },
+                  {
+                    "name": "GitHub Packages",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "GitHub Packages"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Observe",
+          "task": "The SRE agent triages and fixes known issues; signals feed Plan",
+          "products": [
+            {
+              "name": "Azure SRE Agent",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure SRE Agent"
+              ]
+            },
+            {
+              "name": "Container Apps",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Container Apps"
+              ]
+            },
+            {
+              "name": "AKS",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "AKS"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Release approval",
+            "out": "Trends + incidents to review",
+            "cards": [
+              {
+                "name": "Observability",
+                "products": [
+                  {
+                    "name": "Telemetry analysis",
+                    "vendor": "github",
+                    "new": true,
+                    "parts": [
+                      "Telemetry analysis"
+                    ]
+                  },
+                  {
+                    "name": "Azure Monitor",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Azure Monitor"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Collaboration",
+                "products": [
+                  {
+                    "name": "Microsoft Teams",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Microsoft Teams"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Runbooks + monitoring tools",
+            "out": "Learnings into memory",
+            "cards": [
+              {
+                "name": "Tools",
+                "products": [
+                  {
+                    "name": "Azure MCP Server",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Azure MCP Server"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Context",
+                "products": [
+                  {
+                    "name": "Copilot Memory",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot Memory"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "engineering": [
+        {
+          "step": "Tune trust + control",
+          "tasks": [
+            "Approval gates by risk",
+            "Agent identities + least privilege",
+            "Budgets + metrics per team"
+          ]
+        },
+        {
+          "step": "Expand automation",
+          "tasks": [
+            "Copilot cloud agent on issues",
+            "Event + schedule automations",
+            "Signals wired into Plan"
+          ]
+        },
+        {
+          "step": "Strengthen foundations",
+          "tasks": [
+            "Team skills + custom agents",
+            "Memory + Spaces per product",
+            "Curated MCP registry"
+          ]
+        }
+      ],
+      "primitives": {
+        "hq": [
+          {
+            "name": "Copilot canvases",
+            "vendor": "github",
+            "new": false,
+            "card": "Ideation + design",
+            "stages": "Plan",
+            "role": "People and agents shape wireframes, prototypes and docs together."
+          },
+          {
+            "name": "Mission control",
+            "vendor": "github",
+            "new": false,
+            "card": "Dev tools",
+            "stages": "Build",
+            "role": "Start, monitor and steer sessions across repositories."
+          },
+          {
+            "name": "Telemetry analysis",
+            "vendor": "github",
+            "new": true,
+            "card": "Observability",
+            "stages": "Observe",
+            "role": "Turns production telemetry into trends people review."
+          },
+          {
+            "name": "Budgets",
+            "vendor": "github",
+            "new": false,
+            "card": "Controls",
+            "stages": "Verify",
+            "role": "Spending limits and alerts per team for AI credits."
+          }
+        ],
+        "floor": [
+          {
+            "name": "Copilot cloud agent",
+            "vendor": "github",
+            "new": false,
+            "card": "Agents",
+            "stages": "Build",
+            "role": "Takes tasks and opens pull requests from a cloud sandbox."
+          },
+          {
+            "name": "Copilot automations",
+            "vendor": "github",
+            "new": true,
+            "card": "Automations",
+            "stages": "Plan",
+            "role": "Event and schedule triggers: observed signals start Plan automatically."
+          },
+          {
+            "name": "Agentic workflows",
+            "vendor": "github",
+            "new": true,
+            "card": "Automations",
+            "stages": "Verify",
+            "role": "Agent workflows on Actions that review, test and fix."
+          },
+          {
+            "name": "Azure SRE Agent",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Agents",
+            "stages": "Observe",
+            "role": "Triages incidents, fixes known issues and feeds signals back."
+          }
+        ],
+        "found": [
+          {
+            "name": "Copilot Memory",
+            "vendor": "github",
+            "new": false,
+            "card": "Context",
+            "stages": "All stages",
+            "role": "Agents remember conventions and incident learnings."
+          },
+          {
+            "name": "MCP Registry",
+            "vendor": "github",
+            "new": false,
+            "card": "Tools",
+            "stages": "Build",
+            "role": "A curated catalog of approved MCP servers."
+          },
+          {
+            "name": "Work IQ",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Context",
+            "stages": "Plan",
+            "role": "Grounds specs in workplace context: meetings, mail, documents."
+          },
+          {
+            "name": "Entra Agent ID",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Identity & access management",
+            "stages": "All stages",
+            "role": "An identity for every agent, with least privilege."
+          }
+        ]
+      }
+    },
+    "high": {
+      "stages": [
+        {
+          "name": "Plan",
+          "task": "Agents turn goals and signals into prioritised specs and tasks",
+          "products": [
+            {
+              "name": "Copilot projects",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot projects"
+              ]
+            },
+            {
+              "name": "Copilot automations",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Copilot automations"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Goals, OKRs + guardrails",
+            "out": "Plans for visibility",
+            "cards": [
+              {
+                "name": "Planning + tracking",
+                "products": [
+                  {
+                    "name": "GitHub Projects",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "GitHub Projects"
+                    ]
+                  },
+                  {
+                    "name": "Azure Boards",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Azure Boards"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Business context + KPIs",
+            "out": "Specs + decisions in the repo",
+            "cards": [
+              {
+                "name": "Context",
+                "products": [
+                  {
+                    "name": "Fabric IQ ontology",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Fabric IQ ontology"
+                    ]
+                  },
+                  {
+                    "name": "Work IQ",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Work IQ"
+                    ]
+                  },
+                  {
+                    "name": "Foundry IQ",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Foundry IQ"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Build",
+          "task": "Fleets of agents build in parallel, isolated sandboxes",
+          "products": [
+            {
+              "name": "Copilot cloud agent",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Copilot cloud agent"
+              ]
+            },
+            {
+              "name": "ACA sandboxes",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "ACA sandboxes"
+              ]
+            },
+            {
+              "name": "Agent firewall",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Agent firewall"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Steer by exception",
+            "out": "Session summaries",
+            "cards": [
+              {
+                "name": "Dev tools",
+                "products": [
+                  {
+                    "name": "Copilot app",
+                    "vendor": "github",
+                    "new": true,
+                    "parts": [
+                      "Copilot app"
+                    ]
+                  },
+                  {
+                    "name": "Mission control",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Mission control"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Code, tools + skills",
+            "out": "Code + better skills",
+            "cards": [
+              {
+                "name": "Code artifacts",
+                "products": [
+                  {
+                    "name": "GitHub repos",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "GitHub repos"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Context",
+                "products": [
+                  {
+                    "name": "Skills + instructions",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Skills + instructions"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Verify",
+          "task": "Agents test features end to end and create evidence on quality, security and cost",
+          "products": [
+            {
+              "name": "Agentic workflows",
+              "vendor": "github",
+              "new": true,
+              "parts": [
+                "Agentic workflows"
+              ]
+            },
+            {
+              "name": "Code review",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "Code review"
+              ]
+            },
+            {
+              "name": "GHAS + Autofix",
+              "vendor": "github",
+              "new": false,
+              "parts": [
+                "GHAS + Autofix"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "Quality bars + policies",
+            "out": "Evidence: quality, security, cost",
+            "cards": [
+              {
+                "name": "Controls",
+                "products": [
+                  {
+                    "name": "Rulesets",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Rulesets"
+                    ]
+                  },
+                  {
+                    "name": "Audit log",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Audit log"
+                    ]
+                  },
+                  {
+                    "name": "Agent 365",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Agent 365"
+                    ]
+                  },
+                  {
+                    "name": "Copilot metrics",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot metrics"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "E2E test tools",
+            "out": "Evidence + attestations",
+            "cards": [
+              {
+                "name": "Tools",
+                "products": [
+                  {
+                    "name": "Playwright MCP",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Playwright MCP"
+                    ]
+                  },
+                  {
+                    "name": "Computer use",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Computer use"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Code artifacts",
+                "products": [
+                  {
+                    "name": "Attestations",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Attestations"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "name": "Observe",
+          "task": "Agents release progressively, watch SLOs and fix or roll back",
+          "products": [
+            {
+              "name": "Azure SRE Agent",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Azure SRE Agent"
+              ]
+            },
+            {
+              "name": "Foundry evals",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Foundry evals"
+              ]
+            },
+            {
+              "name": "Container Apps",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "Container Apps"
+              ]
+            },
+            {
+              "name": "AKS",
+              "vendor": "microsoft",
+              "new": false,
+              "parts": [
+                "AKS"
+              ]
+            }
+          ],
+          "hq": {
+            "in": "SLOs + error budgets",
+            "out": "Exceptions to decide",
+            "cards": [
+              {
+                "name": "Observability",
+                "products": [
+                  {
+                    "name": "Telemetry analysis",
+                    "vendor": "github",
+                    "new": true,
+                    "parts": [
+                      "Telemetry analysis"
+                    ]
+                  },
+                  {
+                    "name": "Foundry tracing",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Foundry tracing"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Collaboration",
+                "products": [
+                  {
+                    "name": "Microsoft Teams",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Microsoft Teams"
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "foundations": {
+            "in": "Runbooks + monitoring tools",
+            "out": "Learnings into memory + skills",
+            "cards": [
+              {
+                "name": "Tools",
+                "products": [
+                  {
+                    "name": "Azure MCP Server",
+                    "vendor": "microsoft",
+                    "new": false,
+                    "parts": [
+                      "Azure MCP Server"
+                    ]
+                  }
+                ]
+              },
+              {
+                "name": "Context",
+                "products": [
+                  {
+                    "name": "Copilot Memory",
+                    "vendor": "github",
+                    "new": false,
+                    "parts": [
+                      "Copilot Memory"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "engineering": [
+        {
+          "step": "Tune trust + control",
+          "tasks": [
+            "Policy as code + full audit",
+            "Approval by exception",
+            "Agent registry + identities"
+          ]
+        },
+        {
+          "step": "Expand automation",
+          "tasks": [
+            "Agent fleets per work type",
+            "End-to-end test environments",
+            "Progressive delivery + rollback"
+          ]
+        },
+        {
+          "step": "Strengthen foundations",
+          "tasks": [
+            "Business ontology + KPIs",
+            "Agents curate skills + memory",
+            "Evals for every agent"
+          ]
+        }
+      ],
+      "primitives": {
+        "hq": [
+          {
+            "name": "Agent 365",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Controls",
+            "stages": "All stages",
+            "role": "Registry, access control and oversight for every agent."
+          },
+          {
+            "name": "Audit log",
+            "vendor": "github",
+            "new": false,
+            "card": "Controls",
+            "stages": "Verify",
+            "role": "Who, human or agent, did what and when."
+          },
+          {
+            "name": "Foundry tracing",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Observability",
+            "stages": "Observe",
+            "role": "Traces of agent runs and tool calls, reviewed by exception."
+          },
+          {
+            "name": "Microsoft Teams",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Collaboration",
+            "stages": "Observe",
+            "role": "Exceptions reach people where they work; decide in chat."
+          }
+        ],
+        "floor": [
+          {
+            "name": "ACA sandboxes",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Delivery environments",
+            "stages": "Build",
+            "role": "Isolated, short-lived sandboxes for fleets of agents."
+          },
+          {
+            "name": "Session continuity",
+            "vendor": "github",
+            "new": true,
+            "card": "Agents",
+            "stages": "Build · Verify",
+            "role": "Long-running agent sessions people can resume from the app, IDE, CLI, web or phone."
+          },
+          {
+            "name": "Agent firewall",
+            "vendor": "github",
+            "new": false,
+            "card": "Security",
+            "stages": "Build",
+            "role": "Controls the network egress of every agent sandbox."
+          },
+          {
+            "name": "GHAS + Autofix",
+            "vendor": "github",
+            "new": false,
+            "card": "Security",
+            "stages": "Verify",
+            "role": "Security evidence and fixes on every change."
+          },
+          {
+            "name": "Foundry evals",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Agents",
+            "stages": "Observe",
+            "role": "Continuous evaluation of agent quality and safety."
+          }
+        ],
+        "found": [
+          {
+            "name": "Playwright MCP",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Tools",
+            "stages": "Verify",
+            "role": "Agents test every feature end to end in a real browser."
+          },
+          {
+            "name": "Computer use",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Tools",
+            "stages": "Verify",
+            "role": "Agents test desktop and web flows the way a user would."
+          },
+          {
+            "name": "Fabric IQ ontology",
+            "vendor": "microsoft",
+            "new": false,
+            "card": "Context",
+            "stages": "Plan",
+            "role": "Business ontology and KPIs that agents plan against."
+          },
+          {
+            "name": "Attestations",
+            "vendor": "github",
+            "new": false,
+            "card": "Code artifacts",
+            "stages": "Verify",
+            "role": "Signed evidence linking every artifact to its build."
+          }
+        ]
+      }
+    }
+  },
+  "products": {
+    "Copilot canvases": {
+      "url": "https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-canvas-extensions",
+      "role": "Shared, agent-built artifacts (wireframes, prototypes, docs) that humans and agents shape together."
+    },
+    "Prompt files": {
+      "url": "https://docs.github.com/en/copilot/concepts/prompting-and-context/prompt-files",
+      "role": "Reusable prompt templates that capture how the team asks agents for recurring work."
+    },
+    "Custom agents": {
+      "url": "https://docs.github.com/en/copilot/concepts/customizations/custom-agents",
+      "role": "Specialised agent personas (planner, designer, reviewer) defined in the repo."
+    },
+    "Figma MCP": {
+      "url": "https://help.figma.com/hc/en-us/articles/32132100833559-Guide-to-the-Figma-MCP-server",
+      "role": "Brings Figma designs and wireframes into agent context through MCP."
+    },
+    "Microsoft Teams": {
+      "url": "https://www.microsoft.com/en-us/microsoft-teams/group-chat-software",
+      "role": "Start and steer agent work from chat; approvals and mentions where people already work."
+    },
+    "Slack": {
+      "url": "https://slack.com/",
+      "role": "Start and steer Copilot cloud agent sessions from Slack conversations."
+    },
+    "GitHub Mobile": {
+      "url": "https://github.com/mobile",
+      "role": "Capture ideas, steer sessions and approve work from the phone."
+    },
+    "Issues + PRs": {
+      "url": "https://docs.github.com/en/issues",
+      "role": "Issues carry intent to agents; pull requests return their work for human review."
+    },
+    "GitHub Projects": {
+      "url": "https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects",
+      "role": "Plan and track human and agent work on shared boards and roadmaps."
+    },
+    "Attestations": {
+      "url": "https://docs.github.com/en/actions/concepts/security/artifact-attestations",
+      "role": "Signed provenance that links every artifact to the build that produced it."
+    },
+    "Azure Boards": {
+      "url": "https://azure.microsoft.com/en-us/products/devops/boards",
+      "role": "Azure DevOps work tracking, linked to GitHub so agents pick up work items."
+    },
+    "Jira": {
+      "url": "https://www.atlassian.com/software/jira",
+      "role": "Meet teams where they are; Jira work items can be assigned to Copilot cloud agent."
+    },
+    "Linear": {
+      "url": "https://linear.app/",
+      "role": "Meet teams where they are; Linear issues can be assigned to Copilot cloud agent."
+    },
+    "Copilot app": {
+      "url": "https://docs.github.com/en/copilot/concepts/copilot-surfaces/github-copilot-app",
+      "role": "The desktop home for steering parallel agent sessions, from idea to merge."
+    },
+    "Mission control": {
+      "url": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/use-copilot-agents/manage-and-track-agents",
+      "role": "One place to start, monitor and steer agent sessions across repositories."
+    },
+    "VS Code": {
+      "url": "https://code.visualstudio.com/docs/agents/overview",
+      "role": "The IDE where developers pair with agents and review their sessions."
+    },
+    "Visual Studio": {
+      "url": "https://visualstudio.microsoft.com/github-copilot/",
+      "role": "Copilot agent mode for .NET and C++ teams in Visual Studio."
+    },
+    "Copilot CLI": {
+      "url": "https://docs.github.com/en/copilot/concepts/copilot-surfaces/copilot-cli",
+      "role": "Run, resume and steer agent sessions from the terminal."
+    },
+    "JetBrains": {
+      "url": "https://plugins.jetbrains.com/plugin/17718-github-copilot--your-ai-pair-programmer",
+      "role": "Meet developers in JetBrains IDEs with Copilot agent mode."
+    },
+    "Xcode": {
+      "url": "https://github.com/github/CopilotForXcode",
+      "role": "Meet Apple-platform developers in Xcode with Copilot."
+    },
+    "Telemetry analysis": {
+      "url": "https://docs.github.com/en/copilot/concepts/copilot-surfaces/github-copilot-app",
+      "role": "Analyse telemetry in the Copilot app and turn signals into new work for agents."
+    },
+    "Azure Monitor": {
+      "url": "https://azure.microsoft.com/en-us/products/monitor",
+      "role": "Metrics, logs and alerts for the software the factory ships."
+    },
+    "Foundry tracing": {
+      "url": "https://learn.microsoft.com/en-us/azure/foundry/observability/concepts/trace-agent-concept",
+      "role": "Traces of agent runs, tool calls and model usage for review."
+    },
+    "OpenTelemetry": {
+      "url": "https://opentelemetry.io/",
+      "role": "Open standard for traces and metrics from agents and apps, any backend."
+    },
+    "Datadog": {
+      "url": "https://www.datadoghq.com/",
+      "role": "Datadog monitoring feeds the Observe stage and reaches agents as tool context through MCP."
+    },
+    "Copilot metrics": {
+      "url": "https://docs.github.com/en/copilot/concepts/billing-and-usage/copilot-usage-metrics/copilot-metrics",
+      "role": "Adoption and usage metrics to measure the factory's throughput."
+    },
+    "Audit log": {
+      "url": "https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/security-and-compliance/audit-log-for-an-enterprise",
+      "role": "Who (human or agent) did what, when; the audit trail for the factory."
+    },
+    "Rulesets": {
+      "url": "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets",
+      "role": "Policy as code for branches and merges; agents can't bypass required checks."
+    },
+    "Budgets": {
+      "url": "https://docs.github.com/en/billing/concepts/budgets-and-alerts",
+      "role": "Spending limits and alerts for AI credits and compute."
+    },
+    "Agent 365": {
+      "url": "https://www.microsoft.com/en-us/microsoft-agent-365",
+      "role": "Registry, access control and oversight for every agent in the enterprise."
+    },
+    "Azure Policy": {
+      "url": "https://azure.microsoft.com/en-us/products/azure-policy",
+      "role": "Enforce guardrails on the cloud resources agents provision and run on."
+    },
+    "Cost Management": {
+      "url": "https://azure.microsoft.com/en-us/products/cost-management",
+      "role": "Track and optimise the cloud cost of the factory and what it runs."
+    },
+    "Copilot Fusion": {
+      "url": "https://docs.github.com/en/copilot/concepts/models/copilot-fusion",
+      "role": "Orchestrates several models per task so each step gets a suitable model at the right cost."
+    },
+    "Foundry Models": {
+      "url": "https://azure.microsoft.com/en-us/products/ai-foundry/models",
+      "role": "Enterprise catalog of cloud models, deployed in the customer's Azure tenant."
+    },
+    "Model router": {
+      "url": "https://learn.microsoft.com/en-us/azure/foundry/openai/concepts/model-router",
+      "role": "Routes each prompt to the most suitable Foundry model for quality and cost."
+    },
+    "AI Gateway": {
+      "url": "https://ai.gateway.azure.com/docs",
+      "role": "AI Gateway in Azure API Management: one control point for models, MCP tools and agents (A2A), with access, quotas, token limits and logging."
+    },
+    "Foundry Local": {
+      "url": "https://learn.microsoft.com/en-us/azure/foundry-local/what-is-foundry-local",
+      "role": "Run models on device for offline, private or low-cost agent steps."
+    },
+    "AI credits": {
+      "url": "https://docs.github.com/en/copilot/concepts/billing-and-usage/organizations-and-enterprises/billing",
+      "role": "The unit for token usage; pay for the AI the factory actually consumes."
+    },
+    "BYOK": {
+      "url": "https://docs.github.com/en/copilot/concepts/models/bring-your-own-key",
+      "role": "Bring your own model keys and providers into Copilot."
+    },
+    "Copilot cloud agent": {
+      "url": "https://docs.github.com/en/copilot/how-tos/use-copilot-agents/cloud-agent",
+      "role": "Works on issues in a cloud sandbox and opens pull requests; many sessions in parallel."
+    },
+    "Copilot CLI + SDK": {
+      "url": "https://github.com/github/copilot-sdk",
+      "role": "Embed the Copilot agent runtime in your own tools, services and multi-agent systems."
+    },
+    "Session continuity": {
+      "url": "https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-sandboxes#continue-sessions-across-clients",
+      "role": "One cloud session, resumable across the Copilot app, VS Code, CLI, web and phone."
+    },
+    "Agent Framework": {
+      "url": "https://learn.microsoft.com/en-us/agent-framework/overview/",
+      "role": "Open-source SDK for building custom agents and multi-agent workflows."
+    },
+    "Foundry Agent Service": {
+      "url": "https://learn.microsoft.com/en-us/azure/foundry/agents/overview",
+      "role": "Host and scale business agents in Azure with identity, tools and tracing."
+    },
+    "Claude": {
+      "url": "https://docs.github.com/en/copilot/concepts/agent-capabilities/about-agents/about-third-party-coding-agents",
+      "role": "Third-party coding agents such as Claude run under the same GitHub governance via Agent HQ."
+    },
+    "Codex": {
+      "url": "https://docs.github.com/en/copilot/concepts/agent-capabilities/about-agents/about-third-party-coding-agents",
+      "role": "Third-party coding agents such as Codex run under the same GitHub governance via Agent HQ."
+    },
+    "Hosted runners": {
+      "url": "https://docs.github.com/en/actions/concepts/runners/github-hosted-runners",
+      "role": "Managed compute where plan, build and verify jobs run."
+    },
+    "ARC runners": {
+      "url": "https://docs.github.com/en/actions/concepts/runners/actions-runner-controller",
+      "role": "Self-hosted, autoscaling runners on your own Kubernetes for private networks."
+    },
+    "Codespaces": {
+      "url": "https://github.com/features/codespaces",
+      "role": "Ready-to-code cloud dev environments, defined once and reused by people and agents."
+    },
+    "Dev Box": {
+      "url": "https://azure.microsoft.com/en-us/products/dev-box",
+      "role": "Managed, secure developer workstations in Azure for regulated teams."
+    },
+    "ACA sandboxes": {
+      "url": "https://learn.microsoft.com/en-us/azure/container-apps/sessions",
+      "role": "Isolated, short-lived sandboxes (Container Apps dynamic sessions) to run agent-generated code safely."
+    },
+    "AKS": {
+      "url": "https://azure.microsoft.com/en-us/products/kubernetes-service",
+      "role": "Managed Kubernetes where shipped services run and are observed."
+    },
+    "Container Apps": {
+      "url": "https://azure.microsoft.com/en-us/products/container-apps",
+      "role": "Serverless containers for apps, APIs and agents."
+    },
+    "App Service": {
+      "url": "https://azure.microsoft.com/en-us/products/app-service",
+      "role": "Managed hosting for web apps and APIs."
+    },
+    "Azure SQL": {
+      "url": "https://azure.microsoft.com/en-us/products/azure-sql",
+      "role": "Managed relational databases behind the software the factory ships."
+    },
+    "Cosmos DB": {
+      "url": "https://azure.microsoft.com/en-us/products/cosmos-db",
+      "role": "Globally distributed NoSQL and vector database for apps and agents."
+    },
+    "API Management": {
+      "url": "https://azure.microsoft.com/en-us/products/api-management",
+      "role": "Govern and secure APIs, including AI and MCP gateways."
+    },
+    "Azure Arc": {
+      "url": "https://azure.microsoft.com/en-us/products/azure-arc",
+      "role": "One control plane for hybrid and multicloud environments."
+    },
+    "AWS": {
+      "url": "https://aws.amazon.com/",
+      "role": "The factory deploys to and observes workloads on AWS."
+    },
+    "GCP": {
+      "url": "https://cloud.google.com/",
+      "role": "The factory deploys to and observes workloads on Google Cloud."
+    },
+    "on-prem": {
+      "url": "https://azure.microsoft.com/en-us/products/local",
+      "role": "On-premises and edge environments, managed with Azure Local and Arc."
+    },
+    "Copilot automations": {
+      "url": "https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/about-automations",
+      "role": "Agents run in the cloud on manual, event or schedule triggers and propose improvements to their own prompts and tools."
+    },
+    "Agentic workflows": {
+      "url": "https://github.github.io/gh-aw/",
+      "role": "Markdown-defined agent workflows on GitHub Actions, sandboxed with safe outputs."
+    },
+    "GitHub Actions": {
+      "url": "https://github.com/features/actions",
+      "role": "Event-driven CI/CD and the engine for agent workflows."
+    },
+    "Azure Pipelines": {
+      "url": "https://azure.microsoft.com/en-us/products/devops/pipelines",
+      "role": "Azure DevOps CI/CD for existing pipelines."
+    },
+    "Logic Apps": {
+      "url": "https://azure.microsoft.com/en-us/products/logic-apps",
+      "role": "Low-code business workflows that trigger and consume agent work."
+    },
+    "Jenkins": {
+      "url": "https://www.jenkins.io/",
+      "role": "Existing Jenkins pipelines keep running alongside the factory."
+    },
+    "GitLab": {
+      "url": "https://about.gitlab.com/",
+      "role": "Existing GitLab CI/CD can trigger and consume factory work."
+    },
+    "Advanced Security": {
+      "url": "https://github.com/security/advanced-security",
+      "role": "Code scanning, secret protection and supply-chain security for human and agent code."
+    },
+    "Dependabot": {
+      "url": "https://docs.github.com/en/code-security/concepts/supply-chain-security/dependabot-version-updates",
+      "role": "Keeps dependencies patched with automatic update pull requests."
+    },
+    "Agent firewall": {
+      "url": "https://docs.github.com/en/copilot/how-tos/copilot-on-github/customize-copilot/customize-the-firewall",
+      "role": "Controls the network egress of agent sandboxes with an allowlist."
+    },
+    "Defender for Cloud": {
+      "url": "https://www.microsoft.com/en-us/security/business/cloud-security/microsoft-defender-cloud",
+      "role": "Threat protection and posture management for cloud and AI workloads."
+    },
+    "Purview": {
+      "url": "https://www.microsoft.com/en-us/security/business/microsoft-purview",
+      "role": "Data security and compliance for the data agents read and produce."
+    },
+    "Snyk": {
+      "url": "https://snyk.io/",
+      "role": "Snyk scans plug into the same verify gates."
+    },
+    "Spec Kit": {
+      "url": "https://github.com/github/spec-kit",
+      "role": "Open-source spec-driven development toolkit: specify, plan, tasks and implement with any coding agent."
+    },
+    "HVE": {
+      "url": "https://github.com/microsoft/hve-core",
+      "role": "Hyper-Velocity Engineering: Microsoft's open-source agents, prompts and instructions for research, plan and implement workflows with Copilot."
+    },
+    "Copilot projects": {
+      "url": "https://docs.github.com/en/copilot/how-tos/github-copilot-app/working-with-projects",
+      "role": "Give Copilot a goal; it plans the work and runs parallel sessions across repositories."
+    },
+    "Code review": {
+      "url": "https://docs.github.com/en/copilot/concepts/agent-capabilities/agent-powered-workflows-and-operations/code-review",
+      "role": "Copilot reviews every pull request so humans review the evidence, not every line."
+    },
+    "GHAS + Autofix": {
+      "url": "https://docs.github.com/en/code-security/concepts/code-scanning/autofix-for-code-scanning",
+      "role": "Code scanning finds vulnerabilities and Copilot Autofix proposes the fix."
+    },
+    "Azure SRE Agent": {
+      "url": "https://learn.microsoft.com/en-us/azure/sre-agent/overview",
+      "role": "Watches production, investigates incidents and files issues back into the loop."
+    },
+    "Foundry evals": {
+      "url": "https://learn.microsoft.com/en-us/azure/foundry/concepts/observability",
+      "role": "Continuous evaluation of agent quality and safety, feeding the next plan."
+    },
+    "GitHub repos": {
+      "url": "https://docs.github.com/en/repositories/creating-and-managing-repositories/about-repositories",
+      "role": "The system of record for code, specs and agent instructions."
+    },
+    "GitHub Packages": {
+      "url": "https://docs.github.com/en/packages",
+      "role": "Host and share libraries and container images next to the code."
+    },
+    "npm": {
+      "url": "https://www.npmjs.com/",
+      "role": "The JavaScript package registry, operated by GitHub."
+    },
+    "Azure Repos": {
+      "url": "https://azure.microsoft.com/en-us/products/devops/repos",
+      "role": "Existing Azure DevOps repositories, connected to the factory."
+    },
+    "Azure Artifacts": {
+      "url": "https://azure.microsoft.com/en-us/products/devops/artifacts",
+      "role": "Azure DevOps package feeds for existing estates."
+    },
+    "GitHub MCP Server": {
+      "url": "https://github.com/github/github-mcp-server",
+      "role": "Lets any agent act on GitHub (issues, PRs, code, Actions) through MCP."
+    },
+    "MCP Registry": {
+      "url": "https://github.com/mcp",
+      "role": "Discover and govern the MCP servers agents are allowed to use."
+    },
+    "GitHub CLI + APIs": {
+      "url": "https://cli.github.com/",
+      "role": "Scriptable access to everything on GitHub for agents and automations."
+    },
+    "Azure MCP Server": {
+      "url": "https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/overview",
+      "role": "Lets agents query and operate Azure resources through MCP."
+    },
+    "API Center": {
+      "url": "https://learn.microsoft.com/en-us/azure/api-center/overview",
+      "role": "Inventory of APIs and MCP servers, so agents find approved tools."
+    },
+    "Playwright MCP": {
+      "url": "https://github.com/microsoft/playwright-mcp",
+      "role": "Browser use for agents, to test and verify web apps."
+    },
+    "Computer use": {
+      "url": "https://learn.microsoft.com/en-us/azure/foundry/agents/how-to/tools/computer-use",
+      "role": "Agents operate desktop and web UIs when no API exists."
+    },
+    "Sentry": {
+      "url": "https://sentry.io/welcome/",
+      "role": "Sentry errors feed agents as tool context through MCP."
+    },
+    "Skills + instructions": {
+      "url": "https://docs.github.com/en/copilot/concepts/customizations/agent-skills",
+      "role": "Reusable skills and repo instructions that teach agents how the team works."
+    },
+    "Copilot Spaces": {
+      "url": "https://docs.github.com/en/copilot/concepts/prompting-and-context/spaces",
+      "role": "Curated collections of code, docs and notes that ground agents."
+    },
+    "Copilot Memory": {
+      "url": "https://docs.github.com/en/copilot/concepts/prompting-and-context/copilot-memory",
+      "role": "What agents learn about a repository is kept and reused next time."
+    },
+    "Work IQ": {
+      "url": "https://learn.microsoft.com/en-us/microsoft-365/copilot/extensibility/work-iq/",
+      "role": "Workplace knowledge (meetings, mail, documents) for agents, from Microsoft 365."
+    },
+    "Fabric IQ ontology": {
+      "url": "https://learn.microsoft.com/en-us/fabric/iq/ontology/overview",
+      "role": "A shared ontology of business entities and rules, from Microsoft Fabric."
+    },
+    "Foundry IQ": {
+      "url": "https://learn.microsoft.com/en-us/azure/foundry/agents/concepts/what-is-foundry-iq",
+      "role": "Enterprise knowledge bases that ground agents, with permission-aware retrieval."
+    },
+    "AGENTS.md": {
+      "url": "https://agents.md/",
+      "role": "Open format for agent instructions, read by many coding agents."
+    },
+    "Enterprise Managed Users": {
+      "url": "https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/identity-and-access-management/enterprise-managed-users",
+      "role": "GitHub accounts provisioned and controlled by the company's identity provider."
+    },
+    "GitHub Apps": {
+      "url": "https://docs.github.com/en/apps/overview",
+      "role": "Scoped, least-privilege identities for automations and agents."
+    },
+    "Custom roles": {
+      "url": "https://docs.github.com/en/enterprise-cloud@latest/organizations/managing-user-access-to-your-organizations-repositories/managing-repository-roles/about-custom-repository-roles",
+      "role": "Fine-grained roles and permissions for people and agents."
+    },
+    "Entra ID": {
+      "url": "https://www.microsoft.com/en-us/security/business/identity-access/microsoft-entra-id",
+      "role": "Single sign-on and conditional access for every human in the factory."
+    },
+    "Entra Agent ID": {
+      "url": "https://learn.microsoft.com/en-us/entra/agent-id/what-is-microsoft-entra-agent-id",
+      "role": "First-class identities for agents, governed like any other identity."
+    },
+    "Okta": {
+      "url": "https://www.okta.com/",
+      "role": "Okta as the identity provider for SSO and user provisioning."
+    }
+  }
+}

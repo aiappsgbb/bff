@@ -1,0 +1,24 @@
+---
+import { productRole, productUrl, type Product } from '../data/site';
+
+interface Props {
+	product: Product;
+}
+const { product } = Astro.props;
+const key = product.parts[0] ?? product.name;
+const url = productUrl(key);
+const role = productRole(key);
+const Tag = url ? 'a' : 'span';
+---
+
+<Tag
+	class="bff-chip"
+	data-vendor={product.vendor}
+	href={url}
+	title={role}
+	target={url ? '_blank' : undefined}
+	rel={url ? 'noopener' : undefined}
+>
+	{product.name}
+	{product.new && <span class="new">new</span>}
+</Tag>

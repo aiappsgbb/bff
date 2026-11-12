@@ -1,0 +1,59 @@
+---
+title: See it working
+description: One demo, one continuous session, the whole factory line. Built and run with the GitHub Copilot app and Copilot automations.
+eyebrow: factory.demo()
+---
+import DemoActs from '../../../components/DemoActs.astro';
+import { LEVELS } from '../../../data/site';
+import { Aside } from '@astrojs/starlight/components';
+
+## Idea to production and back
+
+One continuous session follows **FieldAssist**, a synthetic service-triage assistant, from an idea captured on a phone to production and back. It crosses the four stations of the line in six acts, without ever starting over. Run it end to end in 20 to 30 minutes, or pick two or three acts for a ten-minute version.
+
+<DemoActs />
+
+**What it proves:** agents do the heavy lifting in the cloud, and a named person steers or approves every consequential step, from any device.
+
+**Where people decide:** the product owner on the phone, the developer at the desk, code owners, the service owner in chat, and the platform team that owns the line.
+
+## Short versions by audience
+
+| Audience | Acts | Why |
+| --- | --- | --- |
+| Business leaders | 1, 3 and 5 | The session journey: idea, steering and approval, from any device. |
+| Platform and security | 4 and 5 | Evidence, gates and a keyless release. |
+| SRE and operations | 6 | Production signals become new work, and the factory learns. |
+| Mixed estates | 1 with MCP | Start from a Jira or Azure Boards item and continue in JetBrains or the Copilot CLI. |
+
+## One demo per level
+
+Each level has a smaller demo that shows its own dimmer position.
+
+- **Crawl:** {LEVELS.low.demo}
+- **Walk:** {LEVELS.medium.demo}
+- **Run:** {LEVELS.high.demo}
+
+## Build the demo with the factory
+
+| Workstream | What to set up | Acts |
+| --- | --- | --- |
+| Foundation | A demo organisation, the FieldAssist repositories, a primitives repository, a project board, and Azure with a Foundry project | All |
+| Plan and build | Spec skills, business-context grounding, a Copilot project across three repositories, GitHub Mobile, cloud sessions to resume | 1–3 |
+| Verify | Copilot code review, GitHub Advanced Security, rulesets, Foundry evals, OIDC deployment to Azure, a canary, chat approvals | 4–5 |
+| Observe | A fault flag, an alert, the Azure SRE Agent connected to GitHub, telemetry | 6 |
+| Learn and open | A Copilot automation that proposes improvements, a weekly agentic report, a Jira or Azure Boards MCP variant | 6 |
+
+## Keep it alive with automations
+
+A demo that breaks on the day costs more than it wins. Let the factory look after its own demo:
+
+- A nightly smoke-test automation runs every act.
+- A reset automation restores the baseline after each run.
+- Dependency upkeep arrives as pull requests.
+- A weekly demo-health issue lists anything that drifted.
+- A recorded fallback for every act.
+
+<Aside type="caution" title="Synthetic data only">
+Use a dedicated demo organisation and synthetic data. FieldAssist is illustrative. Features marked **preview** may change before general availability.
+</Aside>

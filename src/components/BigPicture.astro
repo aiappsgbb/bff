@@ -1,0 +1,352 @@
+---
+import { data, LAYER_META, VENDOR_LABEL, type Vendor } from '../data/site';
+import ProductChip from './ProductChip.astro';
+
+const bands = (['hq', 'floor', 'foundations'] as const).map((k) => ({
+	key: k,
+	...data.layers[k],
+	meta: LAYER_META[k],
+	anchor: k === 'hq' ? 'factory-hq' : k === 'floor' ? 'factory-floor' : 'factory-foundations',
+}));
+const vendors = Object.keys(VENDOR_LABEL) as Vendor[];
+const uid = 'bff-bp';
+---
+
+<div class="bff-bp not-content" data-view="capabilities" id={uid}>
+	<div class="bff-bp-toolbar">
+		<div class="bff-tabs" role="group" aria-label="Show">
+			<button class="bff-tab" type="button" aria-pressed="true" data-view-btn="capabilities">Capabilities</button>
+			<button class="bff-tab" type="button" aria-pressed="false" data-view-btn="products">Products</button>
+		</div>
+		<fieldset class="bff-bp-vendors">
+			<legend>Vendors</legend>
+			{
+				vendors.map((v) => (
+					<label class="bff-bp-vendor" data-vendor={v}>
+						<input type="checkbox" checked value={v} />
+						{VENDOR_LABEL[v]}
+					</label>
+				))
+			}
+		</fieldset>
+	</div>
+
+	<div class="bff-bp-grid">
+		<div class="bff-bp-bands">
+			{
+				bands.map((b, i) => (
+					<>
+						{i === 1 && (
+							<div class="bff-bp-flow" aria-label="Between HQ and floor">
+								<span>
+									<span aria-hidden="true">↓</span> intent · steering · approvals
+								</span>
+								<span>
+									<span aria-hidden="true">↑</span> evidence · signals · cost
+								</span>
+							</div>
+						)}
+						<section class="bff-bp-band" data-layer={b.key} aria-labelledby={`${b.anchor}`}>
+							<header>
+								<p class="bff-bp-who">{b.meta.who}</p>
+								<h3 id={b.anchor}>{b.label}</h3>
+								<p class="bff-bp-tag">{b.tag}</p>
+							</header>
+							<ul class="bff-bp-cards">
+								{b.components.map((c) => (
+									<li class="bff-bp-card">
+										<h4>
+											{c.name}
+											{c.stages && <span class="bff-bp-stages">{c.stages}</span>}
+										</h4>
+										<ul class="bff-bp-items" data-show="capabilities">
+											{c.items.map((it) => (
+												<li>{it}</li>
+											))}
+										</ul>
+										<ul class="bff-chips" data-show="products">
+											{c.products.map((p) => (
+												<li data-vendor={p.vendor}>
+													<ProductChip product={p} />
+												</li>
+											))}
+										</ul>
+									</li>
+								))}
+							</ul>
+						</section>
+					</>
+				))
+			}
+		</div>
+		<aside class="bff-bp-eng" data-layer="engineering" aria-labelledby="factory-engineering">
+			<p class="bff-bp-who">Platform + AI engineers</p>
+			<h3 id="factory-engineering">Factory engineering</h3>
+			<p class="bff-bp-tag">Sets up the factory and improves it every loop.</p>
+			<ol>
+				{
+					data.loop.map((l) => (
+						<li>
+							<strong>{l.step}</strong>
+							<span>{l.detail}</span>
+						</li>
+					))
+				}
+			</ol>
+			<a class="bff-card-more" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/framework/engineering/`}>The engineering loop →</a>
+		</aside>
+	</div>
+	<p class="bff-bp-status" aria-live="polite" data-status></p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.bff-bp').forEach((root) => {
+		const viewBtns = [...root.querySelectorAll<HTMLButtonElement>('[data-view-btn]')];
+		const status = root.querySelector<HTMLElement>('[data-status]')!;
+		const boxes = [...root.querySelectorAll<HTMLInputElement>('.bff-bp-vendors input')];
+		const update = () => {
+			const on = boxes.filter((b) => b.checked).map((b) => b.value);
+			boxes.forEach((b) => root.toggleAttribute(`data-hide-${b.value}`, !b.checked));
+			if (root.dataset.view === 'products') {
+				const visible = root.querySelectorAll('[data-show="products"] > li').length;
+				const shown = [...root.querySelectorAll<HTMLElement>('[data-show="products"] > li')].filter((li) =>
+					on.includes(li.dataset.vendor ?? ''),
+				).length;
+				status.textContent = `Showing ${shown} of ${visible} product placements.`;
+			} else status.textContent = '';
+		};
+		viewBtns.forEach((btn) =>
+			btn.addEventListener('click', () => {
+				root.dataset.view = btn.dataset.viewBtn;
+				viewBtns.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+				update();
+			}),
+		);
+		boxes.forEach((b) => b.addEventListener('change', update));
+	});
+</script>
+
+<style>
+	.bff-bp-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem 1.5rem;
+		margin-bottom: 1rem;
+	}
+	.bff-bp-vendors {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.25rem 1rem;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-2);
+		transition: opacity 0.2s var(--bff-ease-soft);
+	}
+	.bff-bp[data-view='capabilities'] .bff-bp-vendors {
+		opacity: 0.4;
+		pointer-events: none;
+	}
+	.bff-bp-vendors legend {
+		float: left;
+		margin-right: 0.25rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.06em;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-bp-vendor {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		cursor: pointer;
+	}
+	.bff-bp-vendor input {
+		accent-color: var(--vendor);
+	}
+	.bff-bp-vendor[data-vendor='github'] { --vendor: var(--bff-vendor-github); }
+	.bff-bp-vendor[data-vendor='microsoft'] { --vendor: var(--bff-vendor-microsoft); }
+	.bff-bp-vendor[data-vendor='third-party'] { --vendor: var(--bff-vendor-third); }
+
+	.bff-bp-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem);
+		gap: 1rem;
+	}
+	.bff-bp-bands {
+		display: grid;
+		gap: 0.75rem;
+	}
+	.bff-bp-band,
+	.bff-bp-eng {
+		padding: clamp(0.9rem, 2vw, 1.25rem);
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+	}
+	.bff-bp-who::before {
+		content: '';
+		display: inline-block;
+		inline-size: 0.55rem;
+		block-size: 0.55rem;
+		margin-right: 0.45rem;
+		background: var(--accent);
+		vertical-align: 0.05em;
+	}
+	.bff-bp-band[data-layer='floor'] {
+		background:
+			linear-gradient(180deg, color-mix(in oklab, var(--accent) 7%, transparent), transparent 60%),
+			var(--bff-surface);
+	}
+	.bff-bp-band header,
+	.bff-bp-eng > :is(p, h3) {
+		margin-bottom: 0.75rem;
+	}
+	.bff-bp-band header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.25rem 0.75rem;
+	}
+	.bff-bp-who {
+		order: -1;
+		inline-size: 100%;
+		margin: 0;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+		color: var(--accent);
+	}
+	.bff-bp h3 {
+		margin: 0;
+		font-size: var(--bff-text-xl);
+		font-weight: 600;
+		color: var(--sl-color-white);
+		scroll-margin-top: calc(var(--sl-nav-height) + 1.5rem);
+	}
+	.bff-bp-tag {
+		margin: 0;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-bp-cards {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
+		gap: 0.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-bp-card {
+		margin: 0;
+		padding: 0.75rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-md);
+		background: var(--sl-color-black);
+	}
+	.bff-bp-card h4 {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: 0.25rem 0.5rem;
+		margin: 0 0 0.5rem;
+		font-size: var(--bff-text-sm);
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-bp-stages {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		font-weight: 500;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-bp-items {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem 0.75rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-2);
+	}
+	.bff-bp-items li {
+		margin: 0;
+	}
+	.bff-bp[data-view='capabilities'] [data-show='products'],
+	.bff-bp[data-view='products'] [data-show='capabilities'] {
+		display: none;
+	}
+	.bff-bp[data-hide-github] li[data-vendor='github'],
+	.bff-bp[data-hide-microsoft] li[data-vendor='microsoft'],
+	.bff-bp[data-hide-third-party] li[data-vendor='third-party'] {
+		display: none;
+	}
+	.bff-bp-flow {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.25rem 2rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-bp-flow span span {
+		color: var(--bff-floor);
+		font-weight: 700;
+	}
+	.bff-bp-eng {
+		display: flex;
+		flex-direction: column;
+	}
+	.bff-bp-eng ol {
+		display: grid;
+		gap: 0.75rem;
+		margin: 0 0 1rem;
+		padding: 0;
+		list-style: none;
+		counter-reset: step;
+	}
+	.bff-bp-eng li {
+		display: grid;
+		gap: 0.15rem;
+		margin: 0;
+		padding: 0.75rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-md);
+		background: var(--sl-color-black);
+		counter-increment: step;
+	}
+	.bff-bp-eng li strong {
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-white);
+	}
+	.bff-bp-eng li strong::before {
+		content: counter(step) ' ';
+		font-family: var(--bff-font-mono);
+		color: var(--accent);
+	}
+	.bff-bp-eng li span {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-bp-status {
+		min-block-size: 1.2em;
+		margin: 0.5rem 0 0;
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	@media (max-width: 62em) {
+		.bff-bp-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

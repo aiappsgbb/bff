@@ -1,0 +1,53 @@
+---
+title: Bright Factory Framework
+description: Microsoft opinionated framework for building agentic software factories. Ideas come to life, agents do the heavy lifting, humans monitor and control.
+template: splash
+hideTitle: true
+---
+import FactoryHero from '../../components/FactoryHero.astro';
+import Section from '../../components/Section.astro';
+import FeatureCard from '../../components/FeatureCard.astro';
+import BrightVsDark from '../../components/BrightVsDark.astro';
+import WorkflowLine from '../../components/WorkflowLine.astro';
+import LevelsStrip from '../../components/LevelsStrip.astro';
+import JourneySteps from '../../components/JourneySteps.astro';
+import Closing from '../../components/Closing.astro';
+import { PILLARS, PRINCIPLES } from '../../data/content';
+import { withBase } from '../../data/site';
+
+<FactoryHero />
+
+<Section id="why" eyebrow="why.bff()" accent="green" title="Built on GitHub. Better with Microsoft. Open by design." lede="A software factory turns ideas into running software, continuously. The Bright Factory Framework is an opinionated way to build one with agents, without taking people out of control.">
+	<div class="bff-grid">
+		{PILLARS.map((p) => (
+			<FeatureCard title={p.title} kicker={p.kicker} accent={p.accent}>{p.text}</FeatureCard>
+		))}
+	</div>
+</Section>
+
+<Section id="bright" eyebrow="bright.vs(dark)" accent="yellow" title="Not a dark factory. A bright one." lede="A dark factory runs with the lights off and nobody watching. In a bright factory the floor can dim, but the HQ, where people set intent and take decisions, never does.">
+	<BrightVsDark />
+	<p class="bff-section-more"><a href={withBase('/fundamentals/bright-vs-dark/')}>Why the HQ stays bright →</a></p>
+</Section>
+
+<Section id="line" eyebrow="factory.line()" accent="blue" title="One line from idea to production." lede="Plan, build, verify and observe. The same four stations at every level of automation. What changes is who does the work, and who approves it.">
+	<WorkflowLine />
+</Section>
+
+<Section id="principles" eyebrow="framework.principles()" accent="purple" title="Six principles behind every bright factory." lede="They hold at every automation level, for every work type, whatever tools you bring.">
+	<div class="bff-grid">
+		{PRINCIPLES.map((p) => (
+			<FeatureCard title={p.title} image={p.image} accent={p.accent} href={`/framework/principles/#${p.title.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-')}`}>{p.short}</FeatureCard>
+		))}
+	</div>
+</Section>
+
+<Section id="levels" eyebrow="factory.dimmer()" accent="green" title="A dimmer, not a switch." lede="Three automation levels, set per work type. Move up when the evidence says so, and dim back up when it doesn't.">
+	<LevelsStrip />
+</Section>
+
+<Section id="journey" eyebrow="journey.start()" accent="orange" title="Your path to a bright factory." lede="Explore the primitives, find your level, pilot one move up, then scale work type by work type.">
+	<JourneySteps />
+</Section>
+
+<Closing />

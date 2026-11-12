@@ -1,0 +1,22 @@
+---
+title: Find your level
+description: Eight questions, two minutes. Find the automation level for one work type, and the next three moves to get to the next one.
+eyebrow: assess.level()
+wide: true
+tableOfContents: false
+---
+import SelfAssessment from '../../../components/SelfAssessment.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+<SelfAssessment />
+
+## How the score works
+
+Each answer scores 0, 1 or 2. Up to 5 points is **Crawl**, 6 to 11 is **Walk** and 12 or more is **Run**. Two rules come first:
+
+- **No shared gates, no automation.** If people and agents don't go through the same gates, the work type stays at Crawl, whatever the score.
+- **No evidence, no lights-off.** Run needs an evidence bundle on every change. Without it, the work type stays at Walk.
+
+<Aside type="tip">
+Your answers and level stay in this browser. Level pages, playbooks and diagrams across the site follow the level you get here.
+</Aside>

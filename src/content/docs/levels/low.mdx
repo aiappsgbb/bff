@@ -1,0 +1,46 @@
+---
+title: Low automation · Crawl
+description: "Lights on. Humans drive every step, agents assist. Singleplayer: one developer and their agents, on a laptop."
+eyebrow: level.crawl()
+accent: yellow
+---
+import LevelIndicator from '../../../components/LevelIndicator.astro';
+import LevelStages from '../../../components/LevelStages.astro';
+import Primitives from '../../../components/Primitives.astro';
+import LevelCompare from '../../../components/LevelCompare.astro';
+import { LEVELS } from '../../../data/site';
+import { LinkCard } from '@astrojs/starlight/components';
+
+<LevelIndicator level="low" />
+
+At Crawl, agents are assistants. A developer plans with Copilot, codes with Copilot and accepts each edit. CI tests and scans every change, and a person approves every pull request and every release.
+
+This level is about building trust and the foundations everything else depends on: shared gates, written-down context and a habit of reviewing what agents produce.
+
+## The line at this level
+
+Who does what at each station, what the HQ puts in and gets back, and what the foundations supply and keep.
+
+<LevelStages level="low" />
+
+## Multiplayer mode
+
+**Singleplayer.** Agents run locally, in the IDE, the Copilot CLI and the Copilot app. The developer at the keyboard is the only one who sees the session. Hand-offs happen through pull requests, as they always have.
+
+## Primitives
+
+The building blocks for this level, by layer. Products marked **new** are recent or in preview.
+
+<Primitives level="low" />
+
+## Ready to move up when
+
+<p class="bff-ready" data-level-accent="low">{LEVELS.low.readyWhen}</p>
+
+<LevelCompare current="low" />
+
+## See it working
+
+{LEVELS.low.demo} [See the demo acts →](/get-started/demos/)
+
+<LinkCard title="Open the Crawl playbook" description="Step-by-step instructions for this level, with UI and CLI tracks." href="/playbooks/low/" />

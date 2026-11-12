@@ -1,0 +1,42 @@
+---
+title: For partners
+description: The framework is open for partners to build on. Package your own IP on top of it, and help customers build their factories at scale.
+eyebrow: partners.build()
+---
+import { Image } from 'astro:assets';
+import partners from '../../../assets/lego/partners.png';
+import { LEGO_ALT } from '../../../lib/images';
+import { CardGrid, Card } from '@astrojs/starlight/components';
+
+<figure class="bff-figure">
+	<Image src={partners} alt={LEGO_ALT.partners} widths={[480, 760, 1080]} sizes="(min-width: 60em) 44rem, 92vw" />
+	<figcaption>Customers can apply the framework directly. Specialised partners take it further, and to more teams.</figcaption>
+</figure>
+
+## Two ways to use the framework
+
+**Customers apply it directly.** Use the levels, playbooks and big picture to build your own factory, one work type at a time.
+
+**Partners build on it.** The framework is composable by design, so partners can fill its components with their own IP and offer it as a product or a service. Specialised partners are how the bright factory reaches every industry and every team.
+
+## What partners can build
+
+<CardGrid>
+	<Card title="Assessments" icon="magnifier">Factory readiness reviews based on the levels and the self-assessment, with a roadmap per work type.</Card>
+	<Card title="Skills and context packs" icon="open-book">Agent skills, instructions and specs for a stack, a domain or an industry, versioned and reviewed like code.</Card>
+	<Card title="Agents and tools" icon="puzzle">Custom agents and MCP servers that plug into the factory floor and the foundations.</Card>
+	<Card title="Factory accelerators" icon="rocket">Templates for gates, automations, environments and policies that stand up a level in days.</Card>
+	<Card title="Industry factories" icon="seti:config">Opinionated factories for regulated or specialised industries, with their own controls and evidence.</Card>
+	<Card title="Managed operations" icon="setting">Run and tune the factory for a customer: the engineering loop as a service.</Card>
+</CardGrid>
+
+## How a partner engagement can run
+
+1. **Assess.** Map the customer's work types to levels, and find the weakest foundations.
+2. **Pilot.** Take one work type up one level, with the playbook and the customer's own tools.
+3. **Prove.** Measure it end to end against the same SLOs, and rehearse dimming back up.
+4. **Scale.** Repeat per work type and per team, and hand over the engineering loop or run it as a service.
+
+## Get involved
+
+Talk to your Microsoft or partner contact about partner programmes, enablement and co-selling for the Bright Factory Framework.

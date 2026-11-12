@@ -1,0 +1,21 @@
+---
+// Pause/play for looping visuals (WCAG 2.2.2). Pauses every animation inside the closest [data-pausable].
+---
+
+<button class="bff-pause" type="button" aria-pressed="false" data-pause>
+	<span aria-hidden="true" data-icon>❚❚</span><span data-label>Pause</span>
+</button>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>('[data-pause]').forEach((btn) => {
+		const host = btn.closest<HTMLElement>('[data-pausable]');
+		if (!host) return;
+		btn.addEventListener('click', () => {
+			const paused = btn.getAttribute('aria-pressed') !== 'true';
+			btn.setAttribute('aria-pressed', String(paused));
+			host.toggleAttribute('data-paused', paused);
+			btn.querySelector('[data-icon]')!.textContent = paused ? '▶' : '❚❚';
+			btn.querySelector('[data-label]')!.textContent = paused ? 'Play' : 'Pause';
+		});
+	});
+</script>

@@ -1,0 +1,451 @@
+---
+import { INDUSTRY_PILLARS, OUTCOMES, PATTERNS } from '../data/content';
+import { LEVELS, LEVEL_ORDER } from '../data/site';
+import FactoryThumb from './FactoryThumb.astro';
+
+const stations = ['Plan', 'Build', 'Verify', 'Observe'];
+const lanes = [
+	{ y: 225, n: 1, dur: 16, extra: false },
+	{ y: 135, n: 3, dur: 7, extra: true },
+	{ y: 315, n: 3, dur: 8, extra: true },
+];
+const pillarAccents = ['green', 'blue', 'purple', 'pink', 'orange', 'yellow'];
+const captions: Record<string, string> = {
+	line: 'A repeatable line from intent to production.',
+	agents: 'Agents work in parallel, around the clock.',
+	patterns: 'Four patterns teams automate first.',
+	pillars: 'Six capabilities every agentic factory needs.',
+	dark: 'Lights out at once: humans out of the loop.',
+	bright: 'The floor dims. The HQ stays bright.',
+	dimmer: 'A dimmer, not a switch: one work type at a time.',
+	outcomes: 'Velocity, intelligence and quality, together.',
+};
+---
+
+<div class="bff-fv">
+	<div class="bff-fv-stage">
+		<div class="bff-fv-layer" data-frames="line agents">
+			<svg viewBox="0 0 600 450" class="bff-fv-line">
+				<line class="bff-fv-belt" x1="20" y1="245" x2="580" y2="245" />
+				{
+					stations.map((s, i) => (
+						<g class="bff-fv-station" data-i={i}>
+							<rect x={40 + i * 140} y="60" width="100" height="330" rx="12" />
+							<text x={90 + i * 140} y="48" text-anchor="middle">
+								{s}
+							</text>
+						</g>
+					))
+				}
+				{
+					lanes.map((l) => (
+						<g class:list={['bff-fv-lane', { 'bff-fv-extra': l.extra }]}>
+							{l.extra && <line class="bff-fv-belt" x1="20" y1={l.y + 20} x2="580" y2={l.y + 20} />}
+							{Array.from({ length: l.n }, (_, k) => (
+								<g class="bff-fv-brick" style={`--y:${l.y - 8}px;--dur:${l.dur}s;--delay:${(-l.dur * k) / l.n}s`}>
+									<rect class="bff-fv-stud" x="7" y="-5" width="8" height="6" rx="1.5" />
+									<rect class="bff-fv-stud" x="23" y="-5" width="8" height="6" rx="1.5" />
+									<rect width="38" height="22" rx="3" />
+								</g>
+							))}
+						</g>
+					))
+				}
+				<text class="bff-fv-par bff-fv-extra" x="300" y="425" text-anchor="middle">× many, in parallel</text>
+			</svg>
+		</div>
+
+		<div class="bff-fv-layer" data-frames="patterns">
+			<ol class="bff-fv-patterns">
+				{
+					PATTERNS.map((p, i) => (
+						<li style={`--i:${i}`}>
+							<span class="bff-fv-n">{String(i + 1).padStart(2, '0')}</span>
+							<strong>{p.title}</strong>
+							<span>{p.needs}</span>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+
+		<div class="bff-fv-layer" data-frames="pillars">
+			<ul class="bff-fv-pillars">
+				{
+					INDUSTRY_PILLARS.map((p, i) => (
+						<li data-accent={pillarAccents[i]} style={`--i:${i}`}>
+							<strong>{p.title}</strong>
+							<span>{p.text}</span>
+						</li>
+					))
+				}
+			</ul>
+		</div>
+
+		<div class="bff-fv-layer bff-fv-factory" data-frames="dark bright dimmer">
+			<FactoryThumb level="medium" sizes="(min-width: 62em) 36rem, 92vw" />
+			<div class="bff-fv-tags">
+				<span class="bff-fv-tag" data-show="bright" data-tone="hq">HQ · lights on</span>
+				<span class="bff-fv-tag" data-show="bright" data-tone="floor">Floor · dimmed</span>
+				<span class="bff-fv-tag" data-show="dark" data-tone="alert">Nobody watching</span>
+			</div>
+			<div class="bff-fv-dimmer" data-show="dimmer">
+				{LEVEL_ORDER.map((k) => <span data-k={k}>{LEVELS[k].gait}</span>)}
+				<i></i>
+			</div>
+		</div>
+
+		<div class="bff-fv-layer" data-frames="outcomes">
+			<ol class="bff-fv-outcomes">
+				{
+					OUTCOMES.map((o, i) => (
+						<li style={`--i:${i}`}>
+							<strong>{o.title}</strong>
+							<span>{o.text}</span>
+						</li>
+					))
+				}
+			</ol>
+		</div>
+	</div>
+	<p class="bff-fv-caption">
+		{Object.entries(captions).map(([k, v]) => <span data-cap={k}>{v}</span>)}
+	</p>
+</div>
+
+<script>
+	document.querySelectorAll<HTMLElement>('.bff-scrolly').forEach((root) => {
+		const thumb = root.querySelector<HTMLElement>('.bff-fv .bff-thumb');
+		const fv = root.querySelector<HTMLElement>('.bff-fv');
+		if (!thumb || !fv) return;
+		const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+		const order = ['low', 'medium', 'high'];
+		let timer: number | undefined;
+		const setLevel = (l: string) => {
+			thumb.dataset.level = l;
+			fv.dataset.level = l;
+		};
+		root.addEventListener('bff:frame', (e) => {
+			const frame = (e as CustomEvent<string>).detail;
+			window.clearInterval(timer);
+			if (frame === 'dark') setLevel('dark');
+			else if (frame === 'bright') setLevel('high');
+			else if (frame === 'dimmer') {
+				let i = 0;
+				setLevel(order[i]);
+				if (!reduce)
+					timer = window.setInterval(() => {
+						i = (i + 1) % order.length;
+						setLevel(order[i]);
+					}, 1800);
+			}
+		});
+	});
+</script>
+
+<style>
+	.bff-fv {
+		display: grid;
+		grid-template-rows: 1fr auto;
+		gap: 0.75rem;
+		block-size: 100%;
+	}
+	.bff-fv-stage {
+		position: relative;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background:
+			linear-gradient(var(--bff-grid-line) 1px, transparent 1px) 0 0 / 2rem 2rem,
+			linear-gradient(90deg, var(--bff-grid-line) 1px, transparent 1px) 0 0 / 2rem 2rem,
+			var(--bff-surface);
+		overflow: hidden;
+	}
+	.bff-fv-layer {
+		position: absolute;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		padding: clamp(0.75rem, 2.5vw, 1.75rem);
+		opacity: 0;
+		visibility: hidden;
+		transform: scale(0.98);
+		transition:
+			opacity 0.5s var(--bff-ease-soft),
+			transform 0.6s var(--bff-ease-out),
+			visibility 0s linear 0.5s;
+	}
+	:global(.bff-scrolly[data-frame='line']) .bff-fv-layer[data-frames~='line'],
+	:global(.bff-scrolly[data-frame='agents']) .bff-fv-layer[data-frames~='agents'],
+	:global(.bff-scrolly[data-frame='patterns']) .bff-fv-layer[data-frames~='patterns'],
+	:global(.bff-scrolly[data-frame='pillars']) .bff-fv-layer[data-frames~='pillars'],
+	:global(.bff-scrolly[data-frame='dark']) .bff-fv-layer[data-frames~='dark'],
+	:global(.bff-scrolly[data-frame='bright']) .bff-fv-layer[data-frames~='bright'],
+	:global(.bff-scrolly[data-frame='dimmer']) .bff-fv-layer[data-frames~='dimmer'],
+	:global(.bff-scrolly[data-frame='outcomes']) .bff-fv-layer[data-frames~='outcomes'] {
+		opacity: 1;
+		visibility: visible;
+		transform: none;
+		transition-delay: 0s;
+	}
+
+	/* Line + agents */
+	.bff-fv-line {
+		inline-size: 100%;
+		block-size: 100%;
+	}
+	.bff-fv-station rect {
+		fill: color-mix(in oklab, var(--st) 8%, transparent);
+		stroke: color-mix(in oklab, var(--st) 55%, transparent);
+		stroke-width: 1.5;
+	}
+	.bff-fv-station text {
+		fill: var(--sl-color-white);
+		font-size: var(--bff-text-xl);
+		font-weight: 600;
+	}
+	.bff-fv-station[data-i='0'] { --st: var(--bff-yellow); }
+	.bff-fv-station[data-i='1'] { --st: var(--bff-green); }
+	.bff-fv-station[data-i='2'] { --st: var(--bff-blue); }
+	.bff-fv-station[data-i='3'] { --st: var(--bff-orange); }
+	.bff-fv-belt {
+		stroke: var(--sl-color-gray-5);
+		stroke-width: 6;
+		stroke-linecap: round;
+	}
+	.bff-fv-brick {
+		transform: translate(20px, var(--y));
+		animation: bff-fv-move var(--dur) linear var(--delay) infinite;
+	}
+	.bff-fv-brick rect {
+		animation: bff-fv-paint var(--dur) linear var(--delay) infinite;
+	}
+	.bff-fv-stud {
+		filter: brightness(1.15);
+	}
+	@keyframes bff-fv-move {
+		from { transform: translate(20px, var(--y)); }
+		to { transform: translate(542px, var(--y)); }
+	}
+	@keyframes bff-fv-paint {
+		0%, 24% { fill: var(--bff-yellow); }
+		26%, 49% { fill: var(--bff-green); }
+		51%, 74% { fill: var(--bff-blue); }
+		76%, 100% { fill: var(--bff-orange); }
+	}
+	.bff-fv-extra {
+		opacity: 0;
+		transition: opacity 0.6s var(--bff-ease-soft);
+	}
+	:global(.bff-scrolly[data-frame='agents']) .bff-fv-extra {
+		opacity: 1;
+	}
+	.bff-fv-par {
+		fill: var(--sl-color-gray-2);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-lg);
+	}
+
+	/* Patterns, pillars, outcomes */
+	.bff-fv-patterns,
+	.bff-fv-pillars,
+	.bff-fv-outcomes {
+		display: grid;
+		gap: 0.6rem;
+		inline-size: 100%;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-fv-patterns {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.bff-fv-pillars {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+	.bff-fv-patterns li,
+	.bff-fv-pillars li,
+	.bff-fv-outcomes li {
+		display: grid;
+		align-content: start;
+		gap: 0.3rem;
+		margin: 0;
+		padding: 0.9rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-md);
+		background: var(--sl-color-black);
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+		transform: translateY(8px);
+		opacity: 0;
+		transition:
+			opacity 0.45s var(--bff-ease-soft) calc(var(--i) * 80ms),
+			transform 0.5s var(--bff-ease-out) calc(var(--i) * 80ms);
+	}
+	:global(.bff-scrolly[data-frame='patterns']) .bff-fv-patterns li,
+	:global(.bff-scrolly[data-frame='pillars']) .bff-fv-pillars li,
+	:global(.bff-scrolly[data-frame='outcomes']) .bff-fv-outcomes li {
+		transform: none;
+		opacity: 1;
+	}
+	.bff-fv strong {
+		font-size: var(--bff-text-md);
+		color: var(--sl-color-white);
+	}
+	.bff-fv-n {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-4);
+	}
+	.bff-fv-pillars li {
+		position: relative;
+		padding-top: 1.4rem;
+		border-color: color-mix(in oklab, var(--accent) 45%, transparent);
+		background: color-mix(in oklab, var(--accent) 10%, var(--sl-color-black));
+	}
+	.bff-fv-pillars li::before {
+		content: '';
+		position: absolute;
+		inset: 0.55rem auto auto 0.9rem;
+		inline-size: 2.2rem;
+		block-size: 0.45rem;
+		background: radial-gradient(circle at 25% 50%, var(--accent) 0.22rem, transparent 0.24rem),
+			radial-gradient(circle at 75% 50%, var(--accent) 0.22rem, transparent 0.24rem);
+	}
+	.bff-fv-outcomes li {
+		grid-template-columns: 9rem 1fr;
+		align-items: baseline;
+		padding-block: 1.25rem;
+	}
+	.bff-fv-outcomes strong {
+		font-size: var(--bff-text-lede);
+		font-weight: 500;
+		letter-spacing: -0.01em;
+	}
+
+	/* Factory frames */
+	.bff-fv-factory {
+		align-content: center;
+		gap: 0.75rem;
+	}
+	.bff-fv-factory :global(.bff-thumb) {
+		inline-size: 100%;
+	}
+	.bff-fv-tags {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+	}
+	.bff-fv-tag {
+		position: absolute;
+		padding: 0.2rem 0.6rem;
+		border-radius: var(--bff-radius-pill);
+		background: var(--sl-color-black);
+		color: var(--sl-color-white);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		font-weight: 600;
+		box-shadow: var(--bff-shadow-sm);
+		opacity: 0;
+		transition: opacity 0.4s var(--bff-ease-soft) 0.3s;
+	}
+	.bff-fv-tag[data-tone='hq'] { inset: 22% 14% auto auto; border: 1px solid var(--bff-hq); }
+	.bff-fv-tag[data-tone='floor'] { inset: auto auto 34% 12%; border: 1px solid var(--bff-floor); }
+	.bff-fv-tag[data-tone='alert'] { inset: 22% auto auto 50%; translate: -50% 0; border: 1px solid var(--bff-alert); }
+	:global(.bff-scrolly[data-frame='bright']) [data-show='bright'],
+	:global(.bff-scrolly[data-frame='dark']) [data-show='dark'] {
+		opacity: 1;
+	}
+	.bff-fv-dimmer {
+		position: relative;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		inline-size: min(100%, 22rem);
+		margin-inline: auto;
+		padding: 0.25rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-pill);
+		background: var(--sl-color-black);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-xs);
+		text-align: center;
+		color: var(--sl-color-gray-3);
+		opacity: 0;
+		transition: opacity 0.4s var(--bff-ease-soft);
+	}
+	:global(.bff-scrolly[data-frame='dimmer']) .bff-fv-dimmer {
+		opacity: 1;
+	}
+	.bff-fv-dimmer span {
+		position: relative;
+		z-index: 1;
+		padding: 0.3rem;
+	}
+	.bff-fv-dimmer i {
+		position: absolute;
+		inset: 0.25rem auto 0.25rem 0.25rem;
+		inline-size: calc((100% - 0.5rem) / 3);
+		border-radius: var(--bff-radius-pill);
+		background: var(--bff-yellow);
+		transition:
+			transform 0.6s var(--bff-ease-out),
+			background-color 0.6s var(--bff-ease-soft);
+	}
+	.bff-fv[data-level='medium'] .bff-fv-dimmer i { transform: translateX(100%); background: var(--bff-green); }
+	.bff-fv[data-level='high'] .bff-fv-dimmer i { transform: translateX(200%); background: var(--bff-blue); }
+	.bff-fv[data-level='low'] [data-k='low'],
+	.bff-fv[data-level='medium'] [data-k='medium'],
+	.bff-fv[data-level='high'] [data-k='high'] {
+		color: var(--bff-on-accent);
+		font-weight: 700;
+	}
+
+	.bff-fv-caption {
+		position: relative;
+		min-block-size: 1.5em;
+		margin: 0;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-fv-caption span {
+		position: absolute;
+		inset: 0;
+		opacity: 0;
+		transition: opacity 0.3s var(--bff-ease-soft);
+	}
+	:global(.bff-scrolly[data-frame='line']) [data-cap='line'],
+	:global(.bff-scrolly[data-frame='agents']) [data-cap='agents'],
+	:global(.bff-scrolly[data-frame='patterns']) [data-cap='patterns'],
+	:global(.bff-scrolly[data-frame='pillars']) [data-cap='pillars'],
+	:global(.bff-scrolly[data-frame='dark']) [data-cap='dark'],
+	:global(.bff-scrolly[data-frame='bright']) [data-cap='bright'],
+	:global(.bff-scrolly[data-frame='dimmer']) [data-cap='dimmer'],
+	:global(.bff-scrolly[data-frame='outcomes']) [data-cap='outcomes'] {
+		opacity: 1;
+	}
+
+	@media (max-width: 62em) {
+		.bff-fv-patterns li span:not(.bff-fv-n),
+		.bff-fv-pillars li span,
+		.bff-fv-outcomes li span {
+			display: none;
+		}
+		.bff-fv-outcomes li {
+			grid-template-columns: 1fr;
+			padding-block: 0.6rem;
+		}
+		.bff-fv-patterns li,
+		.bff-fv-pillars li {
+			padding: 0.6rem;
+		}
+		.bff-fv-pillars li {
+			padding-top: 1.2rem;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.bff-fv-brick,
+		.bff-fv-brick rect {
+			animation: none;
+		}
+	}
+</style>

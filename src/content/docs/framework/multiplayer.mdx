@@ -1,0 +1,40 @@
+---
+title: Singleplayer to multiplayer
+description: The factory grows from one developer and their agents on a laptop, to shared cloud sessions the team can steer, to fleets of agents across the organisation.
+eyebrow: framework.multiplayer()
+---
+import MultiplayerDiagram from '../../../components/MultiplayerDiagram.astro';
+import { Image } from 'astro:assets';
+import mp from '../../../assets/lego/multiplayer.png';
+import { LEGO_ALT } from '../../../lib/images';
+
+<MultiplayerDiagram />
+
+## Singleplayer: one seat, one session
+
+At **Crawl**, agents run where the developer works: in the IDE, the Copilot CLI and the Copilot app. The developer prompts, watches and accepts each edit. It's the fastest way to build trust, and nobody else sees the session.
+
+Singleplayer is a starting point, not a dead end. The instructions, skills and gates you build here are the same ones the team will share.
+
+## Multiplayer: shared sessions in the cloud
+
+At **Walk**, agents move to cloud sandboxes with Copilot cloud agent. Work starts from issues, events, schedules and production signals, not only from a prompt. Sessions are visible in mission control and the Copilot app, so anyone on the team can watch, steer or pick one up.
+
+<figure class="bff-figure">
+	<Image src={mp} alt={LEGO_ALT.multiplayer} widths={[480, 760, 1080]} sizes="(min-width: 60em) 44rem, 92vw" />
+	<figcaption>People and agents share the same sessions, from any device.</figcaption>
+</figure>
+
+**Session continuity** is what makes it multiplayer: start on the phone on the way in, check progress from a meeting in Microsoft Teams, and continue the same session at the desk with its history intact.
+
+## Multiplayer at scale: fleets by work type
+
+At **Run**, each work type has its own fleet of agents, working in isolated sandboxes behind the agent firewall. People steer by exception from any device. Policy as code, an agent registry and evals per agent keep the organisation in control.
+
+## What changes as you go multiplayer
+
+- **Visibility:** from the person at the keyboard, to the team, to the whole organisation with a full audit trail.
+- **Hand-offs:** from none, to sessions that move across people and devices, to work that moves across teams and time zones.
+- **Governance:** from repository rules, to agent identities and budgets per team, to policy as code.
+
+The diagram above follows the level you chose on any page. Switch it to compare.
