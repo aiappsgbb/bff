@@ -5,14 +5,14 @@ export const PILLARS = [
 		key: 'github',
 		accent: 'green',
 		title: 'Built on GitHub',
-		kicker: 'the factory floor',
+		kicker: 'one platform, humans and agents',
 		text: 'Where humans and agents plan, build, verify and observe together, in one continuous session, secure from the start.',
 	},
 	{
 		key: 'microsoft',
 		accent: 'blue',
 		title: 'Better with Microsoft',
-		kicker: 'from commit to customer',
+		kicker: 'context, cloud and control',
 		text: 'Agents grounded in real business context, with a cloud that runs, secures and learns from what ships.',
 	},
 	{
