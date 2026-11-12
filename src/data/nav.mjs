@@ -1,4 +1,4 @@
-// Information architecture shared by the Starlight sidebar and the llms.txt endpoints.
+// Information architecture shared by the Starlight sidebar and the AGENTS.md and llms-full.txt endpoints.
 // Plain JS so astro.config.mjs can import it.
 
 /** @type {{ label: string; items: ({ slug: string; label?: string; badge?: { text: string; variant: 'tip' | 'caution' | 'note' | 'danger' | 'success' | 'default' } })[] }[]} */

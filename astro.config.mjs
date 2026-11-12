@@ -40,7 +40,7 @@ export default defineConfig({
 				{ tag: 'meta', attrs: { property: 'og:image', content: new URL(withBase('/og.png'), site).href } },
 				{ tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
 				{ tag: 'meta', attrs: { name: 'theme-color', content: '#08872b' } },
-				{ tag: 'link', attrs: { rel: 'alternate', type: 'text/plain', href: withBase('/llms.txt'), title: 'llms.txt' } },
+				{ tag: 'link', attrs: { rel: 'alternate', type: 'text/markdown', href: withBase('/AGENTS.md'), title: 'AGENTS.md' } },
 			],
 			sidebar: SIDEBAR,
 		}),

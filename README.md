@@ -27,7 +27,7 @@ npm run preview    # serve dist/
 | `src/components/` | Interactive visuals: factory hero, dimmer, big picture, self-assessment, playbook progress. |
 | `src/assets/lego/` | Generated LEGO-style illustrations. |
 | `src/styles/` | Theme tokens, fonts and shared component styles. See [DESIGN.md](DESIGN.md). |
-| `src/pages/` | Agent-friendly endpoints: `/llms.txt`, `/llms-full.txt` and `/markdown/<page>.md`. |
+| `src/pages/` | Agent-friendly endpoints: `/AGENTS.md`, `/llms-full.txt` and `/markdown/<page>.md`. |
 
 ## Writing pages
 

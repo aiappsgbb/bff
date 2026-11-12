@@ -11,7 +11,12 @@ export const GET: APIRoute = async ({ site }) => {
 		'',
 		'> Microsoft opinionated framework for building agentic software factories on GitHub, better with Microsoft and open to the tools teams already use. Ideas come to life, agents do the heavy lifting, humans monitor and control.',
 		'',
-		`Every page is also available as Markdown. The full text is at ${root}/llms-full.txt.`,
+		'## Using these docs',
+		'',
+		`- Every page below is available as Markdown. The full text is at ${root}/llms-full.txt.`,
+		`- Use framework terms as defined in the glossary: ${root}/markdown/reference/glossary.md.`,
+		'- Some capabilities are in preview; verify availability for the plan and region before recommending them.',
+		'- The playbooks are drafts.',
 	];
 	for (const group of NAV) {
 		lines.push('', `## ${group.label}`, '');
@@ -22,5 +27,5 @@ export const GET: APIRoute = async ({ site }) => {
 			lines.push(`- [${e.data.title}](${root}/markdown/${slug}.md)${desc}`);
 		}
 	}
-	return new Response(`${lines.join('\n')}\n`, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } });
+	return new Response(`${lines.join('\n')}\n`, { headers: { 'Content-Type': 'text/markdown; charset=utf-8' } });
 };
