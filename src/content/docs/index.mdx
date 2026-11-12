@@ -30,11 +30,11 @@ import { withBase } from '../../data/site';
 	<p class="bff-section-more"><a href={withBase('/fundamentals/bright-vs-dark/')}>Why the HQ stays bright →</a></p>
 </Section>
 
-<Section id="line" eyebrow="factory.line()" accent="blue" title="One line from idea to production." lede="Plan, build, verify and observe. The same four stations at every level of automation. What changes is who does the work, and who approves it.">
+<Section id="line" eyebrow="factory.line()" accent="blue" title="One line from idea to production." lede="Plan, build, verify and observe. The same four stations at every level of autonomy. What changes is who does the work, and who approves it.">
 	<WorkflowLine />
 </Section>
 
-<Section id="principles" eyebrow="framework.principles()" accent="purple" title="Six principles behind every bright factory." lede="They hold at every automation level, for every work type, whatever tools you bring.">
+<Section id="principles" eyebrow="framework.principles()" accent="purple" title="Six principles behind every bright factory." lede="They hold at every autonomy level, for every work type, whatever tools you bring.">
 	<div class="bff-grid">
 		{PRINCIPLES.map((p) => (
 			<FeatureCard title={p.title} image={p.image} accent={p.accent} href={`/framework/principles/#${p.title.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-')}`}>{p.short}</FeatureCard>
@@ -42,7 +42,7 @@ import { withBase } from '../../data/site';
 	</div>
 </Section>
 
-<Section id="levels" eyebrow="factory.dimmer()" accent="green" title="A dimmer, not a switch." lede="Three automation levels, set per work type. Move up when the evidence says so, and dim back up when it doesn't.">
+<Section id="levels" eyebrow="factory.dimmer()" accent="green" title="A dimmer, not a switch." lede="Three autonomy levels, set per work type. Move up when the evidence says so, and dim back up when it doesn't.">
 	<LevelsStrip />
 </Section>
 

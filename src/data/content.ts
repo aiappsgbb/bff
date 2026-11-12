@@ -63,7 +63,7 @@ export const PRINCIPLES = [
 		accent: 'pink',
 		title: 'A reversible dimmer',
 		short: 'Dim the floor, and dim it back up in minutes.',
-		text: 'Automation is set per work type and can be undone. When signals say so, approvals return to people and work continues from Git, so the business never stops.',
+		text: 'Autonomy is set per work type and can be undone. When signals say so, approvals return to people and work continues from Git, so the business never stops.',
 	},
 	{
 		key: 'multiplayer',
@@ -125,7 +125,7 @@ export const JOURNEY = [
 		key: 'assess',
 		title: 'Assess',
 		kicker: 'Find your level',
-		text: 'Map your delivery line onto the big picture, find the automation level of each work type and pick the first one to move up.',
+		text: 'Map your delivery line onto the big picture, find the autonomy level of each work type and pick the first one to move up.',
 		href: '/get-started/find-your-level/',
 	},
 	{

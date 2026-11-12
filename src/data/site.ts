@@ -61,7 +61,7 @@ export const LEVELS: Record<LevelKey, {
 }> = {
 	low: {
 		key: 'low',
-		name: 'Low automation',
+		name: 'Low autonomy',
 		gait: 'Crawl',
 		tagline: 'Humans drive every step, agents assist.',
 		floor: 'Lights on',
@@ -75,7 +75,7 @@ export const LEVELS: Record<LevelKey, {
 	},
 	medium: {
 		key: 'medium',
-		name: 'Medium automation',
+		name: 'Medium autonomy',
 		gait: 'Walk',
 		tagline: 'Agents do the work, people approve.',
 		floor: 'Dimmed',
@@ -89,7 +89,7 @@ export const LEVELS: Record<LevelKey, {
 	},
 	high: {
 		key: 'high',
-		name: 'High automation',
+		name: 'High autonomy',
 		gait: 'Run',
 		tagline: 'The floor runs lights-off, the HQ stays bright.',
 		floor: 'Lights-off',

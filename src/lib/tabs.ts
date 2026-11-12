@@ -22,7 +22,7 @@ export function shareLevel(level: Level, source?: Element) {
 
 /**
  * WAI-ARIA tabs: click, arrow keys, Home/End. With `syncLevel`, tabs carrying `data-level`
- * follow the reader's chosen automation level across components.
+ * follow the reader's chosen autonomy level across components.
  */
 export function bindTabs(root: HTMLElement, { syncLevel = false } = {}) {
 	const tabs = [...root.querySelectorAll<HTMLButtonElement>('[role="tab"]')];

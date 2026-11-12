@@ -22,7 +22,7 @@ npm run preview    # serve dist/
 | `src/content/docs/` | Every page, as Markdown or MDX. The folder structure is the URL structure. |
 | `src/data/nav.mjs` | The sidebar and reading order. Every slug listed here must have a page. |
 | `src/data/content.ts` | Narrative content reused by pages and components: pillars, principles, patterns, demo acts. |
-| `src/data/site.ts` | Automation levels, dim-back-up triggers and product helpers. |
+| `src/data/site.ts` | Autonomy levels, dim-back-up triggers and product helpers. |
 | `src/data/framework.json` | Layers, components, products and per-level stages, generated from the deck sources. |
 | `src/components/` | Interactive visuals: factory hero, dimmer, big picture, self-assessment, playbook progress. |
 | `src/assets/lego/` | Generated LEGO-style illustrations. |

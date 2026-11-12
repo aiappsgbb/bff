@@ -83,7 +83,7 @@ const hotspots = [
 
 		<div class="bff-dimmer-panel">
 			<fieldset class="bff-dimmer">
-				<legend><span class="bff-mono">automation.dimmer</span><span class="sr-only">: choose an automation level</span></legend>
+				<legend><span class="bff-mono">autonomy.dimmer</span><span class="sr-only">: choose an autonomy level</span></legend>
 				<div class="bff-dimmer-plate">
 					<div class="bff-dimmer-track" aria-hidden="true"><span class="bff-dimmer-knob"></span></div>
 					<div class="bff-dimmer-stops">
@@ -91,7 +91,7 @@ const hotspots = [
 							LEVEL_ORDER.map((k) => (
 								<label class="bff-dimmer-stop" data-stop={k}>
 									<input type="radio" name="bff-level" value={k} checked={k === 'medium'} />
-									<span class="name">{LEVELS[k].name.replace(' automation', '')}</span>
+									<span class="name">{LEVELS[k].name.replace(' autonomy', '')}</span>
 									<span class="gait">{LEVELS[k].gait} · {LEVELS[k].floor.toLowerCase()}</span>
 								</label>
 							))

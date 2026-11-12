@@ -26,7 +26,7 @@ export const NAV = [
 		],
 	},
 	{
-		label: 'Automation levels',
+		label: 'Autonomy levels',
 		items: [
 			{ slug: 'levels' },
 			{ slug: 'levels/low' },
