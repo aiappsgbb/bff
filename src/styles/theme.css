@@ -88,6 +88,13 @@
 	--sl-line-height-headings: 1.12;
 	--sl-content-width: 46rem;
 	--sl-nav-height: 4rem;
+
+	/* Logo: the lit brick. */
+	--bff-brick-hi: #3fd365;
+	--bff-brick: #0fbf3e;
+	--bff-brick-lo: #08872b;
+	--bff-brick-lit: #ffd866;
+	--bff-brick-lit-lo: #d4a72c;
 }
 
 :root[data-theme='light'] {
@@ -103,6 +110,11 @@
 	--sl-color-accent-low: #ebf9f4;
 	--sl-color-accent: #08872b;
 	--sl-color-accent-high: #0d6731;
+	--bff-brick-hi: #2da44e;
+	--bff-brick: #08872b;
+	--bff-brick-lo: #066b22;
+	--bff-brick-lit: #ffd33d;
+	--bff-brick-lit-lo: #d4a72c;
 	--sl-color-bg-nav: rgb(255 255 255 / 0.85);
 	--sl-color-bg-sidebar: #ffffff;
 	--sl-color-hairline: #e4ebe6;

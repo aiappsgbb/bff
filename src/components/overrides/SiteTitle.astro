@@ -3,12 +3,20 @@ import { withBase } from '../../data/site';
 ---
 
 <a href={withBase('/')} class="bff-site-title" aria-label="Bright Factory Framework, home">
-	<svg class="bff-logo" viewBox="0 0 32 32" width="28" height="28" aria-hidden="true">
-		<rect x="2" y="6" width="28" height="22" rx="4" fill="var(--sl-color-accent)"></rect>
-		<rect x="2" y="20" width="28" height="8" rx="4" fill="#000" opacity=".18"></rect>
-		<circle cx="10" cy="13" r="7" fill="#ffd33d" opacity=".3"></circle>
-		<circle cx="10" cy="13" r="4" fill="#ffd33d"></circle>
-		<circle cx="22" cy="13" r="4" fill="#fff" opacity=".35"></circle>
+	<svg class="bff-logo" viewBox="0 0 48 48" width="30" height="30" aria-hidden="true">
+		<g transform="translate(24 24) scale(1.15) translate(-24 -21.6)">
+			<path d="M6 18L24 9L42 18L24 27Z" fill="var(--bff-brick-hi)"/>
+			<path d="M6 18L24 27V39L6 30Z" fill="var(--bff-brick)"/>
+			<path d="M24 27L42 18V30L24 39Z" fill="var(--bff-brick-lo)"/>
+			<path d="M19.7 10.9V13.5A4.3 2.15 0 0 0 28.3 13.5V10.9Z" fill="var(--bff-brick)"/>
+			<ellipse cx="24" cy="10.9" rx="4.3" ry="2.15" fill="var(--bff-brick-hi)"/>
+			<path d="M10.7 15.4V18A4.3 2.15 0 0 0 19.3 18V15.4Z" fill="var(--bff-brick)"/>
+			<ellipse cx="15" cy="15.4" rx="4.3" ry="2.15" fill="var(--bff-brick-hi)"/>
+			<path d="M28.7 15.4V18A4.3 2.15 0 0 0 37.3 18V15.4Z" fill="var(--bff-brick)"/>
+			<ellipse cx="33" cy="15.4" rx="4.3" ry="2.15" fill="var(--bff-brick-hi)"/>
+			<path d="M19.7 19.9V22.5A4.3 2.15 0 0 0 28.3 22.5V19.9Z" fill="var(--bff-brick-lit-lo)"/>
+			<ellipse cx="24" cy="19.9" rx="4.3" ry="2.15" fill="var(--bff-brick-lit)"/>
+		</g>
 	</svg>
 	<span class="bff-site-title-text"><strong>Bright Factory</strong> <span>Framework</span></span>
 </a>
