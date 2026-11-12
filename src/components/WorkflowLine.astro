@@ -7,7 +7,19 @@ interface Props {
 }
 const { caption = 'One workflow, four stations. Observed signals feed the next plan, so the line never stops learning.' } = Astro.props;
 const accents = ['yellow', 'green', 'blue', 'orange'];
-const stations = data.workflow.map((s, i) => ({ ...s, x: 125 + i * 250, accent: accents[i] }));
+// Split a label into two lines of balanced length so it fits the station box.
+function balance(text: string): string[] {
+	const words = text.split(' ');
+	let best = [text];
+	let bestLen = Infinity;
+	for (let k = 1; k < words.length; k++) {
+		const lines = [words.slice(0, k).join(' '), words.slice(k).join(' ')];
+		const len = Math.max(...lines.map((l) => l.length));
+		if (len < bestLen) [best, bestLen] = [lines, len];
+	}
+	return best;
+}
+const stations = data.workflow.map((s, i) => ({ ...s, x: 125 + i * 250, accent: accents[i], lines: balance(s.task) }));
 const bricks = [0, 1, 2, 3];
 ---
 
@@ -24,27 +36,31 @@ const bricks = [0, 1, 2, 3];
 		{
 			stations.map((s) => (
 				<g class="bff-wl-station" data-accent={s.accent}>
-					<line class="bff-wl-arm" x1={s.x} y1="168" x2={s.x} y2="196" />
-					<rect class="bff-wl-box" x={s.x - 100} y="74" width="200" height="94" rx="12" />
+					<line class="bff-wl-arm" x1={s.x} y1="186" x2={s.x} y2="208" />
+					<rect class="bff-wl-box" x={s.x - 100} y="74" width="200" height="112" rx="12" />
 					<rect class="bff-wl-bar" x={s.x - 100} y="74" width="200" height="6" />
-					<text class="bff-wl-name" x={s.x} y="122" text-anchor="middle">{s.name}</text>
-					<text class="bff-wl-task" x={s.x} y="152" text-anchor="middle">{s.task}</text>
+					<text class="bff-wl-name" x={s.x} y="117" text-anchor="middle">{s.name}</text>
+					<text class="bff-wl-task" y="146" text-anchor="middle">
+						{s.lines.map((line, j) => (
+							<tspan x={s.x} dy={j ? 22 : 0}>{line}</tspan>
+						))}
+					</text>
 				</g>
 			))
 		}
-		<rect class="bff-wl-belt" x="24" y="220" width="952" height="30" rx="15" />
-		<line class="bff-wl-belt-tread" x1="40" y1="235" x2="960" y2="235" />
+		<rect class="bff-wl-belt" x="24" y="232" width="952" height="30" rx="15" />
+		<line class="bff-wl-belt-tread" x1="40" y1="247" x2="960" y2="247" />
 		{
 			[60, 180, 300, 420, 540, 660, 780, 900].map((x) => (
-				<circle class="bff-wl-roller" cx={x} cy="235" r="8" />
+				<circle class="bff-wl-roller" cx={x} cy="247" r="8" />
 			))
 		}
 		{
 			bricks.map((i) => (
 				<g class="bff-wl-brick" style={`--i: ${i}`}>
-					<rect x="0" y="198" width="44" height="22" rx="3" />
-					<rect class="bff-wl-stud" x="7" y="191" width="11" height="8" rx="2" />
-					<rect class="bff-wl-stud" x="26" y="191" width="11" height="8" rx="2" />
+					<rect x="0" y="210" width="44" height="22" rx="3" />
+					<rect class="bff-wl-stud" x="7" y="203" width="11" height="8" rx="2" />
+					<rect class="bff-wl-stud" x="26" y="203" width="11" height="8" rx="2" />
 				</g>
 			))
 		}
