@@ -34,9 +34,15 @@ import FactoryThumb from './FactoryThumb.astro';
 			))
 		}
 	</ol>
-	<p class="bff-ls-back">
-		The dimmer goes both ways. <a href={withBase('/levels/dim-back-up/')}>Dim back up in minutes →</a>
-	</p>
+	<div class="bff-ls-foot">
+		<p data-assess>
+			<span data-assess-q>Not sure which level fits?</span>{' '}
+			<a href={withBase('/get-started/find-your-level/')} data-assess-cta>Take the two-minute self-assessment →</a>
+		</p>
+		<p>
+			The dimmer goes both ways. <a href={withBase('/levels/dim-back-up/')}>Dim back up in minutes →</a>
+		</p>
+	</div>
 </div>
 
 <script>
@@ -51,6 +57,11 @@ import FactoryThumb from './FactoryThumb.astro';
 			const on = li.dataset.level === mine;
 			li.toggleAttribute('data-mine', on);
 			li.querySelector<HTMLElement>('.bff-ls-mine')!.hidden = !on;
+		});
+		const known = mine === 'low' || mine === 'medium' || mine === 'high';
+		document.querySelectorAll<HTMLElement>('[data-levels-strip] [data-assess]').forEach((p) => {
+			p.querySelector('[data-assess-q]')!.textContent = known ? 'Your level is marked above.' : 'Not sure which level fits?';
+			p.querySelector('[data-assess-cta]')!.textContent = known ? 'Retake the self-assessment →' : 'Take the two-minute self-assessment →';
 		});
 	};
 	mark();
@@ -185,7 +196,7 @@ import FactoryThumb from './FactoryThumb.astro';
 		color: var(--sl-color-gray-3);
 	}
 	.bff-ls-pb,
-	.bff-ls-back a {
+	.bff-ls-foot a {
 		padding-inline: 0.25rem;
 		font-size: var(--bff-text-sm);
 		font-weight: 600;
@@ -204,13 +215,19 @@ import FactoryThumb from './FactoryThumb.astro';
 		}
 	}
 	.bff-ls-pb:hover,
-	.bff-ls-back a:hover {
+	.bff-ls-foot a:hover {
 		text-decoration: underline;
 	}
-	.bff-ls-back {
-		margin: 1.25rem 0 0;
+	.bff-ls-foot {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 2.5rem;
+		margin-top: 1.25rem;
 		font-size: var(--bff-text-sm);
 		color: var(--sl-color-gray-3);
+	}
+	.bff-ls-foot p {
+		margin: 0;
 	}
 	/* A container query in rem also stacks the cards when text is enlarged. */
 	@container ls (max-width: 35rem) {
