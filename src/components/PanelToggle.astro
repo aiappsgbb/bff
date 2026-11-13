@@ -61,8 +61,8 @@ const name = panel === 'nav' ? 'navigation' : 'page outline';
 		display: none;
 		flex: none;
 		place-items: center;
-		width: 2.25rem;
-		height: 2.25rem;
+		width: var(--bff-toggle);
+		height: var(--bff-toggle);
 		padding: 0;
 		border: 0;
 		border-radius: var(--bff-radius-sm);
@@ -96,12 +96,6 @@ const name = panel === 'nav' ? 'navigation' : 'page outline';
 	@media (min-width: 72rem) {
 		.bff-panel-toggle[data-panel='toc'] {
 			display: grid;
-		}
-	}
-	@media (pointer: coarse) {
-		.bff-panel-toggle {
-			width: 2.75rem;
-			height: 2.75rem;
 		}
 	}
 	@media print {

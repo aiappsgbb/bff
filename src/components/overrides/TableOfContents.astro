@@ -16,17 +16,14 @@ import PanelToggle from '../PanelToggle.astro';
 }
 
 <style>
-	.bff-toc {
-		position: relative;
-	}
-	/* Centred on the "On this page" heading, glyph aligned to the outline's end edge. */
+	/*
+	 * Pinned to the viewport's end edge, centred in the rail the outline folds to, so the toggle stays
+	 * put when the outline opens or closes. It lines up with the "On this page" heading.
+	 */
 	.bff-toc > :global(.bff-panel-toggle) {
-		position: absolute;
-		inset-block-start: -0.5rem;
-		inset-inline-end: -0.625rem;
-	}
-	:global(:root[data-bff-toc='collapsed']) .bff-toc > :global(.bff-panel-toggle) {
-		position: static;
-		margin-inline: auto;
+		position: fixed;
+		z-index: 1;
+		inset-block-start: var(--bff-toggle-top);
+		inset-inline-end: var(--bff-toggle-inset);
 	}
 </style>

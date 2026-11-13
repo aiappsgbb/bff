@@ -242,8 +242,17 @@ nav.sidebar .sidebar-pane {
  */
 :root {
 	--bff-rail: 3rem;
+	--bff-toggle: 2.25rem;
+	/* Both toggles sit at the same spot whether their panel is open or folded, centred in the rail. */
+	--bff-toggle-inset: calc((var(--bff-rail) - var(--bff-toggle)) / 2);
+	--bff-toggle-top: calc(var(--sl-nav-height) + 0.5rem);
 	--bff-measure: 45rem;
 	--bff-content-open: 80rem;
+}
+@media (pointer: coarse) {
+	:root {
+		--bff-toggle: 2.75rem;
+	}
 }
 html:has(.bff-wide-page) {
 	--bff-measure: 72rem;
@@ -259,11 +268,10 @@ html:has(.bff-wide-page) {
 		scrollbar-gutter: auto;
 	}
 	:root[data-bff-nav='collapsed'] .sidebar-content {
-		align-items: center;
 		padding-inline: 0;
 	}
 	:root[data-bff-nav='collapsed'] .sidebar-content > .bff-panel-toggle {
-		margin-inline-start: 0;
+		margin-inline-start: var(--bff-toggle-inset);
 	}
 	:root[data-bff-nav='collapsed'] #bff-nav-body {
 		display: none;

@@ -12,8 +12,9 @@ import PanelToggle from '../PanelToggle.astro';
 	.bff-panel-body {
 		display: contents;
 	}
+	/* Same spot as the folded rail's toggle (theme.css), so opening and closing never moves it. */
 	:global(.sidebar-content) > :global(.bff-panel-toggle) {
-		margin-block-end: -0.5rem;
-		margin-inline-start: -0.5rem;
+		margin-block-start: calc(var(--bff-toggle-top) - var(--sl-nav-height) - 1rem);
+		margin-inline-start: calc(var(--bff-toggle-inset) - var(--sl-sidebar-pad-x));
 	}
 </style>
