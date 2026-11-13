@@ -405,6 +405,17 @@ a.bff-card:hover {
 .bff-site-footer-note {
 	font-size: var(--bff-text-xs);
 }
+.bff-site-footer-note + .bff-site-footer-note {
+	margin-top: -0.5rem;
+}
+.bff-site-footer-note a {
+	color: inherit;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+.bff-site-footer-note a:hover {
+	color: var(--sl-color-accent-high);
+}
 
 /* ---------- Site title (SiteTitle override) ---------- */
 .bff-site-title {
