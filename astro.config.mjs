@@ -1,4 +1,6 @@
 // @ts-check
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import { unified } from '@astrojs/markdown-remark';
@@ -10,6 +12,9 @@ const site = process.env.SITE ?? 'http://localhost:4321';
 const base = process.env.BASE_PATH ?? '/';
 const repo = process.env.PUBLIC_REPO_URL ?? 'https://github.com/aiappsgbb/bff';
 const withBase = (/** @type {string} */ p) => `${base.replace(/\/$/, '')}${p}`;
+// Link-preview services (Teams, Slack, LinkedIn) cache images by URL; a content hash busts them when og.png changes.
+const ogVersion = createHash('sha256').update(readFileSync(new URL('./public/og.png', import.meta.url))).digest('hex').slice(0, 8);
+const ogImage = `${new URL(withBase('/og.png'), site).href}?v=${ogVersion}`;
 
 export default defineConfig({
 	site,
@@ -39,7 +44,11 @@ export default defineConfig({
 			},
 			head: [
 				{ tag: 'link', attrs: { rel: 'preload', href: withBase('/fonts/MonaSansVF.woff2'), as: 'font', type: 'font/woff2', crossorigin: '' } },
-				{ tag: 'meta', attrs: { property: 'og:image', content: new URL(withBase('/og.png'), site).href } },
+				{ tag: 'meta', attrs: { property: 'og:image', content: ogImage } },
+				{ tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
+				{ tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
+				{ tag: 'meta', attrs: { property: 'og:image:alt', content: 'Bright Factory Framework' } },
+				{ tag: 'meta', attrs: { name: 'twitter:image', content: ogImage } },
 				{ tag: 'meta', attrs: { name: 'twitter:card', content: 'summary_large_image' } },
 				{ tag: 'meta', attrs: { name: 'theme-color', content: '#08872b' } },
 				{ tag: 'link', attrs: { rel: 'alternate', type: 'text/markdown', href: withBase('/AGENTS.md'), title: 'AGENTS.md' } },
