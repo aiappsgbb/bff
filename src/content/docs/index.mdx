@@ -16,7 +16,7 @@ import WorkflowLine from '../../components/WorkflowLine.astro';
 import LevelsStrip from '../../components/LevelsStrip.astro';
 import JourneySteps from '../../components/JourneySteps.astro';
 import Closing from '../../components/Closing.astro';
-import { PILLARS, PRINCIPLES } from '../../data/content';
+import { PILLARS, PRINCIPLE_GROUPS, principleAnchor } from '../../data/content';
 import { withBase } from '../../data/site';
 
 <FactoryHero />
@@ -43,13 +43,19 @@ import { withBase } from '../../data/site';
 	<WorkflowLine />
 </Section>
 
-<Section id="principles" eyebrow="framework.principles()" accent="purple" title="Seven principles behind every bright factory." lede="They hold at every autonomy level, for every work type, whatever tools you bring.">
+<Section id="principles" eyebrow="framework.principles()" accent="purple" title="Eight principles behind every bright factory." lede="Four pairs: steer, trust, build and grow. They hold at every autonomy level, for every work type, whatever tools you bring.">
 	<div class="bff-principles">
-		<div class="bff-grid" data-layout="principles">
-			{PRINCIPLES.map((p) => (
-				<FeatureCard title={p.title} image={p.image} accent={p.accent} href={`/framework/principles/#${p.title.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-')}`}>{p.short}</FeatureCard>
-			))}
-		</div>
+		{PRINCIPLE_GROUPS.map((g) => (
+			<div class="bff-pgroup" data-accent={g.accent}>
+				<div class="bff-pgroup-head">
+					<h3><span class="bff-pgroup-square" aria-hidden="true"></span>{g.title}</h3>
+					<p>{g.text}</p>
+				</div>
+				{g.principles.map((p) => (
+					<FeatureCard title={p.title} image={p.image} accent={p.accent} headingLevel="h4" href={`/framework/principles/#${principleAnchor(p.title)}`}>{p.short}</FeatureCard>
+				))}
+			</div>
+		))}
 	</div>
 </Section>
 

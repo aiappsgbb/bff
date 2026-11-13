@@ -1,6 +1,6 @@
 ---
-title: Seven principles
-description: The rules that hold at every autonomy level, for every work type, whatever tools you bring.
+title: Eight principles
+description: "Eight rules in four pairs: steer, trust, build and grow. They hold at every autonomy level, for every work type, whatever tools you bring."
 eyebrow: framework.principles()
 ---
 import { STEPS, STEPS_ALT } from '../../../lib/images';
@@ -12,7 +12,11 @@ export const Pic = ({ k, caption }) => (
 	</figure>
 );
 
-## Humans stay in control
+## Steer
+
+People set direction, and the dimmer goes both ways.
+
+### Humans stay in control
 
 <Pic k="build_together" caption="The Factory HQ stays bright at every level." />
 
@@ -21,42 +25,9 @@ People set intent, guardrails and SLOs, and approve the consequences. Agents do 
 - **Intent** lives in issues, specs and goals that people write or approve.
 - **Guardrails** live in rulesets, policies and budgets that people own.
 - **Approvals** move from every change, to by risk, to by exception. Never to nobody.
-- **Every agent** acts under an identity a person is accountable for.
+- **Accountability** stays with people: every agent has an owner who answers for its work.
 
-## Composable by design
-
-<Pic k="composable" caption="Every capability is a brick you can swap." />
-
-GitHub and Microsoft primitives by default, the tools you already use where they fit. Build the factory you need, one brick at a time, and change it without starting over.
-
-- Each component in the [big picture](/#what) is a **capability with a contract**, not a product.
-- Bring your own tracker, chat, CI, cloud or agent. Connect it through **MCP**, **Agent Skills** and agent-to-agent protocols.
-- Add capabilities when a work type needs them, not all at once.
-- Partners can package bricks as their own IP: skills, agents, accelerators and managed operations.
-
-## Context-centric
-
-<Pic k="context" caption="Agents are only as good as their context." />
-
-Specs, skills, memory, business context and goals live in the foundations: versioned, governed and shared by people and agents. Every loop makes them stronger.
-
-- **Repository context:** custom instructions, `AGENTS.md`, agent skills and specs, reviewed like code.
-- **Team context:** Copilot Spaces and Copilot Memory, per product.
-- **Business context:** knowledge, data and goals from Microsoft 365, Fabric and Foundry, reached through governed tools.
-- **Learning:** incidents, reviews and evals turn into reviewed updates to skills and instructions.
-
-## Not a black box
-
-<Pic k="glass" caption="Lights-off never means unseen." />
-
-Every session, tool call, decision and cost is traced. Evidence travels with each change, so people can inspect the floor at any moment and approve with confidence.
-
-- **Sessions** are visible and steerable in mission control and the Copilot app.
-- **Evidence bundles** on each pull request: tests, scans, evals, previews and a summary a reviewer can trust.
-- **Traces and cost** flow through OpenTelemetry into the observability tools the HQ already uses.
-- **Audit** covers people and agents alike.
-
-## A reversible dimmer
+### A reversible dimmer
 
 <Pic k="reversible" caption="Dim the floor, and dim it back up in minutes." />
 
@@ -67,7 +38,66 @@ Autonomy is set per work type and can be undone. When signals say so, approvals 
 - **Work survives** in issues, pull requests and specs, with the same gates and identities.
 - **Rehearse it** before you need it. [How to dim back up →](/levels/dim-back-up/)
 
-## From singleplayer to multiplayer
+## Trust
+
+Every agent is visible, and every agent is contained.
+
+### Not a black box
+
+<Pic k="glass" caption="Lights-off never means unseen." />
+
+Every session, tool call, decision and cost is traced. Evidence travels with each change, so people can inspect the floor at any moment and approve with confidence.
+
+- **Sessions** are visible and steerable in mission control and the Copilot app.
+- **Evidence bundles** on each pull request: tests, scans, evals, previews and a summary a reviewer can trust.
+- **Traces and cost** flow through OpenTelemetry into the observability tools the HQ already uses.
+- **Audit** covers people and agents alike.
+
+### Secure by default
+
+<Pic k="secure" caption="Every agent has its own identity and only the access it needs." />
+
+Every agent works under its own identity, with least privilege, scoped secrets and firewall rules. Every change is checked, and every action traces back to an agent and the person accountable for it.
+
+- **Identity:** each agent has its own identity, such as Microsoft Entra Agent ID, an accountable owner and an audit trail.
+- **Least privilege:** only the tools, MCP servers, secrets and network access a work type needs, in an isolated environment.
+- **Every change is checked:** code scanning, secret scanning with push protection and dependency review run on agent pull requests, like any other.
+- **Policy as code:** rulesets and budgets apply to people and agents alike.
+- **Supply chain:** artifact attestations trace what ships back to the change, the agent and the approval.
+
+[How to give agents identities →](/playbooks/medium/)
+
+## Build
+
+Swappable bricks on shared context.
+
+### Composable by design
+
+<Pic k="composable" caption="Every capability is a brick you can swap." />
+
+GitHub and Microsoft primitives by default, the tools you already use where they fit. Build the factory you need, one brick at a time, and change it without starting over.
+
+- Each component in the [big picture](/#what) is a **capability with a contract**, not a product.
+- Bring your own tracker, chat, CI, cloud or agent. Connect it through **MCP**, **Agent Skills** and agent-to-agent protocols.
+- Add capabilities when a work type needs them, not all at once.
+- Partners can package bricks as their own IP: skills, agents, accelerators and managed operations.
+
+### Context-centric
+
+<Pic k="context" caption="Agents are only as good as their context." />
+
+Specs, skills, memory, business context and goals live in the foundations: versioned, governed and shared by people and agents. Every loop makes them stronger.
+
+- **Repository context:** custom instructions, `AGENTS.md`, agent skills and specs, reviewed like code.
+- **Team context:** Copilot Spaces and Copilot Memory, per product.
+- **Business context:** knowledge, data and goals from Microsoft 365, Fabric and Foundry, reached through governed tools.
+- **Learning:** incidents, reviews and evals turn into reviewed updates to skills and instructions.
+
+## Grow
+
+From one laptop to the organisation, guided by evidence.
+
+### From singleplayer to multiplayer
 
 <Pic k="multiplayer" caption="From one laptop to the whole organisation." />
 
@@ -79,7 +109,7 @@ Start with one developer and their agents on a laptop. Move to shared cloud sess
 
 [See how the factory goes multiplayer →](/framework/multiplayer/)
 
-## Measured, not guessed
+### Measured, not guessed
 
 <Pic k="measure" caption="The HQ measures the factory. Engineering improves it." />
 

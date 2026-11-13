@@ -24,9 +24,11 @@ export const PILLARS = [
 	},
 ] as const;
 
+/** Eight principles in four pairs. Order and numbering match the LEGO steps and the deck. */
 export const PRINCIPLES = [
 	{
 		key: 'bright-hq',
+		group: 'steer',
 		image: 'build_together',
 		accent: 'orange',
 		title: 'Humans stay in control',
@@ -34,7 +36,35 @@ export const PRINCIPLES = [
 		text: 'People set intent, guardrails and SLOs, and approve the consequences. Agents do the heavy lifting. Accountability never moves to the floor.',
 	},
 	{
+		key: 'reversible',
+		group: 'steer',
+		image: 'reversible',
+		accent: 'pink',
+		title: 'A reversible dimmer',
+		short: 'Dim the floor, and dim it back up in minutes.',
+		text: 'Autonomy is set per work type and can be undone. When signals say so, approvals return to people and work continues from Git, so the business never stops.',
+	},
+	{
+		key: 'glass-floor',
+		group: 'trust',
+		image: 'glass',
+		accent: 'yellow',
+		title: 'Not a black box',
+		short: 'Lights-off never means unseen.',
+		text: 'Every session, tool call, decision and cost is traced. Evidence travels with each change, so people can inspect the floor at any moment and approve with confidence.',
+	},
+	{
+		key: 'secure',
+		group: 'trust',
+		image: 'secure',
+		accent: 'yellow',
+		title: 'Secure by default',
+		short: 'Every agent has its own identity and only the access it needs.',
+		text: 'Every agent works under its own identity, with least privilege, scoped secrets and firewall rules. Every change is checked, and every action traces back to an agent and the person accountable for it.',
+	},
+	{
 		key: 'composable',
+		group: 'build',
 		image: 'composable',
 		accent: 'green',
 		title: 'Composable by design',
@@ -43,6 +73,7 @@ export const PRINCIPLES = [
 	},
 	{
 		key: 'context',
+		group: 'build',
 		image: 'context',
 		accent: 'blue',
 		title: 'Context-centric',
@@ -50,23 +81,8 @@ export const PRINCIPLES = [
 		text: 'Specs, skills, memory, business context and goals live in the foundations: versioned, governed and shared by people and agents. Every loop makes them stronger.',
 	},
 	{
-		key: 'glass-floor',
-		image: 'glass',
-		accent: 'yellow',
-		title: 'Not a black box',
-		short: 'Lights-off never means unseen.',
-		text: 'Every session, tool call, decision and cost is traced. Evidence travels with each change, so people can inspect the floor at any moment and approve with confidence.',
-	},
-	{
-		key: 'reversible',
-		image: 'reversible',
-		accent: 'pink',
-		title: 'A reversible dimmer',
-		short: 'Dim the floor, and dim it back up in minutes.',
-		text: 'Autonomy is set per work type and can be undone. When signals say so, approvals return to people and work continues from Git, so the business never stops.',
-	},
-	{
 		key: 'multiplayer',
+		group: 'grow',
 		image: 'multiplayer',
 		accent: 'purple',
 		title: 'From singleplayer to multiplayer',
@@ -75,6 +91,7 @@ export const PRINCIPLES = [
 	},
 	{
 		key: 'measured',
+		group: 'grow',
 		image: 'measure',
 		accent: 'orange',
 		title: 'Measured, not guessed',
@@ -82,6 +99,17 @@ export const PRINCIPLES = [
 		text: 'DORA shows how well the factory delivers. SPACE shows how it works for the people in it. The HQ tracks both per service and work type as the floor dims, and the engineering loop turns the weakest signal into its next improvement.',
 	},
 ] as const;
+
+/** Anchor of a principle on /framework/principles/, matching Starlight's heading slugs. */
+export const principleAnchor = (title: string) =>
+	title.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-');
+
+export const PRINCIPLE_GROUPS = [
+	{ key: 'steer', accent: 'orange', title: 'Steer', text: 'People set direction, and the dimmer goes both ways.' },
+	{ key: 'trust', accent: 'yellow', title: 'Trust', text: 'Every agent is visible, and every agent is contained.' },
+	{ key: 'build', accent: 'green', title: 'Build', text: 'Swappable bricks on shared context.' },
+	{ key: 'grow', accent: 'purple', title: 'Grow', text: 'From one laptop to the organisation, guided by evidence.' },
+].map((g) => ({ ...g, principles: PRINCIPLES.filter((p) => p.group === g.key) }));
 
 /** Measuring progress: DORA for delivery, SPACE for people. Definitions follow dora.dev and the SPACE paper. */
 export const MEASURE = {
