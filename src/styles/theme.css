@@ -37,6 +37,7 @@
 	--bff-light-night: #0b1a3a;
 	--bff-brick-white: #f4f7f5;
 	--bff-brick-shade: #c9d2cc;
+	--bff-step-paper: #e7eff8;
 	--bff-shadow-ink: #000000;
 	--bff-shadow-sm: 0 6px 18px -6px color-mix(in srgb, var(--bff-shadow-ink) 35%, transparent);
 	--bff-shadow-lg: 0 8px 24px -6px color-mix(in srgb, var(--bff-shadow-ink) 40%, transparent);

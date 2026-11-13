@@ -51,6 +51,7 @@ Scene tokens are drawn on top of the LEGO renders, so they don't change with the
 | `--bff-light-violet` | `#8f7bff` | Glowing code blocks on the floor |
 | `--bff-light-night` | `#0b1a3a` | "Lights-off" end of the dimmer |
 | `--bff-brick-white` / `--bff-brick-shade` | `#f4f7f5` / `#c9d2cc` | LEGO plastic (dimmer knob, studs) |
+| `--bff-step-paper` | `#e7eff8` | Page colour of the LEGO instruction-step SVGs (principles); frames behind them match it |
 | `--bff-shadow-sm` / `--bff-shadow-lg` | ink at 35% / 40% | Floating labels and tooltips over imagery |
 
 ## Shape and spacing

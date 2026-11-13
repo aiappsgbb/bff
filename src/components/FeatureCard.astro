@@ -1,6 +1,6 @@
 ---
 import { Image } from 'astro:assets';
-import { LEGO, LEGO_ALT } from '../lib/images';
+import { LEGO, LEGO_ALT, STEPS, STEPS_ALT } from '../lib/images';
 import { withBase } from '../data/site';
 
 interface Props {
@@ -14,10 +14,18 @@ interface Props {
 }
 const { title, href, image, accent, kicker, more, headingLevel: H = 'h3' } = Astro.props;
 const Tag = href ? 'a' : 'article';
-const src = image ? LEGO[image] : undefined;
+const step = image ? STEPS[image] : undefined;
+const src = image && !step ? LEGO[image] : undefined;
 ---
 
 <Tag class="bff-card bff-feature not-content" href={href && withBase(href)} data-accent={accent}>
+	{
+		step && (
+			<div class="bff-card-media bff-card-media--step">
+				<img src={step.src} width={step.width} height={step.height} alt={STEPS_ALT[image!] ?? ''} loading="lazy" decoding="async" />
+			</div>
+		)
+	}
 	{
 		src && (
 			<div class="bff-card-media">

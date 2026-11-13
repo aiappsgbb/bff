@@ -3,12 +3,11 @@ title: Six principles
 description: The rules that hold at every autonomy level, for every work type, whatever tools you bring.
 eyebrow: framework.principles()
 ---
-import { Image } from 'astro:assets';
-import { LEGO, LEGO_ALT } from '../../../lib/images';
+import { STEPS, STEPS_ALT } from '../../../lib/images';
 
 export const Pic = ({ k, caption }) => (
-	<figure class="bff-figure">
-		<Image src={LEGO[k]} alt={LEGO_ALT[k]} widths={[480, 760, 1080]} sizes="(min-width: 60em) 44rem, 92vw" />
+	<figure class="bff-figure bff-figure--step">
+		<img src={STEPS[k].src} width={STEPS[k].width} height={STEPS[k].height} alt={STEPS_ALT[k]} loading="lazy" decoding="async" />
 		{caption && <figcaption>{caption}</figcaption>}
 	</figure>
 );

@@ -313,6 +313,16 @@ a.bff-card:hover {
 	block-size: 100%;
 	object-fit: contain;
 }
+/* LEGO instruction steps carry their own page colour; match it so letterboxing is invisible. */
+.bff-card-media--step {
+	background: var(--bff-step-paper);
+}
+.bff-figure--step img {
+	display: block;
+	inline-size: 100%;
+	block-size: auto;
+	border-radius: var(--bff-radius-md);
+}
 .bff-card-more {
 	margin-top: auto;
 	padding-top: 0.25rem;
