@@ -22,6 +22,9 @@ const uid = 'bff-bp';
 				<button class="bff-tab" type="button" aria-pressed="true" data-view-btn="capabilities">Capabilities</button>
 				<button class="bff-tab" type="button" aria-pressed="false" data-view-btn="products">Products</button>
 			</div>
+			<button class="bff-bp-expand" type="button" aria-expanded="false" aria-controls={`${uid}-grid`} data-expand>
+				<span data-expand-label>Expand all</span>
+			</button>
 		</div>
 		<fieldset class="bff-bp-vendors" disabled>
 			<legend class="bff-bp-label">Vendors</legend>
@@ -36,7 +39,7 @@ const uid = 'bff-bp';
 		</fieldset>
 	</div>
 
-	<div class="bff-bp-grid">
+	<div class="bff-bp-grid" id={`${uid}-grid`}>
 		<div class="bff-bp-bands">
 			{
 				bands.map((b, i) => (
@@ -60,22 +63,34 @@ const uid = 'bff-bp';
 							<ul class="bff-bp-cards">
 								{b.components.map((c) => (
 									<li class="bff-bp-card">
-										<h4>
-											{c.name}
-											{c.stages && <span class="bff-bp-stages">{c.stages}</span>}
-										</h4>
-										<ul class="bff-bp-items" data-show="capabilities">
-											{c.items.map((it) => (
-												<li>{it}</li>
-											))}
-										</ul>
-										<ul class="bff-chips" data-show="products">
-											{c.products.map((p) => (
-												<li data-vendor={p.vendor}>
-													<ProductChip product={p} />
-												</li>
-											))}
-										</ul>
+										<details>
+											<summary>
+												<h4>
+													{c.name}
+													{c.stages && <span class="bff-bp-stages">{c.stages}</span>}
+												</h4>
+												<span class="bff-bp-count" data-show="capabilities">
+													{c.items.length}
+													<span class="sr-only"> capabilities</span>
+												</span>
+												<span class="bff-bp-count" data-show="products">
+													<span data-count>{c.products.length}</span>
+													<span class="sr-only"> products</span>
+												</span>
+											</summary>
+											<ul class="bff-bp-items" data-show="capabilities">
+												{c.items.map((it) => (
+													<li>{it}</li>
+												))}
+											</ul>
+											<ul class="bff-chips" data-show="products">
+												{c.products.map((p) => (
+													<li data-vendor={p.vendor}>
+														<ProductChip product={p} />
+													</li>
+												))}
+											</ul>
+										</details>
 									</li>
 								))}
 							</ul>
@@ -133,14 +148,34 @@ const uid = 'bff-bp';
 		const status = root.querySelector<HTMLElement>('[data-status]')!;
 		const vendors = root.querySelector<HTMLFieldSetElement>('.bff-bp-vendors')!;
 		const boxes = [...vendors.querySelectorAll<HTMLInputElement>('input')];
+		const cards = [...root.querySelectorAll<HTMLDetailsElement>('.bff-bp-card details')];
+		const expand = root.querySelector<HTMLButtonElement>('[data-expand]')!;
+		const expandLabel = expand.querySelector<HTMLElement>('[data-expand-label]')!;
+		const syncExpand = () => {
+			const all = cards.every((d) => d.open);
+			expand.setAttribute('aria-expanded', String(all));
+			expandLabel.textContent = all ? 'Collapse all' : 'Expand all';
+		};
+		expand.addEventListener('click', () => {
+			const open = !cards.every((d) => d.open);
+			cards.forEach((d) => (d.open = open));
+			syncExpand();
+		});
+		// `toggle` doesn't bubble; capture it once for every card.
+		root.addEventListener('toggle', syncExpand, true);
 		const update = () => {
 			const on = boxes.filter((b) => b.checked).map((b) => b.value);
 			boxes.forEach((b) => root.toggleAttribute(`data-hide-${b.value}`, !b.checked));
 			if (root.dataset.view === 'products') {
-				const visible = root.querySelectorAll('[data-show="products"] > li').length;
-				const shown = [...root.querySelectorAll<HTMLElement>('[data-show="products"] > li')].filter((li) =>
-					on.includes(li.dataset.vendor ?? ''),
-				).length;
+				let visible = 0;
+				let shown = 0;
+				cards.forEach((d) => {
+					const chips = [...d.querySelectorAll<HTMLElement>('[data-show="products"] > li')];
+					const n = chips.filter((li) => on.includes(li.dataset.vendor ?? '')).length;
+					visible += chips.length;
+					shown += n;
+					d.querySelector<HTMLElement>('[data-count]')!.textContent = String(n);
+				});
 				status.textContent = `Showing ${shown} of ${visible} product placements.`;
 			} else status.textContent = '';
 		};
@@ -308,6 +343,38 @@ const uid = 'bff-bp';
 	.bff-bp-vendors legend {
 		float: left;
 	}
+	.bff-bp-expand {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		min-height: 2.25rem;
+		padding: 0.35rem 0.5rem;
+		border: 0;
+		border-radius: var(--bff-radius-sm);
+		background: transparent;
+		font: inherit;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+		cursor: pointer;
+		transition: color 0.2s var(--bff-ease-soft);
+	}
+	.bff-bp-expand:hover {
+		color: var(--sl-color-white);
+	}
+	.bff-bp-expand::after {
+		content: '';
+		inline-size: 0.35rem;
+		block-size: 0.35rem;
+		margin-bottom: 0.15rem;
+		border: solid currentColor;
+		border-width: 0 1.5px 1.5px 0;
+		transform: rotate(45deg);
+		transition: transform 0.2s var(--bff-ease-soft);
+	}
+	.bff-bp-expand[aria-expanded='true']::after {
+		margin: 0.15rem 0 0;
+		transform: rotate(-135deg);
+	}
 	.bff-bp-label {
 		margin-right: 0.25rem;
 		font-family: var(--bff-font-mono);
@@ -333,7 +400,7 @@ const uid = 'bff-bp';
 		--bp-pad: clamp(0.9rem, 2vw, 1.25rem);
 		--bp-col-gap: 1.25rem;
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem);
+		grid-template-columns: minmax(0, 1fr) minmax(12rem, 18rem);
 		grid-template-rows: repeat(4, auto);
 		gap: 0.75rem var(--bp-col-gap);
 	}
@@ -365,9 +432,16 @@ const uid = 'bff-bp';
 			linear-gradient(180deg, color-mix(in oklab, var(--accent) 7%, transparent), transparent 60%),
 			var(--bff-surface);
 	}
-	.bff-bp-band header,
-	.bff-bp-eng header > :is(p, h3) {
+	.bff-bp-band header {
 		margin-bottom: 0.75rem;
+	}
+	/* Kept tight so the rail header plus step 1 fits beside the collapsed HQ band. */
+	.bff-bp-eng header > :is(p, h3) {
+		margin-bottom: 0.4rem;
+	}
+	.bff-bp-eng header > .bff-bp-tag {
+		margin-bottom: 0.75rem;
+		font-size: var(--bff-text-xs);
 	}
 	.bff-bp-band header {
 		display: flex;
@@ -400,6 +474,7 @@ const uid = 'bff-bp';
 	.bff-bp-cards {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr));
+		align-items: start;
 		gap: 0.5rem;
 		margin: 0;
 		padding: 0;
@@ -407,21 +482,85 @@ const uid = 'bff-bp';
 	}
 	.bff-bp-card {
 		margin: 0;
-		padding: 0.75rem;
 		border: 1px solid var(--sl-color-hairline);
 		border-radius: var(--bff-radius-md);
 		background: var(--sl-color-black);
+		transition: border-color 0.2s var(--bff-ease-soft);
+	}
+	.bff-bp-card:hover,
+	.bff-bp-card:has(details[open]) {
+		border-color: color-mix(in oklab, var(--accent) 45%, var(--sl-color-hairline));
+	}
+	.bff-bp-card summary {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.6rem 0.75rem;
+		border-radius: inherit;
+		list-style: none;
+		cursor: pointer;
+	}
+	.bff-bp-card summary::-webkit-details-marker {
+		display: none;
+	}
+	.bff-bp-card summary:focus-visible {
+		outline: 2px solid var(--sl-color-accent);
+		outline-offset: 2px;
+	}
+	.bff-bp-card summary::after {
+		content: '';
+		flex: none;
+		inline-size: 0.4rem;
+		block-size: 0.4rem;
+		margin: 0 0.15rem 0.2rem 0;
+		border: solid var(--sl-color-gray-3);
+		border-width: 0 1.5px 1.5px 0;
+		transform: rotate(45deg);
+		transition: transform 0.2s var(--bff-ease-soft);
+	}
+	.bff-bp-card details[open] > summary::after {
+		margin-block: 0.2rem 0;
+		transform: rotate(-135deg);
 	}
 	.bff-bp-card h4 {
 		display: flex;
+		flex: 1;
 		flex-wrap: wrap;
 		align-items: baseline;
-		justify-content: space-between;
-		gap: 0.25rem 0.5rem;
-		margin: 0 0 0.5rem;
+		gap: 0.1rem 0.5rem;
+		margin: 0;
 		font-size: var(--bff-text-sm);
 		font-weight: 600;
 		color: var(--sl-color-white);
+	}
+	.bff-bp-count {
+		flex: none;
+		min-inline-size: 1.4rem;
+		padding: 0.05rem 0.35rem;
+		border-radius: 999px;
+		background: var(--bff-surface-2);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		text-align: center;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-bp-card details > ul {
+		margin: 0;
+		padding: 0 0.75rem 0.75rem;
+	}
+	/* Smooth open/close where the browser can animate details content; others just snap. */
+	.bff-bp-card details {
+		interpolate-size: allow-keywords;
+	}
+	.bff-bp-card details::details-content {
+		block-size: 0;
+		overflow: clip;
+		transition:
+			block-size 0.25s var(--bff-ease-soft),
+			content-visibility 0.25s allow-discrete;
+	}
+	.bff-bp-card details[open]::details-content {
+		block-size: auto;
 	}
 	.bff-bp-stages {
 		font-family: var(--bff-font-mono);
