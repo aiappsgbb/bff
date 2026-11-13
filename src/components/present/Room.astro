@@ -1,13 +1,16 @@
 ---
 /**
- * One presentation slide: copy on the left, a LEGO render on the right (comp B, "room").
- * Building slides (cover, big picture, close) show the cutaway; its 3:2 image box is the
- * zoom target the page script flies into and out of. Slots: default = the slide's visual,
- * `art` = overlays positioned in % of the 3:2 image box, `copy` = replaces the copy column.
+ * One presentation slide: copy on the left, art on the right (comp B, "room").
+ * The art is a LEGO render (Blocks style) and a concept drawing (Vectors style) in the same
+ * 3:2 box; CSS shows one of them from <html data-style>. Building slides (cover, big picture,
+ * close) show the cutaway; its box is the zoom target the page script flies into and out of.
+ * Slots: default = the L200 visual, `deep` = the L400 visual (with `deepLede`), `art` =
+ * overlays positioned in % of the 3:2 box, `copy` = replaces the copy column.
  */
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
 import { withBase } from '../../data/site';
+import VectorArt from './VectorArt.astro';
 
 interface Props {
 	id: string;
@@ -21,11 +24,20 @@ interface Props {
 	href?: string;
 	img: ImageMetadata;
 	alt: string;
+	/** Key of the Vectors drawing. */
+	art: string;
 	spot?: readonly [number, number];
+	/** L400 lede; the L400 visual goes in the `deep` slot. */
+	deepLede?: string;
+	deepHref?: string;
+	/** The L400 layer is a long table or list: it gets a wider copy column. */
+	dense?: boolean;
 }
 
-const { id, index, total, zone, chapter, label, title, lede, href, img, alt, spot } = Astro.props;
+const { id, index, total, zone, chapter, label, title, lede, href, img, alt, art, spot, deepLede, deepHref, dense } = Astro.props;
 const building = zone === 'building';
+const deep = Astro.slots.has('deep');
+const link = deepHref ?? href;
 ---
 
 <section
@@ -38,6 +50,7 @@ const building = zone === 'building';
 	data-chapter={chapter}
 	data-label={label}
 	data-spot={spot?.join(',')}
+	data-dense={dense ? '' : undefined}
 	tabindex="-1"
 >
 	<div class="pz-copy">
@@ -47,15 +60,37 @@ const building = zone === 'building';
 			) : (
 				<>
 					<h2 class="pz-h">{title}</h2>
-					{lede && <p class="pz-lede">{lede}</p>}
+					{lede && (
+						<p class="pz-lede" data-tier={deep && deepLede ? 'l200' : undefined}>
+							{lede}
+						</p>
+					)}
 					{Astro.slots.has('default') && (
-						<div class="pz-visual">
+						<div class="pz-visual" data-tier={deep ? 'l200' : undefined}>
 							<slot />
 						</div>
 					)}
+					{deep && (
+						<>
+							{deepLede && (
+								<p class="pz-lede pz-lede-deep" data-tier="l400">
+									{deepLede}
+								</p>
+							)}
+							<div class="pz-visual pz-deep" data-tier="l400">
+								<slot name="deep" />
+							</div>
+						</>
+					)}
 					{href && (
-						<a class="pz-docs" href={withBase(href)}>
+						<a class="pz-docs" href={withBase(href)} data-tier={link !== href ? 'l200' : undefined}>
 							Read the docs<span class="pz-sr">: {label}</span>
+							<span aria-hidden="true">→</span>
+						</a>
+					)}
+					{link && link !== href && (
+						<a class="pz-docs" href={withBase(link)} data-tier="l400">
+							Read the reference<span class="pz-sr">: {label}</span>
 							<span aria-hidden="true">→</span>
 						</a>
 					)}
@@ -65,15 +100,16 @@ const building = zone === 'building';
 	</div>
 	<div class="pz-art">
 		<div class:list={['pz-imgbox', { 'pz-bimg': building }]}>
+			{/* Lazy for every slide: a hidden render (Vectors style) is then never downloaded. */}
 			<Image
 				src={img}
 				alt={alt}
 				widths={[640, 960, 1280, 1536]}
 				sizes="(min-aspect-ratio: 5/4) and (min-width: 48rem) 62vw, 100vw"
-				loading={index === 0 ? 'eager' : 'lazy'}
-				fetchpriority={index === 0 ? 'high' : undefined}
+				loading="lazy"
 				decoding="async"
 			/>
+			<VectorArt k={art} />
 			<slot name="art" />
 		</div>
 	</div>

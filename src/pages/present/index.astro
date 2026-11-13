@@ -8,6 +8,11 @@
  * motion moment), moving back flies out, and room to room is a short pan. A running header
  * and a mini-map keep the audience oriented; O opens the overview. Copy is short, one visual
  * per slide, and every slide links to the page it summarises.
+ *
+ * Two audience controls, both on <html> and switchable live (DESIGN.md "Presentation mode"):
+ * data-style = vectors (concept drawings, default) | blocks (LEGO renders), and
+ * data-tech = l200 (the story, default) | l400 (same slide, the deeper layer: products,
+ * mechanisms and tables). Keys V and L, URL ?style=blocks&tech=l400, kept in localStorage.
  */
 import type { ImageMetadata } from 'astro';
 import { Image } from 'astro:assets';
@@ -15,9 +20,10 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import Room from '../../components/present/Room.astro';
+import VectorArt from '../../components/present/VectorArt.astro';
 import logo from '../../assets/logo.svg?raw';
-import { DEMO_ACTS, DIM_BACK_UP_STEPS, JOURNEY, MEASURE, MULTIPLAYER, PILLARS, PRINCIPLE_GROUPS } from '../../data/content';
-import { data, LEVEL_ORDER, LEVELS, withBase } from '../../data/site';
+import { DEMO_ACTS, DIM_BACK_UP_STEPS, JOURNEY, MEASURE, MULTIPLAYER, PILLARS, PRINCIPLE_GROUPS, PRINCIPLES } from '../../data/content';
+import { data, DIM_BACK_UP_TRIGGERS, LEVEL_ORDER, LEVELS, withBase } from '../../data/site';
 import '../../styles/fonts.css';
 import '../../styles/theme.css';
 import '../../styles/components.css';
@@ -88,6 +94,7 @@ const slide = (id: string) => {
 		chapter: s.chapter,
 		label: s.label,
 		spot: s.spot,
+		art: s.art,
 		img: imageFor(s.art),
 		alt: ALT[s.art === 'building' ? 'building' : id] ?? '',
 	};
@@ -117,6 +124,72 @@ const GITHUB = ['Copilot app', 'Copilot cloud agent', 'Copilot automations', 'Gi
 const MICROSOFT = ['Foundry Agent Service', 'Foundry IQ', 'Work IQ', 'Azure SRE Agent', 'Entra Agent ID', 'Microsoft Teams'];
 const OPEN = ['Claude · Codex', 'Jira · Linear', 'Slack', 'JetBrains · Xcode', 'Jenkins · GitLab', 'AWS · GCP · on-prem', 'Datadog', 'Okta', 'AGENTS.md'];
 const BAY_STATE = { low: 'Lights on', medium: 'Dimmed', high: 'Lights-off' } as const;
+
+/* ---------- L400: the deeper layer of each slide ---------- */
+const joinDot = (xs: readonly string[]) => xs.join(' · ');
+const layerProducts = (key: 'hq' | 'floor' | 'foundations') =>
+	new Set(data.layers[key].components.flatMap((c) => c.products.map((p) => p.name)));
+/** Curated product names per slide; every one must exist in the framework data, so a rename fails the build. */
+const known = (key: 'hq' | 'floor' | 'foundations', names: string[]) => {
+	const all = layerProducts(key);
+	for (const n of names) if (!all.has(n)) throw new Error(`present: "${n}" is not a ${key} product in framework.json`);
+	return names;
+};
+const PILLAR_PRODUCTS: Record<string, string[]> = {
+	github: ['Copilot app', 'Copilot cloud agent', 'Copilot automations', 'GitHub Actions', 'Advanced Security'],
+	microsoft: ['Foundry Agent Service', 'Work IQ', 'Fabric IQ ontology', 'Entra Agent ID', 'Azure SRE Agent'],
+	open: ['MCP', 'Agent Skills', 'AGENTS.md', 'OpenTelemetry'],
+};
+const GLASS = [
+	{ k: 'Traced', v: 'Every session, tool call, decision and cost, through OpenTelemetry.' },
+	{ k: 'Evidence', v: 'Tests, reviews and scans travel with each change, so people approve with confidence.' },
+	{ k: 'Identity', v: 'Each agent works under its own identity, such as Entra Agent ID, with least privilege.' },
+	{ k: 'Reversible', v: 'Dim back up in minutes. Approvals return to people and work continues from Git.' },
+];
+const ZONE_PARTS: Record<string, string> = {
+	hq: joinDot(data.layers.hq.components.map((c) => c.name)),
+	floor: joinDot(data.layers.floor.components.map((c) => c.name)),
+	foundations: joinDot(data.layers.foundations.components.map((c) => c.name)),
+	eng: joinDot(data.loop.map((l) => l.step)),
+};
+const MECHANISM: Record<string, string> = {
+	'bright-hq': 'People set intent, guardrails and SLOs, and approve the consequences.',
+	reversible: 'Autonomy is set per work type; approvals can return to people at any time.',
+	'glass-floor': 'Every session, tool call, decision and cost is traced; evidence travels with each change.',
+	secure: 'Own identity, least privilege, scoped secrets and firewall rules for every agent.',
+	composable: 'GitHub and Microsoft primitives by default, your tools where they fit.',
+	context: 'Specs, skills, memory and business context, versioned and governed in the foundations.',
+	multiplayer: 'Laptop, then shared cloud sessions, then fleets at organisation scale.',
+	measured: 'DORA and SPACE per service and work type; the weakest signal picks the next move.',
+};
+const ACCENT_OF = Object.fromEntries(PRINCIPLE_GROUPS.map((g) => [g.key, g.accent]));
+const MP_ROWS = ['Where agents run', 'How work starts', 'How people steer', 'Governance'];
+const MEDIUM = data.levels.medium;
+const COMPONENT_COUNT = (['hq', 'floor', 'foundations'] as const).reduce((n, k) => n + data.layers[k].components.length, 0);
+const PLATFORM = [
+	{ key: 'hq', label: 'Factory HQ', github: known('hq', ['Copilot app', 'Mission control', 'Rulesets', 'Audit log']), microsoft: known('hq', ['Microsoft Teams', 'Agent 365', 'Azure Policy', 'Azure Monitor']) },
+	{ key: 'floor', label: 'Factory floor', github: known('floor', ['Copilot cloud agent', 'Copilot automations', 'GitHub Actions', 'Advanced Security']), microsoft: known('floor', ['Foundry Models', 'Foundry Agent Service', 'AKS', 'Defender for Cloud']) },
+	{ key: 'foundations', label: 'Foundations', github: known('foundations', ['GitHub MCP Server', 'Copilot Spaces', 'Attestations', 'Enterprise Managed Users']), microsoft: known('foundations', ['Work IQ', 'Fabric IQ ontology', 'Foundry IQ', 'Entra Agent ID']) },
+] as const;
+const SEAMS = [
+	{ k: 'Agents', v: 'Copilot cloud agent, Claude · Codex, or your own on Agent Framework' },
+	{ k: 'Tools + context', v: 'MCP, Agent Skills and AGENTS.md' },
+	{ k: 'Telemetry', v: 'OpenTelemetry into Azure Monitor, Datadog or your own' },
+	{ k: 'Identity', v: 'Entra ID, Entra Agent ID or Okta' },
+	{ k: 'Tracking', v: 'GitHub Projects, Azure Boards or Jira · Linear' },
+	{ k: 'CI/CD', v: 'GitHub Actions, Azure Pipelines or Jenkins · GitLab' },
+	{ k: 'Runtime', v: 'AKS, Container Apps, Azure Arc or AWS · GCP · on-prem' },
+];
+known('floor', ['Claude · Codex', 'Agent Framework', 'Azure Pipelines', 'Jenkins · GitLab', 'AKS', 'Container Apps', 'Azure Arc', 'AWS · GCP · on-prem']);
+known('hq', ['Azure Monitor', 'Datadog', 'OpenTelemetry', 'GitHub Projects', 'Azure Boards', 'Jira · Linear']);
+known('foundations', ['Entra ID', 'Entra Agent ID', 'Okta', 'AGENTS.md']);
+const IP_TYPES = ['Assessments', 'Skills and context packs', 'Agents and tools', 'Factory accelerators', 'Industry factories', 'Managed operations'];
+const ENGAGE = [
+	{ k: 'Assess', v: "Map the customer's work types to levels, and find the weakest foundations." },
+	{ k: 'Pilot', v: 'Take one work type up one level, with the playbook and the customer’s own tools.' },
+	{ k: 'Prove', v: 'Measure it end to end against the same SLOs, and rehearse dimming back up.' },
+	{ k: 'Scale', v: 'Repeat per work type and per team, and hand over the engineering loop or run it as a service.' },
+];
 
 const site = Astro.site;
 const ogVersion = createHash('sha256').update(readFileSync(join(process.cwd(), 'public/og.png'))).digest('hex').slice(0, 8);
@@ -157,10 +230,24 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 					theme = stored === 'light' || stored === 'dark' ? stored : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
 				} catch {}
 				root.dataset.theme = theme;
+				// Audience controls: URL first (shareable), then the last choice, then the defaults.
+				const q = new URLSearchParams(location.search);
+				const pick = (param, key, allowed, fallback) => {
+					let v = q.get(param);
+					if (!allowed.includes(v)) {
+						try {
+							v = localStorage.getItem(key);
+						} catch {}
+					}
+					return allowed.includes(v) ? v : fallback;
+				};
+				root.dataset.style = pick('style', 'bff-present-style', ['vectors', 'blocks'], 'vectors');
+				root.dataset.tech = pick('tech', 'bff-present-tech', ['l200', 'l400'], 'l200');
 			})();
 		</script>
 	</head>
 	<body>
+		<VectorArt k="defs" />
 		<div class="pz-app">
 			<main class="pz-main">
 				<section class="pz-stage" data-zone="building" data-cur="cover" aria-roledescription="carousel" aria-label="Bright Factory Framework, presentation">
@@ -173,6 +260,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 						</a>
 						<p class="pz-where">
 							<span class="pz-chip"><span class="pz-sq" aria-hidden="true"></span><span data-chapter>Why</span></span>
+							<span class="pz-chip pz-tier-chip" data-tier="l400">L400</span>
 							<span class="pz-count" data-count>01 / {TOTAL}</span>
 						</p>
 					</header>
@@ -187,7 +275,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									<button class="bff-btn bff-btn-primary" type="button" data-go="why">Start the tour <span aria-hidden="true">→</span></button>
 								</div>
 								<p class="pz-hint">
-									<span class="pz-hint-keys">Press <kbd>→</kbd> to advance, <kbd>O</kbd> for the overview.</span>
+									<span class="pz-hint-keys">Press <kbd>→</kbd> to advance, <kbd>O</kbd> for the overview, <kbd>V</kbd> for the visual style and <kbd>L</kbd> for the technical level.</span>
 									<span class="pz-hint-touch">Swipe to advance.</span>
 								</p>
 							</Fragment>
@@ -207,6 +295,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 							{...slide('why')}
 							title="Built on GitHub. Better with Microsoft. Open by design."
 							lede="A software factory turns ideas into running software, continuously. Build one with agents, without taking people out of control."
+							deepLede="Each pillar maps to products you can switch on today, and to open standards you can swap them through."
 							href="/fundamentals/"
 						>
 							<ul class="pz-rows">
@@ -220,12 +309,28 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									))
 								}
 							</ul>
+							<Fragment slot="deep">
+								<dl class="pz-spec">
+									{
+										PILLARS.map((p) => (
+											<div data-accent={p.accent}>
+												<dt>
+													<span class="pz-sq" aria-hidden="true" />
+													{p.title}
+												</dt>
+												<dd>{joinDot(PILLAR_PRODUCTS[p.key])}</dd>
+											</div>
+										))
+									}
+								</dl>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('bright')}
 							title="Not a dark factory. A bright one."
 							lede="In a bright factory the floor can dim, but the HQ, where people set intent and take decisions, never does."
+							deepLede="Dimming the floor changes who approves, not what you can see."
 							href="/fundamentals/bright-vs-dark/"
 						>
 							<dl class="pz-compare">
@@ -238,12 +343,25 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									<dd>Agents do the heavy lifting. People keep intent, judgment and control.</dd>
 								</div>
 							</dl>
+							<Fragment slot="deep">
+								<dl class="pz-spec">
+									{
+										GLASS.map((g) => (
+											<div>
+												<dt>{g.k}</dt>
+												<dd>{g.v}</dd>
+											</div>
+										))
+									}
+								</dl>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('big-picture')}
 							title="The big picture."
 							lede="People in the HQ, agents on the floor, foundations underneath and engineering on the side."
+							deepLede={`${COMPONENT_COUNT} components in three layers, plus the loop that improves them.`}
 							href="/framework/"
 						>
 							<ul class="pz-layers">
@@ -260,6 +378,22 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									))
 								}
 							</ul>
+							<Fragment slot="deep">
+								<ul class="pz-layers pz-layers-deep">
+									{
+										ZONES.map((z) => (
+											<li data-zone={z.key}>
+												<button type="button" data-go={z.go} data-hl={z.key}>
+													<span class="pz-sq" aria-hidden="true" />
+													<strong>{z.label}</strong>
+													<span>{ZONE_PARTS[z.key]}</span>
+													<span class="pz-go" aria-hidden="true">→</span>
+												</button>
+											</li>
+										))
+									}
+								</ul>
+							</Fragment>
 							<Fragment slot="art">
 								{ZONES.map((z) => <span class="pz-zone" data-hl={z.key} data-zone={z.key} style={box(z.rect)} aria-hidden="true" />)}
 							</Fragment>
@@ -267,8 +401,10 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 
 						<Room
 							{...slide('principles')}
+							dense
 							title="Eight principles behind every bright factory."
 							lede="Four pairs. They hold at every level, for every work type, whatever tools you bring."
+							deepLede="What each principle means in practice."
 							href="/framework/principles/"
 						>
 							<div class="pz-groups">
@@ -288,12 +424,28 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									))
 								}
 							</div>
+							<Fragment slot="deep">
+								<dl class="pz-spec pz-spec-tight">
+									{
+										PRINCIPLES.map((p) => (
+											<div data-accent={ACCENT_OF[p.group]}>
+												<dt>
+													<span class="pz-sq" aria-hidden="true" />
+													{p.title}
+												</dt>
+												<dd>{MECHANISM[p.key]}</dd>
+											</div>
+										))
+									}
+								</dl>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('multiplayer')}
 							title="Singleplayer to multiplayer."
 							lede="From one developer and their agents on a laptop, to fleets of agents across the organisation."
+							deepLede="Each mode changes where agents run, how work starts and how people govern it."
 							href="/framework/multiplayer/"
 						>
 							<ol class="pz-track">
@@ -311,12 +463,33 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									))
 								}
 							</ol>
+							<Fragment slot="deep">
+								<table class="pz-table">
+									<thead>
+										<tr>
+											<td></td>
+											{MULTIPLAYER.modes.map((m) => <th scope="col">{m.title}</th>)}
+										</tr>
+									</thead>
+									<tbody>
+										{MULTIPLAYER.rows
+											.filter((r) => MP_ROWS.includes(r.label))
+											.map((r) => (
+												<tr>
+													<th scope="row">{r.label}</th>
+													{r.values.map((v) => <td>{v}</td>)}
+												</tr>
+											))}
+									</tbody>
+								</table>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('measuring')}
 							title="Measured, not guessed."
 							lede="The HQ measures the factory with DORA and SPACE. Engineering turns the weakest signal into its next move."
+							deepLede="DORA per service, SPACE per team, tracked per work type as the floor dims."
 							href="/framework/measuring/"
 						>
 							<div class="pz-measure">
@@ -338,12 +511,44 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									</ul>
 								</div>
 							</div>
+							<Fragment slot="deep">
+								<dl class="pz-spec pz-spec-tight">
+									<div>
+										<dt>DORA</dt>
+										<dd>{joinDot(MEASURE.dora.map((m) => m.name))}</dd>
+									</div>
+									<div>
+										<dt>SPACE</dt>
+										<dd>{joinDot(MEASURE.space.map((m) => m.name))}</dd>
+									</div>
+								</dl>
+								<table class="pz-table">
+									<thead>
+										<tr>
+											<th scope="col">When this signal slips</th>
+											<th scope="col">Next move</th>
+										</tr>
+									</thead>
+									<tbody>
+										{MEASURE.moves.map((m) => (
+											<tr>
+												<td>{m.signal}</td>
+												<th scope="row" data-zone={m.layer}>
+													<span class="pz-sq" aria-hidden="true" />
+													{m.move}
+												</th>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('line')}
 							title="One line from idea to production."
 							lede="The same four stations at every level. What changes is who does the work, and who approves it."
+							deepLede="Shown at Medium autonomy: agents do the work, people approve the merge."
 							href="/framework/#one-line-four-stations"
 						>
 							<ol class="pz-stations">
@@ -356,6 +561,26 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									))
 								}
 							</ol>
+							<Fragment slot="deep">
+								<table class="pz-table">
+									<thead>
+										<tr>
+											<th scope="col">Station</th>
+											<th scope="col">At Medium</th>
+											<th scope="col">With</th>
+										</tr>
+									</thead>
+									<tbody>
+										{MEDIUM.stages.map((st) => (
+											<tr>
+												<th scope="row">{st.name}</th>
+												<td>{st.task}</td>
+												<td class="pz-prod">{joinDot(st.products.map((p) => p.name))}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</Fragment>
 						</Room>
 
 						<Room
@@ -379,9 +604,33 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 								<div class="pz-level-out" aria-live="polite">
 									{
 										LEVEL_ORDER.map((k) => (
-											<p data-level={k} hidden={k !== 'low'}>
-												<strong>{LEVELS[k].floor}.</strong> {LEVELS[k].tagline}
-											</p>
+											<div data-level={k} hidden={k !== 'low'}>
+												<p data-tier="l200">
+													<strong>{LEVELS[k].floor}.</strong> {LEVELS[k].tagline}
+												</p>
+												<dl class="pz-spec pz-spec-tight" data-tier="l400">
+													<div>
+														<dt>Floor</dt>
+														<dd>{LEVELS[k].floor}</dd>
+													</div>
+													<div>
+														<dt>People</dt>
+														<dd>{LEVELS[k].people}</dd>
+													</div>
+													<div>
+														<dt>Agents</dt>
+														<dd>{LEVELS[k].agents}</dd>
+													</div>
+													<div>
+														<dt>Approvals</dt>
+														<dd>{LEVELS[k].approvals}</dd>
+													</div>
+													<div>
+														<dt>Move up when</dt>
+														<dd>{LEVELS[k].readyWhen}</dd>
+													</div>
+												</dl>
+											</div>
 										))
 									}
 								</div>
@@ -401,6 +650,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 							{...slide('dim-back-up')}
 							title="The dimmer goes both ways."
 							lede="Any work type returns to human approvals in minutes. Work continues from Git, so the business never stops."
+							deepLede="Six triggers dim a work type back up. One switch per work type, with the same gates and identities."
 							href="/levels/dim-back-up/"
 						>
 							<ol class="pz-steps">
@@ -415,12 +665,26 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									))
 								}
 							</ol>
+							<Fragment slot="deep">
+								<dl class="pz-spec">
+									{
+										DIM_BACK_UP_TRIGGERS.map((t) => (
+											<div>
+												<dt>{t.name}</dt>
+												<dd>{t.detail}</dd>
+											</div>
+										))
+									}
+								</dl>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('demos')}
+							dense
 							title="See it working."
 							lede="One demo, one continuous session, the whole factory line. Built with the GitHub Copilot app and Copilot automations."
+							deepLede="Six acts, one session, from a phone to production and back."
 							href="/get-started/demos/"
 						>
 							<ol class="pz-acts">
@@ -433,12 +697,27 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									))
 								}
 							</ol>
+							<Fragment slot="deep">
+								<ol class="pz-acts pz-acts-deep">
+									{
+										DEMO_ACTS.map((a) => (
+											<li>
+												<span class="pz-stage-tag">{a.stage}</span>
+												<span>
+													<strong>{a.title}.</strong> {a.text}
+												</span>
+											</li>
+										))
+									}
+								</ol>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('platform')}
 							title="Built on GitHub. Better with Microsoft."
 							lede="GitHub is where people and agents build together. Microsoft adds business context, a cloud to run on and control."
+							deepLede="A selection per layer. The products reference lists every product, by component and level."
 							href="/reference/products/"
 						>
 							<div class="pz-vendors">
@@ -451,22 +730,65 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									<ul class="pz-chips">{MICROSOFT.map((n) => <li>{n}</li>)}</ul>
 								</div>
 							</div>
+							<Fragment slot="deep">
+								<table class="pz-table pz-table-vendors">
+									<thead>
+										<tr>
+											<td></td>
+											<th scope="col" data-vendor="github">
+												<span class="pz-sq" aria-hidden="true" />
+												GitHub
+											</th>
+											<th scope="col" data-vendor="microsoft">
+												<span class="pz-sq" aria-hidden="true" />
+												Microsoft
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{PLATFORM.map((r) => (
+											<tr>
+												<th scope="row" data-zone={r.key}>
+													{r.label}
+												</th>
+												<td>{joinDot(r.github)}</td>
+												<td>{joinDot(r.microsoft)}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('open')}
 							title="Open by design."
 							lede="Any agent, editor, tracker or cloud, connected through open standards like MCP and Agent Skills."
+							deepLede="Every seam is an open contract or a choice. Swap one brick without rebuilding the factory."
 							href="/framework/principles/#composable-by-design"
 						>
 							<ul class="pz-chips">{OPEN.map((n) => <li>{n}</li>)}</ul>
 							<p class="pz-note">Every capability is a brick you can swap.</p>
+							<Fragment slot="deep">
+								<dl class="pz-spec pz-spec-tight">
+									{
+										SEAMS.map((x) => (
+											<div>
+												<dt>{x.k}</dt>
+												<dd>{x.v}</dd>
+											</div>
+										))
+									}
+								</dl>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('engineering')}
+							dense
 							title="Building the factory is a lit job."
 							lede="A platform team, or a partner, treats the factory as a product. Three moves, repeated at every level."
+							deepLede="The same three moves at every level. The work behind each one grows with the dimmer."
 							href="/framework/engineering/"
 						>
 							<ol class="pz-loop">
@@ -483,12 +805,37 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 								}
 							</ol>
 							<p class="pz-note"><span aria-hidden="true">↻ </span>The weakest signal picks the next move.</p>
+							<Fragment slot="deep">
+								<table class="pz-table pz-table-eng">
+									<thead>
+										<tr>
+											<td></td>
+											{LEVEL_ORDER.map((k) => <th scope="col">{LEVELS[k].short}</th>)}
+										</tr>
+									</thead>
+									<tbody>
+										{data.loop.map((l, i) => (
+											<tr>
+												<th scope="row">{l.step}</th>
+												{LEVEL_ORDER.map((k) => (
+													<td>
+														{data.levels[k].engineering[i].tasks.map((t) => (
+															<span>{t}</span>
+														))}
+													</td>
+												))}
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('journey')}
 							title="Your path to a bright factory."
 							lede="Explore the primitives, find your level, pilot one move up, then scale work type by work type."
+							deepLede="What each step involves, and where to start."
 							href="/get-started/"
 						>
 							<ol class="pz-journey">
@@ -506,12 +853,30 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									))
 								}
 							</ol>
+							<Fragment slot="deep">
+								<ol class="pz-journey pz-journey-deep">
+									{
+										JOURNEY.map((j, i) => (
+											<li>
+												<a href={withBase(j.href)}>
+													<span class="pz-num" aria-hidden="true">
+														{i + 1}
+													</span>
+													<strong>{j.title}</strong>
+													<span>{j.text}</span>
+												</a>
+											</li>
+										))
+									}
+								</ol>
+							</Fragment>
 						</Room>
 
 						<Room
 							{...slide('partners')}
 							title="Two ways to use the framework."
 							lede="Specialised partners are how the bright factory reaches every industry and every team."
+							deepLede="Six kinds of partner IP, delivered through one engagement model."
 							href="/get-started/partners/"
 						>
 							<dl class="pz-two">
@@ -524,6 +889,19 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 									<dd>Fill its components with your own IP, and offer it as a product or a service.</dd>
 								</div>
 							</dl>
+							<Fragment slot="deep">
+								<ul class="pz-chips">{IP_TYPES.map((n) => <li>{n}</li>)}</ul>
+								<dl class="pz-spec pz-spec-tight">
+									{
+										ENGAGE.map((x) => (
+											<div>
+												<dt>{x.k}</dt>
+												<dd>{x.v}</dd>
+											</div>
+										))
+									}
+								</dl>
+							</Fragment>
 						</Room>
 
 						<Room {...slide('close')}>
@@ -559,6 +937,28 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
 				</button>
 				<span class="pz-tb-sep" aria-hidden="true"></span>
+				<button type="button" class="pz-tb pz-tb-icon pz-aud-btn" popovertarget="pz-audience" aria-label="Audience: visual style and technical level" title="Audience (V, L)">
+					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 4h7M12 4h2M2 12h2M7 12h7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"></path><circle cx="10.5" cy="4" r="1.6" fill="none" stroke="currentColor" stroke-width="1.4"></circle><circle cx="5.5" cy="12" r="1.6" fill="none" stroke="currentColor" stroke-width="1.4"></circle></svg>
+				</button>
+				<div class="pz-audience" id="pz-audience" popover>
+					<fieldset class="pz-pick" data-pick="style">
+						<legend class="pz-sr">Visual style</legend>
+						<span class="pz-pick-name" aria-hidden="true">Style</span>
+						<span class="pz-seg pz-seg-2">
+							<label title="Concept drawings (V)"><input type="radio" name="pz-style" value="vectors" /><span>Vectors</span></label>
+							<label title="LEGO renders (V)"><input type="radio" name="pz-style" value="blocks" /><span>Blocks</span></label>
+						</span>
+					</fieldset>
+					<fieldset class="pz-pick" data-pick="tech">
+						<legend class="pz-sr">Technical level</legend>
+						<span class="pz-pick-name" aria-hidden="true">Level</span>
+						<span class="pz-seg pz-seg-2">
+							<label title="The story (L)"><input type="radio" name="pz-tech" value="l200" /><span>L200</span></label>
+							<label title="The deeper layer (L)"><input type="radio" name="pz-tech" value="l400" /><span>L400</span></label>
+						</span>
+					</fieldset>
+				</div>
+				<span class="pz-tb-sep" aria-hidden="true"></span>
 				<button type="button" class="pz-tb" data-action="overview" aria-haspopup="dialog">
 					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
 					<span>Overview</span><kbd aria-hidden="true">O</kbd>
@@ -585,6 +985,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 				<div class="pz-ov-map">
 					<div class="pz-imgbox pz-ov-bimg">
 						<Image src={building} alt="" widths={[960, 1536]} sizes="(min-aspect-ratio: 5/4) 60vw, 100vw" loading="lazy" decoding="async" />
+						<VectorArt k="building" decorative />
 						{
 							SLIDES.map(
 								(s, i) =>
@@ -653,6 +1054,24 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 			}));
 			const indexOf = (id?: string | null) => slides.findIndex((s) => s.id === id);
 
+			/* ---------- Audience: visual style and technical level ---------- */
+			type Kind = 'style' | 'tech';
+			const AUDIENCE: Record<Kind, { values: string[]; fallback: string; key: string; what: string; names: Record<string, string> }> = {
+				style: { values: ['vectors', 'blocks'], fallback: 'vectors', key: 'bff-present-style', what: 'Visual style', names: { vectors: 'Vectors', blocks: 'Blocks' } },
+				tech: { values: ['l200', 'l400'], fallback: 'l200', key: 'bff-present-tech', what: 'Technical level', names: { l200: 'L200', l400: 'L400' } },
+			};
+			// Non-default choices ride in the URL, so a copied link opens the same way for the next presenter.
+			function audienceQuery() {
+				const q = new URLSearchParams(location.search);
+				(Object.keys(AUDIENCE) as Kind[]).forEach((k) => {
+					const v = root.dataset[k];
+					if (v && v !== AUDIENCE[k].fallback) q.set(k, v);
+					else q.delete(k);
+				});
+				const s = q.toString();
+				return s ? `?${s}` : '';
+			}
+
 			let cur = 0;
 			let settle: (() => void) | null = null;
 			// Inert is set here, not in the HTML, so the no-JS fallback keeps every slide usable.
@@ -674,7 +1093,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 					if (b.dataset.ov === m.id) b.setAttribute('aria-current', 'step');
 					else b.removeAttribute('aria-current');
 				});
-				history.replaceState(null, '', cur === 0 ? location.pathname : `#${m.id}`);
+				history.replaceState(null, '', location.pathname + audienceQuery() + (cur === 0 ? '' : `#${m.id}`));
 				document.title = cur === 0 ? 'Present · Bright Factory Framework' : `${m.label} · Bright Factory Framework`;
 			}
 
@@ -791,6 +1210,36 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 			['pointerover', 'pointerout', 'focusin', 'focusout'].forEach((t) => dialog.addEventListener(t, lightMarker));
 
 			/* ---------- Controls ---------- */
+			function setAudience(kind: Kind, value: string, user = false) {
+				const a = AUDIENCE[kind];
+				if (!a.values.includes(value)) return;
+				const changed = root.dataset[kind] !== value;
+				root.dataset[kind] = value;
+				document.querySelectorAll<HTMLInputElement>(`input[name="pz-${kind}"]`).forEach((r) => (r.checked = r.value === value));
+				if (!user || !changed) return;
+				try {
+					localStorage.setItem(a.key, value);
+				} catch {}
+				chrome();
+				live.textContent = `${a.what}: ${a.names[value]}`;
+				const slide = slides[cur];
+				// Focus stays on the slide when the control it was on swaps out with the tier.
+				const f = document.activeElement as HTMLElement | null;
+				if (f && slide.contains(f) && f !== slide && !f.checkVisibility?.()) slide.focus({ preventScroll: true });
+				if (reduce.matches) return;
+				const target = slide.querySelector<HTMLElement>(kind === 'tech' ? '.pz-copy' : '.pz-imgbox, .pz-bimg');
+				target?.animate({ opacity: [0, 1] }, { duration: kind === 'tech' ? 180 : 240, easing: 'ease-out' });
+			}
+			const toggleAudience = (kind: Kind) => {
+				const { values } = AUDIENCE[kind];
+				setAudience(kind, values[(values.indexOf(root.dataset[kind]!) + 1) % values.length], true);
+			};
+			(Object.keys(AUDIENCE) as Kind[]).forEach((k) => setAudience(k, root.dataset[k] ?? AUDIENCE[k].fallback));
+			document.querySelector('.pz-audience')!.addEventListener('change', (e) => {
+				const r = e.target as HTMLInputElement;
+				setAudience(r.name === 'pz-style' ? 'style' : 'tech', r.value, true);
+			});
+
 			// Only an explicit toggle is saved, so a docs "Auto" theme keeps following the OS.
 			function setTheme(theme: 'light' | 'dark', persist = false) {
 				root.dataset.theme = theme;
@@ -876,6 +1325,10 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 						return toggleFullscreen();
 					case 't':
 						return toggleTheme();
+					case 'v':
+						return toggleAudience('style');
+					case 'l':
+						return toggleAudience('tech');
 				}
 				if (to === null) return;
 				e.preventDefault();

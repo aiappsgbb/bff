@@ -277,6 +277,267 @@
 	object-fit: contain;
 }
 
+/* ---------- Audience: visual style (Vectors default, Blocks) ---------- */
+/* No attribute (no JavaScript) means the defaults: Vectors and L200. */
+.pz-root:not([data-style='blocks']) .pz-imgbox > img,
+.pz-root:not([data-style='blocks']) .pz-imgbox::before,
+.pz-root[data-style='blocks'] .pz-vec {
+	display: none;
+}
+.pz-defs {
+	position: absolute;
+	overflow: hidden;
+}
+/*
+ * Vectors drawing language (VectorArt.astro): people are solid figures in the ink colour,
+ * agents are dark bots with green eyes, lit rooms are warm, the dark floor is near black in
+ * both themes. Zone parts take --z, pillars and bricks take --accent.
+ */
+.pz-root {
+	--vec-ink: var(--sl-color-gray-3);
+	--vec-strong: var(--sl-color-gray-2);
+	--vec-faint: color-mix(in srgb, var(--sl-color-gray-4) 55%, var(--sl-color-gray-5));
+	--vec-human: var(--sl-color-white);
+	--vec-human-on-dark: #eef3f0;
+	--vec-night: #030504;
+	--vec-night-line: #34423a;
+	--vec-belt: #46554c;
+	--vec-bot: #1e2922;
+	--vec-bot-line: #6e7a72;
+	--vec-agent: #5fed83;
+	--vec-lit: var(--bff-brick-lit);
+	--vec-warm: color-mix(in srgb, var(--vec-lit) 9%, var(--bff-surface));
+}
+.pz-root[data-theme='light'] {
+	--vec-night: #1b231f;
+	--vec-night-line: #46554c;
+	--vec-belt: #7d8a83;
+	--vec-bot: #1f2924;
+	--vec-bot-line: #5f6d64;
+	--vec-warm: color-mix(in srgb, var(--vec-lit) 16%, var(--bff-surface));
+}
+.pz-vec {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+	fill: none;
+	stroke: none;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+.pzv-s-ag {
+	stop-color: var(--vec-agent);
+}
+.pzv-s-lit {
+	stop-color: var(--vec-lit);
+}
+/* Fills first (some carry a default edge), then strokes, then modifiers: later rules win. */
+.pz-vec .surf {
+	fill: var(--bff-surface-2);
+	stroke: var(--vec-faint);
+	stroke-width: 2;
+}
+.pz-vec .tile {
+	fill: var(--bff-surface);
+	stroke: var(--vec-faint);
+	stroke-width: 2;
+}
+.pz-vec .night {
+	fill: var(--vec-night);
+}
+.pz-vec .warm {
+	fill: var(--vec-warm);
+}
+.pz-vec .dimbay {
+	fill: color-mix(in srgb, var(--vec-night) 62%, var(--vec-warm));
+}
+.pz-vec .nbox {
+	fill: color-mix(in srgb, var(--vec-night-line) 30%, var(--vec-night));
+	stroke: var(--vec-night-line);
+	stroke-width: 3;
+}
+.pz-vec .scr {
+	fill: color-mix(in srgb, var(--vec-agent) 12%, var(--vec-night));
+	stroke: color-mix(in srgb, var(--vec-agent) 45%, transparent);
+	stroke-width: 2;
+}
+.pz-vec .pk {
+	fill: color-mix(in srgb, var(--z) 75%, var(--vec-night));
+}
+.pz-vec .zfill,
+.pz-vec .node-on {
+	fill: var(--z);
+}
+.pz-vec .zf {
+	fill: color-mix(in srgb, var(--z) 11%, transparent);
+	stroke: color-mix(in srgb, var(--z) 60%, transparent);
+	stroke-width: 3;
+}
+.pz-vec .acfill,
+.pz-vec .led {
+	fill: var(--accent, var(--z));
+}
+.pz-vec .acf {
+	fill: color-mix(in srgb, var(--accent) 15%, transparent);
+	stroke: var(--accent);
+	stroke-width: 4;
+}
+.pz-vec .acn {
+	fill: var(--sl-color-black);
+	stroke: var(--accent);
+	stroke-width: 6;
+}
+.pz-vec .lit,
+.pz-vec .knob-lit {
+	fill: var(--vec-lit);
+}
+.pz-vec .barm,
+.pz-vec .stud {
+	fill: var(--vec-faint);
+}
+.pz-vec .knob {
+	fill: var(--vec-strong);
+}
+.pz-vec .track {
+	fill: var(--vec-night);
+	stroke: var(--vec-faint);
+	stroke-width: 2;
+}
+.pz-vec .hole {
+	fill: var(--sl-color-black);
+}
+.pz-vec .cm,
+.pz-vec .node {
+	fill: var(--sl-color-black);
+	stroke: var(--vec-strong);
+	stroke-width: 4;
+}
+.pz-vec .ah {
+	fill: var(--vec-ink);
+}
+.pz-vec .ah.z {
+	fill: var(--z);
+}
+.pz-vec .ah.acc {
+	fill: var(--accent);
+}
+.pz-vec .ah.lit {
+	fill: var(--vec-lit);
+}
+.pz-vec .fa {
+	stroke: var(--vec-faint);
+	stroke-width: 3;
+}
+.pz-vec .ln {
+	stroke: var(--vec-ink);
+	stroke-width: 4;
+}
+.pz-vec .ln2 {
+	stroke: var(--vec-strong);
+	stroke-width: 5;
+}
+.pz-vec .wall {
+	stroke: var(--vec-strong);
+	stroke-width: 6;
+}
+.pz-vec .nl {
+	stroke: var(--vec-night-line);
+	stroke-width: 3;
+}
+.pz-vec .belt {
+	stroke: var(--vec-belt);
+	stroke-width: 10;
+}
+.pz-vec .zs {
+	stroke: var(--z);
+	stroke-width: 4;
+}
+.pz-vec .zo {
+	stroke: color-mix(in srgb, var(--z) 50%, transparent);
+	stroke-width: 3;
+}
+.pz-vec .acs {
+	stroke: var(--accent);
+	stroke-width: 6;
+}
+.pz-vec .lit-s {
+	stroke: var(--vec-lit);
+	stroke-width: 5;
+}
+.pz-vec .glass {
+	stroke: var(--vec-ink);
+	stroke-width: 6;
+	stroke-dasharray: 26 12;
+}
+.pz-vec .slot {
+	stroke: var(--vec-ink);
+	stroke-width: 4;
+	stroke-dasharray: 14 12;
+}
+.pz-vec .thick {
+	stroke-width: 10;
+}
+.pz-vec .dash {
+	stroke-dasharray: 14 14;
+}
+.pz-vec .soft {
+	opacity: 0.45;
+}
+/* People */
+.pz-vec .hu {
+	fill: var(--vec-human);
+}
+.pz-vec .hu.acc {
+	fill: var(--accent);
+}
+.pz-vec .hu.on-dark {
+	fill: var(--vec-human-on-dark);
+}
+/* Agents */
+.pz-vec .ag rect {
+	fill: var(--vec-bot);
+	stroke: var(--vec-bot-line);
+	stroke-width: 3;
+}
+.pz-vec .ag path {
+	stroke: var(--vec-bot-line);
+	stroke-width: 4;
+}
+.pz-vec .ag-e {
+	fill: var(--vec-agent);
+}
+.pz-vec .ag-h {
+	fill: url(#pzv-halo);
+}
+/* Lamps */
+.pz-vec .cone {
+	fill: url(#pzv-cone);
+}
+.pz-vec .lamp.dim .cone {
+	opacity: 0.45;
+}
+.pz-vec .cord {
+	stroke: var(--vec-faint);
+	stroke-width: 3;
+}
+.pz-vec .shade {
+	fill: var(--vec-strong);
+}
+.pz-vec .bulb {
+	fill: var(--vec-lit);
+}
+.pz-vec .lamp.dim .bulb {
+	fill: color-mix(in srgb, var(--vec-lit) 55%, var(--vec-night));
+}
+.pz-vec .lamp.off :is(.shade, .bulb) {
+	fill: var(--vec-night-line);
+}
+.pz-vec .lamp.off .cord {
+	stroke: var(--vec-night-line);
+}
+
 /* ---------- Copy ---------- */
 .pz-title {
 	color: var(--sl-color-white);
@@ -734,6 +995,10 @@
 	outline: 2px solid var(--z-ink);
 	outline-offset: 2px;
 }
+.pz-level-out .pz-spec {
+	max-width: 34em;
+	margin-top: 0.8em;
+}
 .pz-level-out p {
 	max-width: 32em;
 	margin-top: 0.8em;
@@ -858,6 +1123,108 @@
 	font-size: var(--pz-small);
 }
 
+/* ---------- Audience: technical level (L200 default, L400 = same slide, deeper layer) ---------- */
+.pz-root:not([data-tech='l400']) [data-tier='l400'],
+.pz-root[data-tech='l400'] [data-tier='l200'] {
+	display: none !important;
+}
+.pz-deep > * + * {
+	margin-top: 1.1em;
+}
+.pz-spec > div {
+	display: grid;
+	grid-template-columns: minmax(6.5em, 30%) 1fr;
+	align-items: baseline;
+	column-gap: 1em;
+	padding-block: 0.5em;
+	border-top: 1px solid var(--sl-color-hairline-light);
+	font-size: var(--pz-small);
+	line-height: 1.4;
+}
+.pz-spec-tight > div {
+	padding-block: 0.36em;
+}
+.pz-spec dt {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5em;
+	color: var(--sl-color-white);
+	font-weight: 600;
+}
+.pz-spec dt .pz-sq {
+	align-self: center;
+}
+.pz-spec dd {
+	color: var(--sl-color-gray-2);
+}
+.pz-table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--pz-small);
+	line-height: 1.35;
+}
+.pz-table :is(th, td) {
+	padding: 0.42em 0.9em 0.42em 0;
+	border-top: 1px solid var(--sl-color-hairline-light);
+	text-align: left;
+	vertical-align: top;
+}
+.pz-table :is(th, td):last-child {
+	padding-right: 0;
+}
+.pz-table thead :is(th, td) {
+	border-top: 0;
+	padding-top: 0;
+	color: var(--sl-color-gray-3);
+	font-weight: 600;
+}
+.pz-table thead th .pz-sq,
+.pz-table tbody th .pz-sq {
+	margin-right: 0.45em;
+}
+.pz-table tbody th {
+	color: var(--sl-color-white);
+	font-weight: 600;
+}
+.pz-table td {
+	color: var(--sl-color-gray-2);
+}
+.pz-table .pz-prod {
+	color: var(--sl-color-gray-3);
+}
+.pz-table-eng td span {
+	display: block;
+}
+.pz-table-eng td span + span {
+	margin-top: 0.3em;
+}
+.pz-table-vendors tbody th {
+	color: var(--z-ink);
+}
+.pz-acts-deep li {
+	align-items: baseline;
+}
+.pz-acts-deep li > span:last-child {
+	color: var(--sl-color-gray-2);
+	font-size: var(--pz-small);
+}
+.pz-acts-deep strong {
+	color: var(--sl-color-white);
+	font-weight: 600;
+}
+.pz-layers-deep span:not(.pz-sq, .pz-go) {
+	font-size: var(--pz-small);
+}
+.pz-tier-chip {
+	padding: 0.05em 0.5em;
+	border: 1px solid var(--sl-color-gray-5);
+	border-radius: var(--bff-radius-sm);
+	color: var(--sl-color-gray-2);
+	font-size: 0.75em;
+	font-weight: 600;
+	letter-spacing: 0.03em;
+}
+
 /* ---------- Mini-map (opens the overview) ---------- */
 .pz-minimap {
 	position: absolute;
@@ -975,13 +1342,127 @@
 .pz-root[data-theme='light'] .pz-sun {
 	display: none;
 }
+/* Audience pickers: inline in the toolbar on wide screens, in a popover on narrow ones. */
+.pz-aud-btn {
+	display: none;
+}
+.pz-audience {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	position: static;
+	inset: auto;
+	width: auto;
+	height: auto;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	overflow: visible;
+}
+.pz-pick {
+	display: flex;
+	align-items: center;
+	gap: 0.45rem;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+.pz-pick-name {
+	color: var(--sl-color-gray-3);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+.pz-seg-2 {
+	grid-template-columns: repeat(2, auto);
+	gap: 2px;
+	padding: 2px;
+}
+.pz-pick .pz-seg span {
+	min-height: 1.9rem;
+	padding: 0 0.75em;
+	font-size: 0.8125rem;
+}
+.pz-pick .pz-seg input:checked + span {
+	background: var(--sl-color-gray-5);
+	color: var(--sl-color-white);
+}
+.pz-pick .pz-seg input:focus-visible + span {
+	outline-color: var(--sl-color-accent-high);
+}
+@media (max-width: 60rem) {
+	.pz-tb kbd,
+	.pz-pick-name {
+		display: none;
+	}
+	.pz-tb[data-action='overview'],
+	.pz-tb[href] {
+		width: 2.25rem;
+		padding: 0;
+	}
+	.pz-tb[data-action='overview'] span,
+	.pz-tb[href] span {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+}
+@media (max-width: 44rem) {
+	.pz-aud-btn {
+		display: inline-flex;
+	}
+	.pz-audience {
+		position: fixed;
+		inset: auto 0.75rem calc(3.5rem + env(safe-area-inset-bottom, 0px) + 0.5rem) auto;
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.9rem;
+		width: min(17rem, calc(100vw - 1.5rem));
+		padding: 1rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: var(--bff-radius);
+		background: var(--bff-surface);
+		box-shadow: 0 12px 32px rgb(0 0 0 / 0.35);
+	}
+	.pz-audience:not(:popover-open) {
+		display: none;
+	}
+	.pz-pick {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.4rem;
+	}
+	.pz-pick-name {
+		display: block;
+	}
+	.pz-pick .pz-seg {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+	.pz-pick .pz-seg span {
+		min-height: 2.5rem;
+	}
+	.pz-aud-btn + .pz-audience + .pz-tb-sep {
+		display: none;
+	}
+}
 @media (pointer: coarse) {
 	.pz-tb,
 	.pz-seg span {
 		min-height: 2.75rem;
 	}
-	.pz-tb-icon {
-		width: 2.75rem;
+	.pz-tb-icon,
+	.pz-tb[data-action='overview'],
+	.pz-tb[href] {
+		min-width: 2.75rem;
+	}
+	.pz-pick .pz-seg span {
+		min-height: 2.75rem;
 	}
 }
 /* Phones: every control is an icon, and the header already shows the slide count. */
@@ -1011,6 +1492,13 @@
 @media (max-width: 30rem) and (pointer: coarse) {
 	.pz-tb:not(.pz-tb-icon) {
 		width: 2.75rem;
+	}
+}
+/* 320px phones: seven 44px targets only fit edge to edge. */
+@media (max-width: 22.5rem) {
+	.pz-toolbar {
+		gap: 0;
+		padding-inline: 0.125rem;
 	}
 }
 /* While presenting, the controls fade out until the pointer moves. */
@@ -1195,6 +1683,16 @@
 	.pz-slide.pz-building {
 		grid-template-columns: 36fr 64fr;
 	}
+	/* L400 carries tables: the copy column takes more of the slide. */
+	.pz-root[data-tech='l400'] .pz-slide:has(.pz-deep) {
+		grid-template-columns: 52fr 48fr;
+	}
+	.pz-root[data-tech='l400'] .pz-slide.pz-building:has(.pz-deep) {
+		grid-template-columns: 44fr 56fr;
+	}
+	.pz-root[data-tech='l400'] .pz-slide[data-dense] {
+		grid-template-columns: 62fr 38fr;
+	}
 	.pz-copy {
 		justify-content: safe center;
 		max-width: none;
@@ -1229,6 +1727,44 @@
 		overflow-y: auto;
 		border-top: 0;
 		border-left: 1px solid var(--sl-color-hairline);
+	}
+}
+/* Short 16:9 stages (1024×768, 1280×720): L400 tables tighten so the slide never scrolls. */
+@container (max-height: 44rem) {
+	.pz-root[data-tech='l400'] .pz-slide:has(.pz-deep) {
+		padding-block: 5cqw 4.25cqw;
+	}
+	.pz-root[data-tech='l400'] .pz-deep > * + * {
+		margin-top: 0.75em;
+	}
+	.pz-root[data-tech='l400'] .pz-lede-deep {
+		margin-bottom: 0;
+	}
+	.pz-root[data-tech='l400'] .pz-spec > div {
+		padding-block: 0.3em;
+		line-height: 1.32;
+	}
+	.pz-root[data-tech='l400'] .pz-table :is(th, td) {
+		padding-block: 0.28em;
+		line-height: 1.3;
+	}
+	.pz-root[data-tech='l400'] .pz-table-eng td span {
+		display: inline;
+	}
+	.pz-root[data-tech='l400'] .pz-table-eng td span + span::before {
+		content: ' · ';
+		color: var(--sl-color-gray-4);
+	}
+	.pz-root[data-tech='l400'] .pz-acts-deep li {
+		padding-block: 0.3em;
+	}
+}
+@container (max-height: 35.5rem) {
+	.pz-root[data-tech='l400'] .pz-slide:has(.pz-deep) {
+		padding-block: 4cqw 3.75cqw;
+	}
+	.pz-root[data-tech='l400'] .pz-spec > div {
+		padding-block: 0.22em;
 	}
 }
 
