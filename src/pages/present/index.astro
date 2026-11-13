@@ -1,0 +1,934 @@
+---
+/**
+ * Presentation mode: a 17-slide visual tour of the framework, built from the docs content.
+ *
+ * Direction (PRODUCT.md, DESIGN.md "Imagery"): the LEGO building cutaway is the map. Cover,
+ * big picture and close show the whole building; every other slide is a room in it. Moving
+ * from a building slide into a room flies the camera into that room's spot (the one authored
+ * motion moment), moving back flies out, and room to room is a short pan. A running header
+ * and a mini-map keep the audience oriented; O opens the overview. Copy is short, one visual
+ * per slide, and every slide links to the page it summarises.
+ */
+import type { ImageMetadata } from 'astro';
+import { Image } from 'astro:assets';
+import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import Room from '../../components/present/Room.astro';
+import logo from '../../assets/logo.svg?raw';
+import { DEMO_ACTS, DIM_BACK_UP_STEPS, JOURNEY, MEASURE, MULTIPLAYER, PILLARS, PRINCIPLE_GROUPS } from '../../data/content';
+import { data, LEVEL_ORDER, LEVELS, withBase } from '../../data/site';
+import '../../styles/fonts.css';
+import '../../styles/theme.css';
+import '../../styles/components.css';
+import '../../styles/present.css';
+
+type Zone = 'building' | 'all' | 'hq' | 'floor' | 'foundations' | 'eng';
+interface SlideMeta {
+	id: string;
+	art: string;
+	zone: Zone;
+	chapter: string;
+	label: string;
+	/** Where the room sits in the building, in % of the 3:2 cutaway. */
+	spot?: readonly [number, number];
+}
+
+const SLIDES: SlideMeta[] = [
+	{ id: 'cover', art: 'building', zone: 'building', chapter: 'Why', label: 'Bright Factory Framework' },
+	{ id: 'why', art: 'why', zone: 'all', chapter: 'Why', label: 'Why the framework' },
+	{ id: 'bright', art: 'bright-dark', zone: 'all', chapter: 'Why', label: 'Bright, not dark' },
+	{ id: 'big-picture', art: 'building', zone: 'building', chapter: 'Why', label: 'The big picture' },
+	{ id: 'principles', art: 'principles', zone: 'hq', chapter: 'Factory HQ', label: 'Eight principles', spot: [43.5, 27] },
+	{ id: 'multiplayer', art: 'multiplayer', zone: 'hq', chapter: 'Factory HQ', label: 'Singleplayer to multiplayer', spot: [23.5, 27] },
+	{ id: 'measuring', art: 'measure', zone: 'hq', chapter: 'Factory HQ', label: 'Measuring progress', spot: [62, 27] },
+	{ id: 'line', art: 'line', zone: 'floor', chapter: 'Factory floor', label: 'One line, four stations', spot: [35, 60] },
+	{ id: 'dimmer', art: 'dimmer', zone: 'floor', chapter: 'Factory floor', label: 'The autonomy dimmer', spot: [18, 50] },
+	{ id: 'dim-back-up', art: 'dimback', zone: 'floor', chapter: 'Factory floor', label: 'Dim back up', spot: [58, 62] },
+	{ id: 'demos', art: 'demos', zone: 'floor', chapter: 'Factory floor', label: 'See it working', spot: [48, 53] },
+	{ id: 'platform', art: 'platform', zone: 'foundations', chapter: 'Foundations', label: 'GitHub and Microsoft', spot: [27, 80] },
+	{ id: 'open', art: 'open', zone: 'foundations', chapter: 'Foundations', label: 'Open by design', spot: [55, 80] },
+	{ id: 'engineering', art: 'loop', zone: 'eng', chapter: 'Engineering', label: 'Engineering the factory', spot: [83, 53] },
+	{ id: 'journey', art: 'journey', zone: 'all', chapter: 'Get started', label: 'Your path' },
+	{ id: 'partners', art: 'partners', zone: 'all', chapter: 'Get started', label: 'Customers and partners' },
+	{ id: 'close', art: 'building', zone: 'building', chapter: 'Get started', label: 'Start building' },
+];
+const TOTAL = SLIDES.length;
+
+const renders = import.meta.glob<{ default: ImageMetadata }>('../../assets/present/*.png', { eager: true });
+const building = renders['../../assets/present/building.png'].default;
+const imageFor = (key: string) => renders[`../../assets/present/${key}.png`]?.default ?? building;
+
+const ALT: Record<string, string> = {
+	building: 'A LEGO building in cross-section: a bright orange Factory HQ on top, a lights-off factory floor of robots, blue foundations below and a purple engineering wing on the side.',
+	why: 'A LEGO entrance hall held up by green, blue and purple pillars, with cats and robots walking in together.',
+	bright: 'One factory room split in two: a dark half where robots work alone, and a lit half where a cat steers them.',
+	principles: 'Cats plan around a table in the HQ with an instruction booklet, a blueprint and trays of sorted bricks.',
+	multiplayer: 'One cat at a laptop with one robot, then a shared table of cats and robots, then a hall of robots watched from a balcony.',
+	measuring: 'A cat and a duck review a wall of dashboards in the HQ control room.',
+	line: 'One conveyor through four stations, worked by robots only, lights-off and lit by their screens.',
+	dimmer: 'A cat at a dimmer switch beside three factory bays: lit, dimmed and dark.',
+	'dim-back-up': 'A cat pushes the dimmer back up and the lamps come on, while a duck takes notes and robots keep working.',
+	demos: 'A cat presents the factory on a big screen to an audience of cats and ducks, with robots working beside the stage.',
+	platform: 'A blue foundations room of server racks and glowing data pipes, checked by cats, ducks and a robot.',
+	open: 'A cat drives a forklift of many-coloured bricks into an open bay where robots of different makes work side by side.',
+	engineering: 'Ducks in hard hats tune machines in the purple engineering wing while a conveyor loop carries improved parts back.',
+	journey: 'A building growing step by step, from a one-person workshop to a lit, multi-storey factory.',
+	partners: 'Two teams building one factory together, passing bricks and blueprints, while a crane lifts in a new room.',
+};
+
+const slide = (id: string) => {
+	const index = SLIDES.findIndex((s) => s.id === id);
+	const s = SLIDES[index];
+	return {
+		id,
+		index,
+		total: TOTAL,
+		zone: s.zone,
+		chapter: s.chapter,
+		label: s.label,
+		spot: s.spot,
+		img: imageFor(s.art),
+		alt: ALT[s.art === 'building' ? 'building' : id] ?? '',
+	};
+};
+
+const CHAPTERS = [...new Set(SLIDES.map((s) => s.chapter))].map((title) => ({
+	title,
+	items: SLIDES.map((s, i) => ({ ...s, n: i + 1 })).filter((s) => s.chapter === title),
+}));
+
+const ZONES = [
+	{ key: 'hq', go: 'principles', label: 'Factory HQ', who: 'Humans bring clarity', rect: [9.4, 14.2, 72.3, 37.1], pin: [12, 17] },
+	{ key: 'floor', go: 'line', label: 'Factory floor', who: 'Agents do the heavy lifting', rect: [9.4, 38.6, 71.6, 68.4], pin: [12, 41] },
+	{ key: 'foundations', go: 'platform', label: 'Foundations', who: 'What the factory is built on', rect: [9.4, 68.8, 71.6, 92.3], pin: [12, 71] },
+	{ key: 'eng', go: 'engineering', label: 'Engineering', who: 'Builds the factory itself', rect: [72.3, 10.7, 93.4, 95.2], pin: [7.5, 13], right: true },
+] as const;
+
+const BAYS = [
+	{ level: 'low', rect: [18.2, 39, 48.8, 81] },
+	{ level: 'medium', rect: [52.4, 39, 69.3, 81] },
+	{ level: 'high', rect: [72.9, 39, 91.1, 81] },
+] as const;
+
+const box = (r: readonly number[]) => `left:${r[0]}%;top:${r[1]}%;width:${r[2] - r[0]}%;height:${r[3] - r[1]}%`;
+
+const GITHUB = ['Copilot app', 'Copilot cloud agent', 'Copilot automations', 'GitHub Actions', 'GHAS + Autofix', 'Agentic workflows'];
+const MICROSOFT = ['Foundry Agent Service', 'Foundry IQ', 'Work IQ', 'Azure SRE Agent', 'Entra Agent ID', 'Microsoft Teams'];
+const OPEN = ['Claude · Codex', 'Jira · Linear', 'Slack', 'JetBrains · Xcode', 'Jenkins · GitLab', 'AWS · GCP · on-prem', 'Datadog', 'Okta', 'AGENTS.md'];
+const BAY_STATE = { low: 'Lights on', medium: 'Dimmed', high: 'Lights-off' } as const;
+
+const site = Astro.site;
+const ogVersion = createHash('sha256').update(readFileSync(join(process.cwd(), 'public/og.png'))).digest('hex').slice(0, 8);
+const ogImage = site ? `${new URL(withBase('/og.png'), site).href}?v=${ogVersion}` : undefined;
+const canonical = site ? new URL(withBase('/present/'), site).href : undefined;
+const pageTitle = 'Present · Bright Factory Framework';
+const description = 'A visual tour of the Bright Factory Framework: Microsoft opinionated framework for building agentic software factories.';
+---
+
+<!doctype html>
+<html lang="en" dir="ltr" class="pz-root">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{pageTitle}</title>
+		<meta name="description" content={description} />
+		<link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+		{canonical && <link rel="canonical" href={canonical} />}
+		<meta property="og:type" content="website" />
+		<meta property="og:title" content={pageTitle} />
+		<meta property="og:description" content={description} />
+		{canonical && <meta property="og:url" content={canonical} />}
+		{ogImage && <meta property="og:image" content={ogImage} />}
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:alt" content="Bright Factory Framework" />
+		<meta name="twitter:card" content="summary_large_image" />
+		{ogImage && <meta name="twitter:image" content={ogImage} />}
+		<meta name="theme-color" content="#0a0d0b" />
+		<script is:inline>
+			// Same theme key as the docs (Starlight), applied before first paint.
+			(() => {
+				const root = document.documentElement;
+				root.classList.add('js');
+				let theme = 'dark';
+				try {
+					const stored = localStorage.getItem('starlight-theme');
+					theme = stored === 'light' || stored === 'dark' ? stored : matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+				} catch {}
+				root.dataset.theme = theme;
+			})();
+		</script>
+	</head>
+	<body>
+		<div class="pz-app">
+			<main class="pz-main">
+				<section class="pz-stage" data-zone="building" data-cur="cover" aria-roledescription="carousel" aria-label="Bright Factory Framework, presentation">
+					<div class="pz-progress" aria-hidden="true"><i></i></div>
+
+					<header class="pz-head">
+						<a class="pz-brand" href={withBase('/')}>
+							<span class="pz-logo" set:html={logo} />
+							<span>Bright Factory Framework</span>
+						</a>
+						<p class="pz-where">
+							<span class="pz-chip"><span class="pz-sq" aria-hidden="true"></span><span data-chapter>Why</span></span>
+							<span class="pz-count" data-count>01 / {TOTAL}</span>
+						</p>
+					</header>
+
+					<div class="pz-slides">
+						<Room {...slide('cover')}>
+							<Fragment slot="copy">
+								<h1 class="pz-title">Bright Factory <span>Framework</span></h1>
+								<p class="pz-sub">Microsoft opinionated framework for building agentic software factories.</p>
+								<p class="pz-lede">Ideas come to life. Agents do the heavy lifting. Humans monitor and control.</p>
+								<div class="pz-ctas">
+									<button class="bff-btn bff-btn-primary" type="button" data-go="why">Start the tour <span aria-hidden="true">→</span></button>
+								</div>
+								<p class="pz-hint">
+									<span class="pz-hint-keys">Press <kbd>→</kbd> to advance, <kbd>O</kbd> for the overview.</span>
+									<span class="pz-hint-touch">Swipe to advance.</span>
+								</p>
+							</Fragment>
+							<Fragment slot="art">
+								{
+									ZONES.map((z) => (
+										<button type="button" class="pz-pin" data-go={z.go} data-zone={z.key} style={`${'right' in z ? 'right' : 'left'}:${z.pin[0]}%;top:${z.pin[1]}%`}>
+											<span class="pz-sq" aria-hidden="true" />
+											{z.label}
+										</button>
+									))
+								}
+							</Fragment>
+						</Room>
+
+						<Room
+							{...slide('why')}
+							title="Built on GitHub. Better with Microsoft. Open by design."
+							lede="A software factory turns ideas into running software, continuously. Build one with agents, without taking people out of control."
+							href="/fundamentals/"
+						>
+							<ul class="pz-rows">
+								{
+									PILLARS.map((p) => (
+										<li data-accent={p.accent}>
+											<span class="pz-sq" aria-hidden="true" />
+											<strong>{p.title}</strong>
+											<span>{p.kicker}</span>
+										</li>
+									))
+								}
+							</ul>
+						</Room>
+
+						<Room
+							{...slide('bright')}
+							title="Not a dark factory. A bright one."
+							lede="In a bright factory the floor can dim, but the HQ, where people set intent and take decisions, never does."
+							href="/fundamentals/bright-vs-dark/"
+						>
+							<dl class="pz-compare">
+								<div data-state="dark">
+									<dt><span class="pz-lamp" aria-hidden="true"></span>Dark factory</dt>
+									<dd>Lights off, nobody watching. People are out of the loop.</dd>
+								</div>
+								<div data-state="bright">
+									<dt><span class="pz-lamp" aria-hidden="true"></span>Bright factory</dt>
+									<dd>Agents do the heavy lifting. People keep intent, judgment and control.</dd>
+								</div>
+							</dl>
+						</Room>
+
+						<Room
+							{...slide('big-picture')}
+							title="The big picture."
+							lede="People in the HQ, agents on the floor, foundations underneath and engineering on the side."
+							href="/framework/"
+						>
+							<ul class="pz-layers">
+								{
+									ZONES.map((z) => (
+										<li data-zone={z.key}>
+											<button type="button" data-go={z.go} data-hl={z.key}>
+												<span class="pz-sq" aria-hidden="true" />
+												<strong>{z.label}</strong>
+												<span>{z.who}</span>
+												<span class="pz-go" aria-hidden="true">→</span>
+											</button>
+										</li>
+									))
+								}
+							</ul>
+							<Fragment slot="art">
+								{ZONES.map((z) => <span class="pz-zone" data-hl={z.key} data-zone={z.key} style={box(z.rect)} aria-hidden="true" />)}
+							</Fragment>
+						</Room>
+
+						<Room
+							{...slide('principles')}
+							title="Eight principles behind every bright factory."
+							lede="Four pairs. They hold at every level, for every work type, whatever tools you bring."
+							href="/framework/principles/"
+						>
+							<div class="pz-groups">
+								{
+									PRINCIPLE_GROUPS.map((g) => (
+										<div class="pz-group" data-accent={g.accent}>
+											<p class="pz-gname">
+												<span class="pz-sq" aria-hidden="true" />
+												{g.title}
+											</p>
+											<ul>
+												{g.principles.map((p) => (
+													<li>{p.title}</li>
+												))}
+											</ul>
+										</div>
+									))
+								}
+							</div>
+						</Room>
+
+						<Room
+							{...slide('multiplayer')}
+							title="Singleplayer to multiplayer."
+							lede="From one developer and their agents on a laptop, to fleets of agents across the organisation."
+							href="/framework/multiplayer/"
+						>
+							<ol class="pz-track">
+								{
+									MULTIPLAYER.modes.map((m, i) => (
+										<li>
+											<span class="pz-bricks" data-n={[1, 3, 9][i]} aria-hidden="true">
+												{Array.from({ length: [1, 3, 9][i] }, () => (
+													<i />
+												))}
+											</span>
+											<strong>{m.title}</strong>
+											<span>{m.where}</span>
+										</li>
+									))
+								}
+							</ol>
+						</Room>
+
+						<Room
+							{...slide('measuring')}
+							title="Measured, not guessed."
+							lede="The HQ measures the factory with DORA and SPACE. Engineering turns the weakest signal into its next move."
+							href="/framework/measuring/"
+						>
+							<div class="pz-measure">
+								<div>
+									<p class="pz-label">DORA, for delivery</p>
+									<ul class="pz-chips">{MEASURE.dora.map((m) => <li>{m.name}</li>)}</ul>
+								</div>
+								<div>
+									<p class="pz-label">SPACE, for people</p>
+									<ul class="pz-letters">
+										{
+											MEASURE.space.map((m) => (
+												<li>
+													<b aria-hidden="true">{m.letter}</b>
+													<span>{m.name.split(' ')[0]}</span>
+												</li>
+											))
+										}
+									</ul>
+								</div>
+							</div>
+						</Room>
+
+						<Room
+							{...slide('line')}
+							title="One line from idea to production."
+							lede="The same four stations at every level. What changes is who does the work, and who approves it."
+							href="/framework/#one-line-four-stations"
+						>
+							<ol class="pz-stations">
+								{
+									data.workflow.map((w) => (
+										<li>
+											<strong>{w.name}</strong>
+											<span>{w.task}</span>
+										</li>
+									))
+								}
+							</ol>
+						</Room>
+
+						<Room
+							{...slide('dimmer')}
+							title="A dimmer, not a switch."
+							lede="Three autonomy levels, set per work type. Move up when the evidence says so."
+							href="/levels/"
+						>
+							<fieldset class="pz-dimmer">
+								<legend class="pz-label">Try the dimmer</legend>
+								<div class="pz-seg">
+									{
+										LEVEL_ORDER.map((k) => (
+											<label>
+												<input type="radio" name="pz-level" value={k} checked={k === 'low'} />
+												<span>{LEVELS[k].short}</span>
+											</label>
+										))
+									}
+								</div>
+								<div class="pz-level-out" aria-live="polite">
+									{
+										LEVEL_ORDER.map((k) => (
+											<p data-level={k} hidden={k !== 'low'}>
+												<strong>{LEVELS[k].floor}.</strong> {LEVELS[k].tagline}
+											</p>
+										))
+									}
+								</div>
+							</fieldset>
+							<Fragment slot="art">
+								{
+									BAYS.map((b) => (
+										<span class="pz-bay" data-level={b.level} style={box(b.rect)} aria-hidden="true">
+											<span>{BAY_STATE[b.level]}</span>
+										</span>
+									))
+								}
+							</Fragment>
+						</Room>
+
+						<Room
+							{...slide('dim-back-up')}
+							title="The dimmer goes both ways."
+							lede="Any work type returns to human approvals in minutes. Work continues from Git, so the business never stops."
+							href="/levels/dim-back-up/"
+						>
+							<ol class="pz-steps">
+								{
+									DIM_BACK_UP_STEPS.map((s, i) => (
+										<li>
+											<span class="pz-num" aria-hidden="true">
+												{i + 1}
+											</span>
+											{s.title}
+										</li>
+									))
+								}
+							</ol>
+						</Room>
+
+						<Room
+							{...slide('demos')}
+							title="See it working."
+							lede="One demo, one continuous session, the whole factory line. Built with the GitHub Copilot app and Copilot automations."
+							href="/get-started/demos/"
+						>
+							<ol class="pz-acts">
+								{
+									DEMO_ACTS.map((a) => (
+										<li>
+											<span class="pz-stage-tag">{a.stage}</span>
+											<span>{a.title}</span>
+										</li>
+									))
+								}
+							</ol>
+						</Room>
+
+						<Room
+							{...slide('platform')}
+							title="Built on GitHub. Better with Microsoft."
+							lede="GitHub is where people and agents build together. Microsoft adds business context, a cloud to run on and control."
+							href="/reference/products/"
+						>
+							<div class="pz-vendors">
+								<div data-vendor="github">
+									<p class="pz-label"><span class="pz-sq" aria-hidden="true"></span>GitHub</p>
+									<ul class="pz-chips">{GITHUB.map((n) => <li>{n}</li>)}</ul>
+								</div>
+								<div data-vendor="microsoft">
+									<p class="pz-label"><span class="pz-sq" aria-hidden="true"></span>Microsoft</p>
+									<ul class="pz-chips">{MICROSOFT.map((n) => <li>{n}</li>)}</ul>
+								</div>
+							</div>
+						</Room>
+
+						<Room
+							{...slide('open')}
+							title="Open by design."
+							lede="Any agent, editor, tracker or cloud, connected through open standards like MCP and Agent Skills."
+							href="/framework/principles/#composable-by-design"
+						>
+							<ul class="pz-chips">{OPEN.map((n) => <li>{n}</li>)}</ul>
+							<p class="pz-note">Every capability is a brick you can swap.</p>
+						</Room>
+
+						<Room
+							{...slide('engineering')}
+							title="Building the factory is a lit job."
+							lede="A platform team, or a partner, treats the factory as a product. Three moves, repeated at every level."
+							href="/framework/engineering/"
+						>
+							<ol class="pz-loop">
+								{
+									data.loop.map((l, i) => (
+										<li>
+											<span class="pz-num" aria-hidden="true">
+												{i + 1}
+											</span>
+											<strong>{l.step}</strong>
+											<span>{l.detail}</span>
+										</li>
+									))
+								}
+							</ol>
+							<p class="pz-note"><span aria-hidden="true">↻ </span>The weakest signal picks the next move.</p>
+						</Room>
+
+						<Room
+							{...slide('journey')}
+							title="Your path to a bright factory."
+							lede="Explore the primitives, find your level, pilot one move up, then scale work type by work type."
+							href="/get-started/"
+						>
+							<ol class="pz-journey">
+								{
+									JOURNEY.map((j, i) => (
+										<li>
+											<a href={withBase(j.href)}>
+												<span class="pz-num" aria-hidden="true">
+													{i + 1}
+												</span>
+												<strong>{j.title}</strong>
+												<span>{j.kicker}</span>
+											</a>
+										</li>
+									))
+								}
+							</ol>
+						</Room>
+
+						<Room
+							{...slide('partners')}
+							title="Two ways to use the framework."
+							lede="Specialised partners are how the bright factory reaches every industry and every team."
+							href="/get-started/partners/"
+						>
+							<dl class="pz-two">
+								<div>
+									<dt>Customers apply it directly.</dt>
+									<dd>Build your own factory with the levels, playbooks and big picture, one work type at a time.</dd>
+								</div>
+								<div>
+									<dt>Partners build on it.</dt>
+									<dd>Fill its components with your own IP, and offer it as a product or a service.</dd>
+								</div>
+							</dl>
+						</Room>
+
+						<Room {...slide('close')}>
+							<Fragment slot="copy">
+								<h2 class="pz-h pz-h-close">Everything’s in the box.</h2>
+								<p class="pz-sub">The factory is yours to build.</p>
+								<div class="pz-ctas">
+									<a class="bff-btn bff-btn-primary" href={withBase('/get-started/')}>Get started <span aria-hidden="true">→</span></a>
+									<a class="bff-btn" href={withBase('/get-started/find-your-level/')}>Find your level</a>
+									<a class="bff-btn bff-btn-ghost" href={withBase('/get-started/demos/')}>See it working</a>
+								</div>
+							</Fragment>
+						</Room>
+					</div>
+
+					<button class="pz-minimap" type="button" data-action="overview" aria-haspopup="dialog" aria-label="Overview" title="Overview (O)">
+						<span class="pz-mm" aria-hidden="true">
+							<i data-mm="hq"></i>
+							<i data-mm="floor"></i>
+							<i data-mm="foundations"></i>
+							<i data-mm="eng"></i>
+						</span>
+					</button>
+				</section>
+			</main>
+
+			<nav class="pz-toolbar" aria-label="Presentation controls">
+				<button type="button" class="pz-tb pz-tb-icon" data-nav="prev" aria-label="Previous slide" title="Previous (←)">
+					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M10 3 5 8l5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+				</button>
+				<span class="pz-tb-count" data-count aria-hidden="true">01 / {TOTAL}</span>
+				<button type="button" class="pz-tb pz-tb-icon" data-nav="next" aria-label="Next slide" title="Next (→)">
+					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="m6 3 5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+				</button>
+				<span class="pz-tb-sep" aria-hidden="true"></span>
+				<button type="button" class="pz-tb" data-action="overview" aria-haspopup="dialog">
+					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2.5 2.5h4.5v4.5H2.5zM9 2.5h4.5v4.5H9zM2.5 9h4.5v4.5H2.5zM9 9h4.5v4.5H9z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+					<span>Overview</span><kbd aria-hidden="true">O</kbd>
+				</button>
+				<button type="button" class="pz-tb pz-tb-icon" data-action="theme" aria-label="Switch to light theme" title="Theme (T)">
+					<svg class="pz-sun" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.4"></circle><path d="M8 1v1.6M8 13.4V15M1 8h1.6M13.4 8H15M3 3l1.1 1.1M11.9 11.9 13 13M3 13l1.1-1.1M11.9 4.1 13 3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path></svg>
+					<svg class="pz-moon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M13.5 9.8A5.8 5.8 0 0 1 6.2 2.5a5.8 5.8 0 1 0 7.3 7.3Z" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"></path></svg>
+				</button>
+				<button type="button" class="pz-tb pz-tb-icon" data-action="fullscreen" aria-label="Full screen" aria-pressed="false" title="Full screen (F)">
+					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+				</button>
+				<span class="pz-tb-sep" aria-hidden="true"></span>
+				<a class="pz-tb" href={withBase('/')}>
+					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M6.5 2.5h-3a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1h3M10.5 11 13.5 8l-3-3M13.5 8H6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+					<span>Exit to docs</span>
+				</a>
+			</nav>
+		</div>
+
+		<p class="pz-sr" aria-live="polite" data-live></p>
+
+		<dialog class="pz-ov" aria-labelledby="pz-ov-title">
+			<div class="pz-ov-grid">
+				<div class="pz-ov-map">
+					<div class="pz-imgbox pz-ov-bimg">
+						<Image src={building} alt="" widths={[960, 1536]} sizes="(min-aspect-ratio: 5/4) 60vw, 100vw" loading="lazy" decoding="async" />
+						{
+							SLIDES.map(
+								(s, i) =>
+									s.spot && (
+										<button type="button" class="pz-marker" data-ov={s.id} data-zone={s.zone} style={`left:${s.spot[0]}%;top:${s.spot[1]}%`} aria-label={`Slide ${i + 1}: ${s.label}`}>
+											<span aria-hidden="true">{i + 1}</span>
+											<span class="pz-marker-label" aria-hidden="true">{s.label}</span>
+										</button>
+									),
+							)
+						}
+					</div>
+				</div>
+				<div class="pz-ov-side">
+					<div class="pz-ov-top">
+						<h2 id="pz-ov-title">Overview</h2>
+						<button type="button" class="pz-tb" data-action="close">Close <kbd aria-hidden="true">Esc</kbd></button>
+					</div>
+					<ol class="pz-ov-list">
+						{
+							CHAPTERS.map((c) => (
+								<li>
+									<p class="pz-ov-ch">{c.title}</p>
+									<ol>
+										{c.items.map((s) => (
+											<li>
+												<button type="button" data-ov={s.id} data-zone={s.zone}>
+													<span class="pz-num" aria-hidden="true">
+														{s.n}
+													</span>
+													{s.label}
+												</button>
+											</li>
+										))}
+									</ol>
+								</li>
+							))
+						}
+					</ol>
+				</div>
+			</div>
+		</dialog>
+
+		<script>
+			const root = document.documentElement;
+			const stage = document.querySelector<HTMLElement>('.pz-stage')!;
+			const slides = [...document.querySelectorAll<HTMLElement>('.pz-slide')];
+			const dialog = document.querySelector<HTMLDialogElement>('.pz-ov')!;
+			const ovImg = dialog.querySelector<HTMLElement>('.pz-ov-bimg')!;
+			const toolbar = document.querySelector<HTMLElement>('.pz-toolbar')!;
+			const live = document.querySelector<HTMLElement>('[data-live]')!;
+			const N = slides.length;
+			const CENTER: [number, number] = [45, 52];
+			const EASE_OUT = 'cubic-bezier(0.16, 1, 0.3, 1)';
+			const EASE_IN = 'cubic-bezier(0.55, 0, 0.75, 0.2)';
+			const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+			const landscape = matchMedia('(min-aspect-ratio: 5/4) and (min-width: 48rem)');
+
+			const meta = slides.map((s) => ({
+				id: s.id,
+				zone: s.dataset.zone!,
+				chapter: s.dataset.chapter!,
+				label: s.dataset.label!,
+				spot: (s.dataset.spot?.split(',').map(Number) as [number, number] | undefined) ?? CENTER,
+				building: s.querySelector<HTMLElement>('.pz-bimg'),
+			}));
+			const indexOf = (id?: string | null) => slides.findIndex((s) => s.id === id);
+
+			let cur = 0;
+			let settle: (() => void) | null = null;
+			// Inert is set here, not in the HTML, so the no-JS fallback keeps every slide usable.
+			slides.forEach((s, i) => (s.inert = i !== cur));
+
+			function chrome() {
+				const m = meta[cur];
+				stage.dataset.zone = m.zone;
+				stage.dataset.cur = m.id;
+				stage.style.setProperty('--pz-progress', String(cur / (N - 1)));
+				const count = `${String(cur + 1).padStart(2, '0')} / ${N}`;
+				document.querySelectorAll('[data-count]').forEach((el) => (el.textContent = count));
+				document.querySelector('[data-chapter]')!.textContent = m.chapter;
+				document.querySelectorAll<HTMLElement>('[data-nav]').forEach((b) => {
+					const end = b.dataset.nav === 'prev' ? cur === 0 : cur === N - 1;
+					b.setAttribute('aria-disabled', String(end));
+				});
+				dialog.querySelectorAll<HTMLElement>('[data-ov]').forEach((b) => {
+					if (b.dataset.ov === m.id) b.setAttribute('aria-current', 'step');
+					else b.removeAttribute('aria-current');
+				});
+				history.replaceState(null, '', cur === 0 ? location.pathname : `#${m.id}`);
+				document.title = cur === 0 ? 'Present · Bright Factory Framework' : `${m.label} · Bright Factory Framework`;
+			}
+
+			function spotOrigin(el: HTMLElement, [x, y]: [number, number]) {
+				el.style.transformOrigin = `${x}% ${y}%`;
+			}
+
+			function animate(a: HTMLElement, b: HTMLElement, from: number, to: number, via?: 'overview') {
+				const ma = meta[from];
+				const mb = meta[to];
+				const anims: Animation[] = [];
+				a.classList.add('is-leaving');
+				if (reduce.matches) {
+					anims.push(a.animate({ opacity: [1, 0] }, { duration: 160, fill: 'forwards' }));
+					anims.push(b.animate({ opacity: [0, 1] }, { duration: 160 }));
+				} else if (via === 'overview') {
+					anims.push(a.animate({ opacity: [1, 0] }, { duration: 160, fill: 'forwards' }));
+					anims.push(b.animate({ opacity: [0, 1], transform: ['scale(1.04)', 'none'] }, { duration: 520, easing: EASE_OUT }));
+				} else if (ma.building && !mb.building) {
+					// Fly into the room: the cutaway zooms on the room's spot, the room fades up as we arrive.
+					spotOrigin(ma.building, mb.spot);
+					anims.push(ma.building.animate({ transform: ['scale(1)', 'scale(3.2)'] }, { duration: 820, easing: EASE_IN, fill: 'forwards' }));
+					anims.push(a.querySelector('.pz-copy')!.animate({ opacity: [1, 0] }, { duration: 220, fill: 'forwards' }));
+					anims.push(a.animate([{ opacity: 1 }, { opacity: 1, offset: 0.5 }, { opacity: 0 }], { duration: 820, fill: 'forwards' }));
+					anims.push(b.animate({ opacity: [0, 1], transform: ['scale(0.96)', 'none'] }, { duration: 560, delay: 480, easing: EASE_OUT, fill: 'backwards' }));
+				} else if (!ma.building && mb.building) {
+					// Fly back out: the cutaway starts close on the room we left and pulls back.
+					spotOrigin(mb.building, ma.spot);
+					anims.push(a.animate({ opacity: [1, 0], transform: ['none', 'scale(1.04)'] }, { duration: 280, easing: 'ease-in', fill: 'forwards' }));
+					anims.push(b.animate({ opacity: [0, 1] }, { duration: 360, delay: 120, fill: 'backwards' }));
+					anims.push(mb.building.animate({ transform: ['scale(3.2)', 'scale(1)'] }, { duration: 900, delay: 120, easing: EASE_OUT, fill: 'backwards' }));
+					anims.push(b.querySelector('.pz-copy')!.animate({ opacity: [0, 1], transform: ['translateY(0.75rem)', 'none'] }, { duration: 500, delay: 560, easing: EASE_OUT, fill: 'backwards' }));
+				} else {
+					const d = to > from ? 1 : -1;
+					anims.push(a.animate({ opacity: [1, 0], transform: ['none', `translateX(${-3 * d}%)`] }, { duration: 280, easing: 'ease-in', fill: 'forwards' }));
+					anims.push(b.animate({ opacity: [0, 1], transform: [`translateX(${3 * d}%)`, 'none'] }, { duration: 560, delay: 140, easing: EASE_OUT, fill: 'backwards' }));
+				}
+				const done = () => {
+					a.classList.remove('is-leaving');
+					anims.forEach((x) => x.cancel());
+					if (settle === done) settle = null;
+				};
+				settle = done;
+				Promise.all(anims.map((x) => x.finished))
+					.then(() => settle === done && done())
+					.catch(() => {});
+			}
+
+			function go(to: number, opts: { instant?: boolean; via?: 'overview' } = {}) {
+				to = Math.max(0, Math.min(N - 1, to));
+				if (to === cur) return;
+				settle?.();
+				const from = cur;
+				const a = slides[from];
+				const b = slides[to];
+				const hadFocus = a.contains(document.activeElement);
+				cur = to;
+				a.classList.remove('is-active');
+				a.inert = true;
+				b.classList.add('is-active');
+				b.inert = false;
+				b.scrollTop = 0;
+				chrome();
+				live.textContent = `Slide ${to + 1} of ${N}: ${meta[to].label}`;
+				if (hadFocus) b.focus({ preventScroll: true });
+				if (!opts.instant) animate(a, b, from, to, opts.via);
+			}
+
+			/* ---------- Overview ---------- */
+			function openOverview() {
+				if (dialog.open) return;
+				dialog.showModal();
+				const current = dialog.querySelector<HTMLElement>('.pz-ov-list [aria-current]');
+				current?.focus();
+				if (reduce.matches) return;
+				spotOrigin(ovImg, meta[cur].spot);
+				ovImg.animate({ transform: ['scale(2.4)', 'scale(1)'], opacity: [0, 1] }, { duration: 620, easing: EASE_OUT });
+				dialog.animate({ opacity: [0, 1] }, { duration: 220 });
+			}
+			function closeOverview() {
+				if (dialog.open) dialog.close();
+			}
+			function choose(id: string) {
+				const to = indexOf(id);
+				if (to < 0 || to === cur || reduce.matches) {
+					closeOverview();
+					go(to);
+					return;
+				}
+				const spot = meta[to].spot;
+				spotOrigin(ovImg, spot);
+				const zoom = ovImg.animate({ transform: ['scale(1)', 'scale(2.6)'] }, { duration: 420, easing: EASE_IN, fill: 'forwards' });
+				const fade = dialog.animate({ opacity: [1, 0] }, { duration: 200, delay: 240, fill: 'forwards' });
+				zoom.finished
+					.then(() => {
+						closeOverview();
+						zoom.cancel();
+						fade.cancel();
+						go(to, { via: 'overview' });
+					})
+					.catch(() => {});
+			}
+			dialog.addEventListener('click', (e) => {
+				const t = e.target as HTMLElement;
+				const pick = t.closest<HTMLElement>('[data-ov]');
+				if (pick) return choose(pick.dataset.ov!);
+				if (t.closest('[data-action="close"]')) closeOverview();
+			});
+			// Hovering or focusing a chapter item lights its marker on the building.
+			const lightMarker = (e: Event) => {
+				const id = (e.target as HTMLElement).closest<HTMLElement>('.pz-ov-list [data-ov]')?.dataset.ov;
+				dialog.querySelectorAll('.pz-marker').forEach((m) => m.classList.toggle('is-lit', (m as HTMLElement).dataset.ov === id && e.type !== 'pointerout' && e.type !== 'focusout'));
+			};
+			['pointerover', 'pointerout', 'focusin', 'focusout'].forEach((t) => dialog.addEventListener(t, lightMarker));
+
+			/* ---------- Controls ---------- */
+			// Only an explicit toggle is saved, so a docs "Auto" theme keeps following the OS.
+			function setTheme(theme: 'light' | 'dark', persist = false) {
+				root.dataset.theme = theme;
+				if (persist)
+					try {
+						localStorage.setItem('starlight-theme', theme);
+					} catch {}
+				document.querySelector('[data-action="theme"]')!.setAttribute('aria-label', theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+			}
+			const toggleTheme = () => setTheme(root.dataset.theme === 'light' ? 'dark' : 'light', true);
+			setTheme(root.dataset.theme === 'light' ? 'light' : 'dark');
+
+			const fsBtn = document.querySelector<HTMLElement>('[data-action="fullscreen"]')!;
+			fsBtn.hidden = !document.fullscreenEnabled;
+			const toggleFullscreen = () => {
+				if (!document.fullscreenEnabled) return;
+				if (document.fullscreenElement) document.exitFullscreen();
+				else root.requestFullscreen().catch(() => {});
+			};
+			document.addEventListener('fullscreenchange', () => {
+				const on = !!document.fullscreenElement;
+				fsBtn.setAttribute('aria-pressed', String(on));
+				fsBtn.setAttribute('aria-label', on ? 'Exit full screen' : 'Full screen');
+			});
+
+			document.addEventListener('click', (e) => {
+				const t = e.target as HTMLElement;
+				if (dialog.contains(t)) return;
+				const nav = t.closest<HTMLElement>('[data-nav]');
+				if (nav) return go(cur + (nav.dataset.nav === 'next' ? 1 : -1));
+				const jump = t.closest<HTMLElement>('[data-go]');
+				if (jump) return go(indexOf(jump.dataset.go));
+				const action = t.closest<HTMLElement>('[data-action]')?.dataset.action;
+				if (action === 'overview') openOverview();
+				else if (action === 'theme') toggleTheme();
+				else if (action === 'fullscreen') toggleFullscreen();
+			});
+
+			document.addEventListener('keydown', (e) => {
+				if (e.defaultPrevented || e.metaKey || e.ctrlKey || e.altKey) return;
+				const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+				if (dialog.open) {
+					if (key === 'o') {
+						e.preventDefault();
+						closeOverview();
+					}
+					return;
+				}
+				const t = e.target as HTMLElement;
+				if (t.closest('input:not([type="radio"]), textarea, select, [contenteditable]:not([contenteditable="false"])')) return;
+				const inGroup = !!t.closest('fieldset, [role="radiogroup"]');
+				const onControl = !!t.closest('a, button, summary, input');
+				const flat = landscape.matches;
+				let to: number | null = null;
+				switch (key) {
+					case 'ArrowRight':
+					case 'PageDown':
+						if (!inGroup || key === 'PageDown') to = cur + 1;
+						break;
+					case 'ArrowLeft':
+					case 'PageUp':
+						if (!inGroup || key === 'PageUp') to = cur - 1;
+						break;
+					case 'ArrowDown':
+						if (flat && !inGroup) to = cur + 1;
+						break;
+					case 'ArrowUp':
+						if (flat && !inGroup) to = cur - 1;
+						break;
+					case ' ':
+						if (!onControl && flat) to = cur + (e.shiftKey ? -1 : 1);
+						break;
+					case 'Home':
+						to = 0;
+						break;
+					case 'End':
+						to = N - 1;
+						break;
+					case 'o':
+						e.preventDefault();
+						return openOverview();
+					case 'f':
+						return toggleFullscreen();
+					case 't':
+						return toggleTheme();
+				}
+				if (to === null) return;
+				e.preventDefault();
+				go(to);
+			});
+
+			// Swipe between slides; vertical drags stay as scrolling on stacked (portrait) slides.
+			let sx = 0;
+			let sy = 0;
+			stage.addEventListener('touchstart', (e) => ({ clientX: sx, clientY: sy } = e.touches[0]), { passive: true });
+			stage.addEventListener(
+				'touchend',
+				(e) => {
+					const dx = e.changedTouches[0].clientX - sx;
+					const dy = e.changedTouches[0].clientY - sy;
+					if (Math.abs(dx) > 56 && Math.abs(dx) > Math.abs(dy) * 1.5) go(cur + (dx < 0 ? 1 : -1));
+				},
+				{ passive: true },
+			);
+
+			// Dimmer slide: the chosen level frames its bay in the render.
+			const dimmer = document.getElementById('dimmer');
+			const applyLevel = (level: string) => {
+				if (!dimmer) return;
+				dimmer.dataset.level = level;
+				dimmer.querySelectorAll<HTMLElement>('.pz-level-out [data-level]').forEach((p) => (p.hidden = p.dataset.level !== level));
+			};
+			dimmer?.addEventListener('change', (e) => applyLevel((e.target as HTMLInputElement).value));
+			// Browsers may restore the checked radio on reload or back without firing change.
+			applyLevel(dimmer?.querySelector<HTMLInputElement>('input:checked')?.value ?? 'low');
+
+			// Controls fade out while presenting and return on any movement.
+			let idle = 0;
+			const wake = () => {
+				root.classList.remove('pz-idle');
+				clearTimeout(idle);
+				idle = window.setTimeout(() => {
+					if (!toolbar.matches(':hover, :focus-within') && !dialog.open) root.classList.add('pz-idle');
+				}, 2600);
+			};
+			['pointermove', 'pointerdown', 'keydown'].forEach((t) => addEventListener(t, wake, { passive: true }));
+			wake();
+
+			addEventListener('hashchange', () => {
+				const i = indexOf(location.hash.slice(1));
+				if (i >= 0) go(i);
+			});
+			addEventListener('beforeprint', () => document.querySelectorAll<HTMLImageElement>('.pz-slide img').forEach((img) => (img.loading = 'eager')));
+
+			const start = indexOf(location.hash.slice(1));
+			if (start > 0) go(start, { instant: true });
+			else chrome();
+			root.classList.add('pz-ready');
+		</script>
+	</body>
+</html>

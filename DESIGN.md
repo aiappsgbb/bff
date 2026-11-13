@@ -106,6 +106,7 @@ Scene tokens are drawn on top of the LEGO renders, so they don't change with the
 ## Shape and spacing
 
 - Radius: `--bff-radius` 16px (media frames, cards), `--bff-radius-md` 12px (tables, asides, panels), `--bff-radius-sm` 6px (buttons, chips), `--bff-radius-pill` (status pills, hotspots, dots, the dimmer track).
+- Tiny marks (accent squares, brick studs, minimap cells) use a 1–2px radius, deliberately below the scale; at that size a 6px radius turns them into dots.
 - Max width: `--bff-max` 67.5rem (Starlight's splash width) on splash pages, set on `:root` so it doesn't depend on stylesheet order; content column 46rem, or 72rem on wide pages.
 - The blueprint grid (48px hairlines) appears only behind the page background. It fades out after the first viewport.
 - No side-tab or top accent bars. To mark a card, step or active item, tint its whole hairline border or surface with `color-mix`, or use the accent square.
@@ -134,6 +135,22 @@ Scene tokens are drawn on top of the LEGO renders, so they don't change with the
 ## Imagery
 
 - LEGO toy-photography renders (purple octocat characters = people, blue robots = agents, yellow ducks = quality) generated with GPT Image. Source images live in the deck repo under `deck/visuals/`.
+- Light follows people. A factory floor with only robots, no purple cats or yellow ducks, runs lights-off: lamps off, lit only by the robots' screens and status lights. Any room with people or ducks in it stays bright, and the HQ is always bright.
 - Diagrams are coloured with the layer tokens. Diagrams that carry text are HTML laid out with container queries, so rendered text stays at least 12px. They are not scaled SVG. Pure shapes can stay inline SVG.
 - Workflow stations are neutral numbered markers. Floor green is reserved for the loop, signals and verified bricks.
 - Brick stages: planned = dashed outline, built = grey, verified = floor green.
+
+## Presentation mode
+
+`/present/` is a standalone page (no Starlight chrome) that presents the framework as 17 slides for field teams, customers and partners. It reuses `src/data/` content, so the slides never drift from the docs. Code: `src/pages/present/index.astro`, `src/components/present/Room.astro`, `src/styles/present.css`; renders in `src/assets/present/`.
+
+- One public deck. No speaker notes; every slide ends in a **Read the docs** link to the page it summarises.
+- Visual first. One headline (at most two lines), one lede, one visual (chips, stations, steps or a control), never paragraphs. Body text stays at least 12px.
+- The building is the map. The cover is the factory cross-section with the engineering wing; pins open each zone. Moving from the building to a room zooms into that room's spot on the building (WAAPI, transform and opacity only) and back out again. Other moves pan 3%. Reduced motion gets a 160ms fade.
+- Rooms are LEGO renders in the same style as the building, transparent cutouts on a soft zone-coloured pool of light. Light follows people (see Imagery).
+- Zone colour drives the chrome: the progress bar, the chapter square and the minimap use `--z` from `[data-zone]` (HQ orange, floor green, foundations blue, engineering purple).
+- Landscape (`min-aspect-ratio: 5/4` and at least `48rem` wide) is a fixed 16:9 stage with `container-type: size`; type scales in `cqw` with rem floors. Portrait stacks art above copy and scrolls; the brand keeps only its logo below `30rem`.
+- Controls: arrows, Page Up/Down, Home/End and Space (not inside form controls), **O** overview, **F** fullscreen, **T** theme; swipe on touch. The hash deep-links a slide (`/present/#dimmer`). Inactive slides are `inert`; a live region announces each slide.
+- The cover pins stay 32px on touch screens instead of 44px: they overlay the art, and every destination is also one swipe or the Overview away.
+- Without JavaScript, and in print (`@page` 1280×720), all slides render one after another.
+- Entry points: **Present** in the header nav and menu, and **Present the framework** under the home hero CTAs.
