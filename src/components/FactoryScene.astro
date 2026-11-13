@@ -17,7 +17,7 @@ const ALL = 'low medium high';
 
 const img = await getImage({ src: plate, widths: [640, 960, 1280, 1483], format: 'webp' });
 const cubeImg = await getImage({ src: cube, width: 64, format: 'webp' });
-const sizes = '(min-width: 72em) 52rem, 94vw';
+const sizes = '(min-width: 64em) 37rem, 94vw';
 
 const files = import.meta.glob<ImageMetadata>('../assets/factory/*.png', { eager: true, import: 'default' });
 const asset = (k: string) => files[`../assets/factory/${k}.png`];
@@ -311,7 +311,14 @@ const spritesIn = (sec: Sec) => sprites.filter((s) => s.sec === sec);
 				if (idle === !e.isIntersecting) return;
 				idle = !idle;
 				fig.toggleAttribute('data-idle', idle);
-				if (!idle) setRate(target());
+				if (!idle) {
+					fig.removeAttribute('data-skip');
+					setRate(target());
+					return;
+				}
+				// Skipped subtrees stop style updates, so pause first and skip rendering a frame later;
+				// otherwise the animations keep ticking unseen.
+				requestAnimationFrame(() => requestAnimationFrame(() => idle && fig.setAttribute('data-skip', '')));
 			},
 			{ rootMargin: '200px 0px' }
 		).observe(fig);
@@ -758,7 +765,7 @@ const spritesIn = (sec: Sec) => sprites.filter((s) => s.sec === sec);
 
 	/* Off-screen, the factory rests and skips rendering, so its many layers cost
 	   nothing while other visuals animate. */
-	.bff-factory[data-idle] {
+	.bff-factory[data-skip] {
 		content-visibility: hidden;
 	}
 	.bff-factory[data-idle] *,

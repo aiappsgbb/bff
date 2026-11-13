@@ -4,11 +4,15 @@ import { LEVELS, LEVEL_ORDER } from '../data/site';
 import FactoryThumb from './FactoryThumb.astro';
 
 const stations = ['Plan', 'Build', 'Verify', 'Observe'];
+// `at` is the station each brick rests at when motion is reduced.
 const lanes = [
-	{ y: 225, n: 1, dur: 16, extra: false },
-	{ y: 135, n: 3, dur: 7, extra: true },
-	{ y: 315, n: 3, dur: 8, extra: true },
+	{ y: 225, n: 1, dur: 16, extra: false, at: [1] },
+	{ y: 135, n: 3, dur: 7, extra: true, at: [0, 1, 2] },
+	{ y: 315, n: 3, dur: 8, extra: true, at: [1, 2, 3] },
 ];
+// A brick is planned (outline), then built (grey), then verified (green) as it crosses the stations.
+const stageAt = (station: number) => Math.min(station, 2);
+const restAt = (station: number) => +((90 + station * 140 - 39) / 522).toFixed(3);
 const pillarAccents = ['green', 'blue', 'purple', 'pink', 'orange', 'yellow'];
 const captions: Record<string, string> = {
 	line: 'A repeatable line from intent to production.',
@@ -29,10 +33,14 @@ const captions: Record<string, string> = {
 				<line class="bff-fv-belt" x1="20" y1="245" x2="580" y2="245" />
 				{
 					stations.map((s, i) => (
-						<g class="bff-fv-station" data-i={i}>
+						<g class="bff-fv-station">
 							<rect x={40 + i * 140} y="60" width="100" height="330" rx="12" />
-							<text x={90 + i * 140} y="48" text-anchor="middle">
+							<text x={90 + i * 140} y="38" text-anchor="middle">
 								{s}
+							</text>
+							<circle class="bff-fv-marker" cx={90 + i * 140} cy="60" r="12" />
+							<text class="bff-fv-num" x={90 + i * 140} y="65" text-anchor="middle">
+								{i + 1}
 							</text>
 						</g>
 					))
@@ -42,10 +50,18 @@ const captions: Record<string, string> = {
 						<g class:list={['bff-fv-lane', { 'bff-fv-extra': l.extra }]}>
 							{l.extra && <line class="bff-fv-belt" x1="20" y1={l.y + 20} x2="580" y2={l.y + 20} />}
 							{Array.from({ length: l.n }, (_, k) => (
-								<g class="bff-fv-brick" style={`--y:${l.y - 8}px;--dur:${l.dur}s;--delay:${(-l.dur * k) / l.n}s`}>
-									<rect class="bff-fv-stud" x="7" y="-5" width="8" height="6" rx="1.5" />
-									<rect class="bff-fv-stud" x="23" y="-5" width="8" height="6" rx="1.5" />
-									<rect width="38" height="22" rx="3" />
+								<g
+									class="bff-fv-brick"
+									data-stage={stageAt(l.at[k])}
+									style={`--y:${l.y - 8}px;--dur:${l.dur}s;--delay:${(-l.dur * k) / l.n}s;--rest:${restAt(l.at[k])}`}
+								>
+									{[0, 1, 2].map((c) => (
+										<g class="bff-fv-coat" data-coat={c}>
+											<rect class="bff-fv-stud" x="7" y="-5" width="8" height="6" rx="1.5" />
+											<rect class="bff-fv-stud" x="23" y="-5" width="8" height="6" rx="1.5" />
+											<rect class="bff-fv-body" width="38" height="22" rx="3" />
+										</g>
+									))}
 								</g>
 							))}
 						</g>
@@ -92,8 +108,8 @@ const captions: Record<string, string> = {
 				</div>
 			</div>
 			<div class="bff-fv-dimmer" data-show="dimmer">
-				{LEVEL_ORDER.map((k) => <span data-k={k}>{LEVELS[k].gait}</span>)}
-				<i></i>
+				{LEVEL_ORDER.map((k) => <span data-k={k}>{LEVELS[k].short}</span>)}
+				<i>{LEVEL_ORDER.map((k) => <b data-tint={k} />)}</i>
 			</div>
 		</div>
 
@@ -139,7 +155,7 @@ const captions: Record<string, string> = {
 				setLevel(order[i]);
 				if (!reduce)
 					timer = window.setInterval(() => {
-						if (fv.hasAttribute('data-offscreen')) return;
+						if (document.hidden || fv.hasAttribute('data-offscreen')) return;
 						i = (i + 1) % order.length;
 						setLevel(order[i]);
 					}, 1800);
@@ -198,9 +214,10 @@ const captions: Record<string, string> = {
 		inline-size: 100%;
 		block-size: 100%;
 	}
+	/* Stations are steps on the Floor, not layers, so they stay neutral and numbered. */
 	.bff-fv-station rect {
-		fill: color-mix(in oklab, var(--st) 8%, transparent);
-		stroke: color-mix(in oklab, var(--st) 55%, transparent);
+		fill: color-mix(in oklab, var(--sl-color-gray-5) 22%, transparent);
+		stroke: var(--sl-color-gray-5);
 		stroke-width: 1.5;
 	}
 	.bff-fv-station text {
@@ -208,39 +225,66 @@ const captions: Record<string, string> = {
 		font-size: var(--bff-text-xl);
 		font-weight: 600;
 	}
-	.bff-fv-station[data-i='0'] { --st: var(--bff-yellow); }
-	.bff-fv-station[data-i='1'] { --st: var(--bff-green); }
-	.bff-fv-station[data-i='2'] { --st: var(--bff-blue); }
-	.bff-fv-station[data-i='3'] { --st: var(--bff-orange); }
+	.bff-fv-marker {
+		fill: var(--sl-color-black);
+		stroke: var(--sl-color-gray-4);
+		stroke-width: 1.5;
+	}
+	.bff-fv-station .bff-fv-num {
+		fill: var(--sl-color-gray-2);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-md);
+		font-weight: 600;
+	}
 	.bff-fv-belt {
 		stroke: var(--sl-color-gray-5);
 		stroke-width: 6;
 		stroke-linecap: round;
 	}
-	/* SVG animations run on the main thread, so the bricks move only while their lane shows. */
+	/*
+	 * Only transform and opacity animate, so the bricks stay on the compositor: each brick
+	 * crossfades pre-coloured coats instead of animating fill. They run only while their lane shows.
+	 */
 	.bff-fv-brick {
 		transform: translate(20px, var(--y));
 		animation: bff-fv-move var(--dur) linear var(--delay) infinite paused;
 	}
-	.bff-fv-brick rect {
-		animation: bff-fv-paint var(--dur) linear var(--delay) infinite paused;
+	.bff-fv-coat[data-coat='0'] { --coat: var(--sl-color-gray-4); }
+	.bff-fv-coat[data-coat='1'] { --coat: var(--sl-color-gray-4); animation: bff-fv-built var(--dur) linear var(--delay) infinite paused; }
+	.bff-fv-coat[data-coat='2'] { --coat: var(--bff-floor); animation: bff-fv-verified var(--dur) linear var(--delay) infinite paused; }
+	.bff-fv-coat[data-coat='1'],
+	.bff-fv-coat[data-coat='2'] {
+		opacity: 0;
 	}
-	:global(.bff-scrolly[data-frame='line']) .bff-fv-lane:not(.bff-fv-extra) :is(.bff-fv-brick, .bff-fv-brick rect),
-	:global(.bff-scrolly[data-frame='agents']) :is(.bff-fv-brick, .bff-fv-brick rect) {
+	.bff-fv-coat rect {
+		fill: var(--coat);
+		stroke: var(--coat);
+		stroke-width: 1.5;
+	}
+	.bff-fv-coat .bff-fv-stud {
+		fill: color-mix(in oklab, var(--coat) 82%, white);
+	}
+	.bff-fv-coat[data-coat='0'] rect {
+		fill: var(--sl-color-black);
+	}
+	.bff-fv-coat[data-coat='0'] .bff-fv-body {
+		stroke-dasharray: 4 3;
+	}
+	:global(.bff-scrolly[data-frame='line']) .bff-fv-lane:not(.bff-fv-extra) :is(.bff-fv-brick, .bff-fv-coat),
+	:global(.bff-scrolly[data-frame='agents']) :is(.bff-fv-brick, .bff-fv-coat) {
 		animation-play-state: running;
-	}
-	.bff-fv-stud {
-		filter: brightness(1.15);
 	}
 	@keyframes bff-fv-move {
 		from { transform: translate(20px, var(--y)); }
 		to { transform: translate(542px, var(--y)); }
 	}
-	@keyframes bff-fv-paint {
-		0%, 24% { fill: var(--bff-yellow); }
-		26%, 49% { fill: var(--bff-green); }
-		51%, 74% { fill: var(--bff-blue); }
-		76%, 100% { fill: var(--bff-orange); }
+	@keyframes bff-fv-built {
+		0%, 24% { opacity: 0; }
+		26%, 100% { opacity: 1; }
+	}
+	@keyframes bff-fv-verified {
+		0%, 49% { opacity: 0; }
+		51%, 100% { opacity: 1; }
 	}
 	.bff-fv-extra {
 		opacity: 0;
@@ -398,18 +442,30 @@ const captions: Record<string, string> = {
 		z-index: 1;
 		padding: 0.3rem;
 	}
+	/* The knob slides and crossfades pre-coloured tints, so the loop stays on the compositor. */
 	.bff-fv-dimmer i {
 		position: absolute;
 		inset: 0.25rem auto 0.25rem 0.25rem;
 		inline-size: calc((100% - 0.5rem) / 3);
+		transition: transform 0.6s var(--bff-ease-out);
+	}
+	.bff-fv-dimmer b {
+		position: absolute;
+		inset: 0;
 		border-radius: var(--bff-radius-pill);
 		background: var(--bff-yellow);
-		transition:
-			transform 0.6s var(--bff-ease-out),
-			background-color 0.6s var(--bff-ease-soft);
+		opacity: 0;
+		transition: opacity 0.6s var(--bff-ease-soft);
 	}
-	.bff-fv[data-level='medium'] .bff-fv-dimmer i { transform: translateX(100%); background: var(--bff-green); }
-	.bff-fv[data-level='high'] .bff-fv-dimmer i { transform: translateX(200%); background: var(--bff-blue); }
+	.bff-fv-dimmer b[data-tint='medium'] { background: var(--bff-green); }
+	.bff-fv-dimmer b[data-tint='high'] { background: var(--bff-blue); }
+	.bff-fv[data-level='medium'] .bff-fv-dimmer i { transform: translateX(100%); }
+	.bff-fv[data-level='high'] .bff-fv-dimmer i { transform: translateX(200%); }
+	.bff-fv:not([data-level='medium'], [data-level='high']) [data-tint='low'],
+	.bff-fv[data-level='medium'] [data-tint='medium'],
+	.bff-fv[data-level='high'] [data-tint='high'] {
+		opacity: 1;
+	}
 	.bff-fv[data-level='low'] [data-k='low'],
 	.bff-fv[data-level='medium'] [data-k='medium'],
 	.bff-fv[data-level='high'] [data-k='high'] {
@@ -462,8 +518,15 @@ const captions: Record<string, string> = {
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.bff-fv-brick,
-		.bff-fv-brick rect {
+		.bff-fv-brick .bff-fv-coat {
 			animation: none;
+		}
+		.bff-fv-brick {
+			transform: translate(calc(20px + var(--rest) * 522px), var(--y));
+		}
+		.bff-fv-brick:is([data-stage='1'], [data-stage='2']) [data-coat='1'],
+		.bff-fv-brick[data-stage='2'] [data-coat='2'] {
+			opacity: 1;
 		}
 	}
 </style>

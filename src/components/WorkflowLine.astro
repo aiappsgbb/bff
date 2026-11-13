@@ -6,21 +6,8 @@ interface Props {
 	caption?: string;
 }
 const { caption = 'One workflow, four stations. Observed signals feed the next plan, so the line never stops learning.' } = Astro.props;
-const accents = ['yellow', 'green', 'blue', 'orange'];
-// Split a label into two lines of balanced length so it fits the station box.
-function balance(text: string): string[] {
-	const words = text.split(' ');
-	let best = [text];
-	let bestLen = Infinity;
-	for (let k = 1; k < words.length; k++) {
-		const lines = [words.slice(0, k).join(' '), words.slice(k).join(' ')];
-		const len = Math.max(...lines.map((l) => l.length));
-		if (len < bestLen) [best, bestLen] = [lines, len];
-	}
-	return best;
-}
-const stations = data.workflow.map((s, i) => ({ ...s, x: 125 + i * 250, accent: accents[i], lines: balance(s.task) }));
-const bricks = [0, 1, 2, 3];
+// The belt shows one brick per station zone: planned (outline), built (grey), then verified (green).
+const bricks = ['planned', 'built', 'verified', 'verified', 'verified'];
 ---
 
 <figure class="bff-figure bff-wl not-content" aria-labelledby="bff-wl-cap" data-pausable>
@@ -28,208 +15,383 @@ const bricks = [0, 1, 2, 3];
 		<p class="bff-eyebrow" data-accent="green"><span class="bff-eyebrow-square" aria-hidden="true"></span>factory.floor.workflow()</p>
 		<PauseButton />
 	</div>
-	<svg class="bff-wl-svg" viewBox="0 0 1000 300" role="img" aria-labelledby="bff-wl-title">
-		<title id="bff-wl-title">The factory floor workflow: Plan, Build, Verify and Observe, with signals looping back to Plan.</title>
-		<path class="bff-wl-loop" d="M 875 74 C 875 14, 800 18, 700 18 L 300 18 C 200 18, 125 14, 125 66" />
-		<path class="bff-wl-loop-head" d="M 116 58 L 125 74 L 134 58" />
-		<text class="bff-wl-loop-label" x="500" y="46" text-anchor="middle">signals become new work</text>
-		{
-			stations.map((s) => (
-				<g class="bff-wl-station" data-accent={s.accent}>
-					<line class="bff-wl-arm" x1={s.x} y1="186" x2={s.x} y2="208" />
-					<rect class="bff-wl-box" x={s.x - 100} y="74" width="200" height="112" rx="12" />
-					<rect class="bff-wl-bar" x={s.x - 100} y="74" width="200" height="6" />
-					<text class="bff-wl-name" x={s.x} y="117" text-anchor="middle">{s.name}</text>
-					<text class="bff-wl-task" y="146" text-anchor="middle">
-						{s.lines.map((line, j) => (
-							<tspan x={s.x} dy={j ? 22 : 0}>{line}</tspan>
-						))}
-					</text>
-				</g>
-			))
-		}
-		<rect class="bff-wl-belt" x="24" y="232" width="952" height="30" rx="15" />
-		<line class="bff-wl-belt-tread" x1="40" y1="247" x2="960" y2="247" />
-		{
-			[60, 180, 300, 420, 540, 660, 780, 900].map((x) => (
-				<circle class="bff-wl-roller" cx={x} cy="247" r="8" />
-			))
-		}
-		{
-			bricks.map((i) => (
-				<g class="bff-wl-brick" style={`--i: ${i}`}>
-					<rect x="0" y="210" width="44" height="22" rx="3" />
-					<rect class="bff-wl-stud" x="7" y="203" width="11" height="8" rx="2" />
-					<rect class="bff-wl-stud" x="26" y="203" width="11" height="8" rx="2" />
-				</g>
-			))
-		}
-	</svg>
-	<ol class="bff-wl-steps">
-		{
-			stations.map((s) => (
-				<li data-accent={s.accent}>
-					<p class="bff-wl-step-name">{s.name}</p>
-					<p class="bff-wl-step-task">{s.task}</p>
-					<ul class="bff-chips" aria-label={`${s.name} products`}>
-						{s.products.map((p) => {
-							const url = productUrl(p.parts[0]);
-							return (
-								<li>
-									{url ? (
-										<a class="bff-chip" data-vendor={p.vendor} href={url} rel="noopener" target="_blank">
-											{p.name}
-										</a>
-									) : (
-										<span class="bff-chip" data-vendor={p.vendor}>{p.name}</span>
-									)}
-								</li>
-							);
-						})}
-					</ul>
-				</li>
-			))
-		}
-	</ol>
+	<div class="bff-wl-body" data-layer="floor">
+		<ol class="bff-wl-steps" role="list">
+			{
+				data.workflow.map((s, i) => (
+					<li class="bff-wl-step">
+						<span class="bff-wl-marker">{i + 1}</span>
+						<p class="bff-wl-name">{s.name}</p>
+						<p class="bff-wl-task">{s.task}</p>
+						<ul class="bff-chips" aria-label={`${s.name} products`}>
+							{s.products.map((p) => {
+								const url = productUrl(p.parts[0]);
+								return (
+									<li>
+										{url ? (
+											<a class="bff-chip" data-vendor={p.vendor} href={url} rel="noopener" target="_blank">
+												{p.name}
+											</a>
+										) : (
+											<span class="bff-chip" data-vendor={p.vendor}>
+												{p.name}
+											</span>
+										)}
+									</li>
+								);
+							})}
+						</ul>
+					</li>
+				))
+			}
+		</ol>
+		<p class="bff-wl-loop">
+			<span class="bff-wl-loop-label">signals feed the next plan</span>
+			<span class="bff-wl-signal" aria-hidden="true"><i></i></span>
+		</p>
+		<div class="bff-wl-belt" aria-hidden="true">
+			<div class="bff-wl-track">
+				<div class="bff-wl-strip">
+					{bricks.map((stage, k) => <i class="bff-wl-brick" data-stage={stage} style={`--k:${k}`} />)}
+				</div>
+			</div>
+			<div class="bff-wl-conveyor"><span class="bff-wl-tread"></span></div>
+		</div>
+	</div>
 	<figcaption id="bff-wl-cap">{caption}</figcaption>
 </figure>
 
 <style>
-	.bff-wl-svg {
-		display: block;
-		inline-size: 100%;
-		block-size: auto;
-		overflow: visible;
+	/*
+	 * One HTML list carries the stations for every reader. The loop, belt and bricks are
+	 * decoration and animate only transform and opacity, so they stay on the compositor.
+	 * Wide containers lay the stations out as a line; narrow ones stack them on a rail.
+	 */
+	.bff-wl {
+		container-type: inline-size;
 	}
-	.bff-wl-loop {
-		fill: none;
-		stroke: var(--bff-floor);
-		stroke-width: 2.5;
-		stroke-dasharray: 8 8;
-		animation: bff-wl-dash 1.2s linear infinite;
-	}
-	.bff-wl-loop-head {
-		fill: none;
-		stroke: var(--bff-floor);
-		stroke-width: 2.5;
-		stroke-linecap: round;
-		stroke-linejoin: round;
-	}
-	.bff-wl-loop-label {
-		fill: var(--bff-floor);
-		font-family: var(--bff-font-mono);
-		font-size: var(--bff-text-xl);
-	}
-	.bff-wl-box {
-		fill: var(--sl-color-black);
-		stroke: var(--sl-color-gray-5);
-		stroke-width: 1.5;
-	}
-	.bff-wl-bar {
-		fill: var(--accent);
-	}
-	.bff-wl-arm {
-		stroke: var(--sl-color-gray-4);
-		stroke-width: 4;
-		stroke-linecap: round;
-	}
-	.bff-wl-name {
-		fill: var(--sl-color-white);
-		font-size: calc(var(--bff-text-xl) * 1.5);
-		font-weight: 600;
-	}
-	.bff-wl-task {
-		fill: var(--sl-color-gray-3);
-		font-size: var(--bff-text-lg);
-	}
-	.bff-wl-belt {
-		fill: var(--sl-color-gray-6);
-		stroke: var(--sl-color-gray-5);
-		stroke-width: 1.5;
-	}
-	.bff-wl-belt-tread {
-		stroke: var(--sl-color-gray-4);
-		stroke-width: 2;
-		stroke-dasharray: 4 16;
-		animation: bff-wl-tread 0.8s linear infinite;
-	}
-	.bff-wl-roller {
-		fill: var(--sl-color-gray-5);
-		stroke: var(--sl-color-gray-4);
-		stroke-width: 1.5;
-	}
-	.bff-wl-brick {
-		--dur: 12s;
-		fill: var(--sl-color-gray-4);
-		animation:
-			bff-wl-move var(--dur) linear infinite,
-			bff-wl-paint var(--dur) linear infinite;
-		animation-delay: calc(var(--i) * var(--dur) / -4);
-	}
-	.bff-wl-stud {
-		filter: brightness(1.15);
-	}
-	@keyframes bff-wl-move {
-		from { transform: translateX(20px); }
-		to { transform: translateX(936px); }
-	}
-	@keyframes bff-wl-paint {
-		0%, 9% { fill: var(--sl-color-gray-4); }
-		12%, 34% { fill: var(--bff-yellow); }
-		37%, 61% { fill: var(--bff-green); }
-		64%, 88% { fill: var(--bff-blue); }
-		91%, 100% { fill: var(--bff-orange); }
-	}
-	@keyframes bff-wl-dash {
-		to { stroke-dashoffset: -16; }
-	}
-	@keyframes bff-wl-tread {
-		to { stroke-dashoffset: -20; }
+	.bff-wl-body {
+		--gap: 0.5rem;
+		--marker: 1.75rem;
+		--brick: 2.5rem;
+		position: relative;
+		display: grid;
+		margin-top: 0.75rem;
 	}
 	.bff-wl-steps {
 		display: grid;
-		grid-template-columns: repeat(4, minmax(0, 1fr));
-		gap: 1rem;
-		margin: 1.25rem 0 0;
+		gap: 1.25rem;
+		margin: 0;
 		padding: 0;
 		list-style: none;
 	}
-	.bff-wl-steps > li {
+	.bff-wl-step {
+		position: relative;
 		display: grid;
+		grid-template-columns: var(--marker) minmax(0, 1fr);
+		column-gap: 0.75rem;
+		row-gap: 0.3rem;
 		align-content: start;
-		gap: 0.4rem;
-		margin: 0;
-		padding-top: 0.75rem;
-		border-top: 3px solid var(--accent);
-	}
-	.bff-wl-steps p {
 		margin: 0;
 	}
-	.bff-wl-step-name {
+	.bff-wl-step > :not(.bff-wl-marker) {
+		grid-column: 2;
+	}
+	.bff-wl-step p {
+		margin: 0;
+	}
+	.bff-wl-marker {
+		grid-row: 1 / span 3;
+		display: grid;
+		place-items: center;
+		inline-size: var(--marker);
+		block-size: var(--marker);
+		border: 1.5px solid var(--sl-color-gray-4);
+		border-radius: 50%;
+		background: var(--sl-color-black);
+		color: var(--sl-color-gray-2);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-sm);
 		font-weight: 600;
+		line-height: 1;
+	}
+	.bff-wl-name {
+		align-self: center;
+		min-block-size: var(--marker);
+		display: flex;
+		align-items: center;
+		font-size: var(--bff-text-lg);
+		font-weight: 600;
+		line-height: 1.2;
 		color: var(--sl-color-white);
 	}
-	.bff-wl-step-task {
+	.bff-wl-task {
 		font-size: var(--bff-text-sm);
 		color: var(--sl-color-gray-3);
 	}
-	@media (max-width: 50em) {
-		.bff-wl-task {
+	.bff-wl-step .bff-chips {
+		margin-top: 0.3rem;
+	}
+	.bff-wl-loop {
+		margin: 0;
+	}
+	.bff-wl-loop-label {
+		position: relative;
+		z-index: 1;
+		display: inline-block;
+		padding-inline: 0.5rem;
+		background: var(--bff-surface);
+		color: var(--accent-ink, var(--accent));
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-sm);
+		line-height: 1.5rem;
+	}
+	.bff-wl-loop::before,
+	.bff-wl-loop::after {
+		content: '';
+		position: absolute;
+		pointer-events: none;
+	}
+	.bff-wl-signal {
+		position: absolute;
+	}
+	.bff-wl-signal i {
+		position: absolute;
+		inline-size: 0.6rem;
+		block-size: 0.6rem;
+		border-radius: 50%;
+		background: var(--accent);
+		opacity: 0;
+		animation: bff-wl-fade 3s linear infinite;
+	}
+
+	/* Narrow: a vertical rail, with the loop as a bracket from the label back up to Plan. */
+	@container (width < 43rem) {
+		.bff-wl-body {
+			padding-inline-start: 1.25rem;
+		}
+		.bff-wl-step:not(:last-child)::before {
+			content: '';
+			position: absolute;
+			inset: calc(var(--marker) + 0.2rem) auto -1.05rem calc(var(--marker) / 2 - 1px);
+			inline-size: 2px;
+			background: var(--sl-color-gray-5);
+		}
+		.bff-wl-loop {
+			margin-top: 1rem;
+		}
+		.bff-wl-loop::before {
+			inset: calc(var(--marker) / 2) auto 0.75rem 0.25rem;
+			inline-size: 1rem;
+			border: 2px dashed var(--accent);
+			border-inline-end: 0;
+			border-radius: 0.75rem 0 0 0.75rem;
+		}
+		.bff-wl-loop::after {
+			inset: calc(var(--marker) / 2 - 0.3rem + 1px) auto auto 0.6rem;
+			inline-size: 0.6rem;
+			block-size: 0.6rem;
+			border-block-start: 2px solid var(--accent);
+			border-inline-end: 2px solid var(--accent);
+			transform: rotate(45deg);
+		}
+		.bff-wl-signal {
+			inset: calc(var(--marker) / 2 + 0.75rem) auto 1.5rem calc(0.25rem + 1px);
+			inline-size: 0;
+			animation: bff-wl-rise 3s linear infinite;
+		}
+		.bff-wl-signal i {
+			inset: auto auto 0 -0.3rem;
+			translate: 0 50%;
+		}
+		.bff-wl-belt {
 			display: none;
 		}
+	}
+
+	/* Wide: stations in a row, the loop arcs over them and a belt runs underneath. */
+	@container (width >= 43rem) {
+		.bff-wl-body {
+			grid-template-areas: 'loop' 'steps' 'belt';
+		}
 		.bff-wl-steps {
-			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-area: steps;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: var(--gap);
+			margin-top: calc(var(--marker) / 2);
+		}
+		.bff-wl-step {
+			grid-template-columns: minmax(0, 1fr);
+			justify-items: center;
+			padding: calc(var(--marker) / 2 + 0.6rem) 0.3rem 0.9rem;
+			border: 1px solid var(--sl-color-gray-5);
+			border-radius: var(--bff-radius-md);
+			background: var(--sl-color-black);
+			text-align: center;
+		}
+		.bff-wl-step > :not(.bff-wl-marker) {
+			grid-column: 1;
+		}
+		.bff-wl-marker {
+			grid-row: auto;
+			position: absolute;
+			inset: 0 auto auto 50%;
+			translate: -50% -50%;
+		}
+		.bff-wl-name {
+			min-block-size: 0;
+		}
+		.bff-wl-step .bff-chips {
+			justify-content: center;
+		}
+		/* Keeps the longest product name on one line in a 43rem figure. */
+		.bff-wl-step .bff-chip {
+			padding-inline: 0.5rem;
+		}
+		/* Arms reach down from each station to the belt. */
+		.bff-wl-step::after {
+			content: '';
+			position: absolute;
+			inset: 100% auto auto calc(50% - 2px);
+			inline-size: 4px;
+			block-size: 0.9rem;
+			border-radius: 2px;
+			background: var(--sl-color-gray-4);
+		}
+		.bff-wl-loop {
+			grid-area: loop;
+			position: relative;
+			block-size: 2.75rem;
+			margin-inline: calc((100% - 3 * var(--gap)) / 8);
+			text-align: center;
+		}
+		.bff-wl-loop::before {
+			inset: 0.75rem 0 0;
+			border: 2px dashed var(--accent);
+			border-block-end: 0;
+			border-radius: 1.25rem 1.25rem 0 0;
+		}
+		.bff-wl-loop::after {
+			inset: auto auto 0.15rem calc(1px - 0.3rem);
+			inline-size: 0.6rem;
+			block-size: 0.6rem;
+			border-inline-end: 2px solid var(--accent);
+			border-block-end: 2px solid var(--accent);
+			transform: rotate(45deg);
+		}
+		.bff-wl-signal {
+			inset: calc(0.75rem + 1px) 1.25rem auto;
+			block-size: 0;
+			animation: bff-wl-back 3s linear infinite;
+		}
+		.bff-wl-signal i {
+			inset: -0.3rem 0 auto auto;
+			translate: 50% 0;
+		}
+		.bff-wl-belt {
+			grid-area: belt;
+			display: grid;
+			margin-top: 0.9rem;
 		}
 	}
+	.bff-wl-track {
+		position: relative;
+		block-size: 1.75rem;
+		overflow: hidden;
+	}
+	/* Each brick crosses one station zone, then the strip resets: a seamless loop with static colours. */
+	.bff-wl-strip {
+		position: absolute;
+		inset: 0;
+		animation: bff-wl-belt 3s linear infinite;
+	}
+	.bff-wl-brick {
+		--coat: var(--sl-color-gray-4);
+		position: absolute;
+		inset: auto auto 0 calc(var(--k) * 25% - var(--brick) / 2);
+		inline-size: var(--brick);
+		block-size: 1.25rem;
+		border-radius: 3px;
+		background: var(--coat);
+	}
+	.bff-wl-brick::before,
+	.bff-wl-brick::after {
+		content: '';
+		position: absolute;
+		inset: -0.45rem auto auto 0.4rem;
+		inline-size: 0.6rem;
+		block-size: 0.5rem;
+		border-radius: 2px 2px 0 0;
+		background: color-mix(in oklab, var(--coat) 82%, white);
+	}
+	.bff-wl-brick::after {
+		inset-inline-start: 1.5rem;
+	}
+	.bff-wl-brick[data-stage='verified'] {
+		--coat: var(--accent);
+	}
+	.bff-wl-brick[data-stage='planned'] {
+		border: 1.5px dashed var(--sl-color-gray-4);
+		background: var(--sl-color-black);
+	}
+	.bff-wl-brick[data-stage='planned']::before,
+	.bff-wl-brick[data-stage='planned']::after {
+		background: var(--sl-color-black);
+		box-shadow: inset 0 0 0 1.5px var(--sl-color-gray-4);
+	}
+	.bff-wl-conveyor {
+		position: relative;
+		block-size: 1.875rem;
+		border: 1.5px solid var(--sl-color-gray-5);
+		border-radius: var(--bff-radius-pill);
+		background: var(--sl-color-gray-6);
+		overflow: hidden;
+	}
+	.bff-wl-conveyor::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: radial-gradient(
+				circle,
+				var(--sl-color-gray-5) 0 0.35rem,
+				var(--sl-color-gray-4) 0.35rem calc(0.35rem + 1.5px),
+				transparent calc(0.35rem + 2px)
+			)
+			0 50% / 12.5% 100% repeat-x;
+	}
+	.bff-wl-tread {
+		position: absolute;
+		inset: calc(50% - 1px) -1.25rem auto;
+		block-size: 2px;
+		background: repeating-linear-gradient(90deg, var(--sl-color-gray-4) 0 4px, transparent 4px 1.25rem);
+		animation: bff-wl-tread 0.8s linear infinite;
+	}
+	@keyframes bff-wl-belt {
+		to { transform: translateX(25%); }
+	}
+	@keyframes bff-wl-tread {
+		to { transform: translateX(1.25rem); }
+	}
+	@keyframes bff-wl-back {
+		to { transform: translateX(-100%); }
+	}
+	@keyframes bff-wl-rise {
+		to { transform: translateY(-100%); }
+	}
+	@keyframes bff-wl-fade {
+		0%, 100% { opacity: 0; }
+		12%, 88% { opacity: 1; }
+	}
 	@media (prefers-reduced-motion: reduce) {
-		.bff-wl-loop,
-		.bff-wl-belt-tread,
-		.bff-wl-brick {
+		.bff-wl-strip,
+		.bff-wl-tread,
+		.bff-wl-signal,
+		.bff-wl-signal i {
 			animation: none;
 		}
-		.bff-wl-brick {
-			transform: translateX(calc(103px + var(--i) * 250px));
-			fill: var(--bff-green);
+		/* Rest each brick under its station. */
+		.bff-wl-strip {
+			transform: translateX(12.5%);
 		}
 	}
 </style>

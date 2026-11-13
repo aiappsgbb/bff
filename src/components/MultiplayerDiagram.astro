@@ -4,15 +4,24 @@ import { LEVELS } from '../data/site';
 import PauseButton from './PauseButton.astro';
 
 const uid = 'bff-mp';
-const grid = (x0: number, y0: number, cols: number, rows: number, step = 26) =>
+type Agent = { x: number; y: number; d: number };
+const grid = (x0: number, y0: number, cols: number, rows: number, step = 26): Agent[] =>
 	Array.from({ length: cols * rows }, (_, i) => ({ x: x0 + (i % cols) * step, y: y0 + Math.floor(i / cols) * step, d: (i * 0.37) % 2.4 }));
-const multiAgents = grid(222, 92, 6, 2, 28);
+// Agents pulse in four phase groups: one animated layer per group instead of one per agent.
+const PHASE = 0.6;
+const byPhase = (agents: Agent[]) =>
+	[0, 1, 2, 3]
+		.map((k) => ({ delay: +(k * PHASE).toFixed(1), agents: agents.filter((a) => Math.floor(a.d / PHASE) === k) }))
+		.filter((g) => g.agents.length);
+const soloAgents = byPhase([0, 1, 2].map((i) => ({ x: 282 + i * 40, y: 148, d: i * 0.6 })));
+const multiAgents = byPhase(grid(222, 92, 6, 2, 28));
 const fleets = [
 	{ x: 40, label: 'Fixes' },
 	{ x: 225, label: 'Features' },
 	{ x: 410, label: 'Upgrades' },
-].map((f) => ({ ...f, agents: grid(f.x + 22, 112, 5, 3, 24) }));
-const multiPeople = [120, 240, 360, 480];
+];
+const fleetAgents = byPhase(fleets.flatMap((f) => grid(f.x + 22, 112, 5, 3, 24)));
+const multiPeople = [120, 240, 360, 480].map((x) => ({ x, dx: (300 - x) * 0.6 }));
 ---
 
 <figure class="bff-figure bff-mp not-content" data-pausable data-selected="medium" aria-labelledby={`${uid}-cap`}>
@@ -30,7 +39,7 @@ const multiPeople = [120, 240, 360, 480];
 						tabindex={m.level === 'medium' ? 0 : -1}
 						data-level={m.level}
 					>
-						{m.title} <span class="bff-tab-sub">{LEVELS[m.level].gait}</span>
+						{m.title} <span class="bff-tab-sub">{LEVELS[m.level].short}</span>
 					</button>
 				))
 			}
@@ -48,8 +57,12 @@ const multiPeople = [120, 240, 360, 480];
 				<rect class="bff-mp-device" x="250" y="110" width="170" height="104" rx="8" />
 				<rect class="bff-mp-base" x="232" y="214" width="206" height="10" rx="4" />
 				{
-					[0, 1, 2].map((i) => (
-						<rect class="bff-mp-agent" x={282 + i * 40} y="148" width="26" height="26" rx="5" style={`--d:${i * 0.6}s`} />
+					soloAgents.map((g) => (
+						<g class="bff-mp-pulse" style={`--d:${g.delay}s`}>
+							{g.agents.map((a) => (
+								<rect class="bff-mp-agent" x={a.x} y={a.y} width="26" height="26" rx="5" />
+							))}
+						</g>
 					))
 				}
 				<text class="bff-mp-label" x="335" y="262" text-anchor="middle">one developer · one laptop · local agents</text>
@@ -61,11 +74,26 @@ const multiPeople = [120, 240, 360, 480];
 					class="bff-mp-cloud"
 					d="M 190 160 Q 160 160 160 130 Q 160 98 196 96 Q 204 58 252 60 Q 284 36 326 54 Q 366 36 396 66 Q 440 64 444 100 Q 470 108 466 134 Q 462 160 432 160 Z"
 				/>
-				{multiAgents.map((a) => <rect class="bff-mp-agent" x={a.x} y={a.y} width="20" height="20" rx="4" style={`--d:${a.d}s`} />)}
 				{
-					multiPeople.map((x, i) => (
+					multiAgents.map((g) => (
+						<g class="bff-mp-pulse" style={`--d:${g.delay}s`}>
+							{g.agents.map((a) => (
+								<rect class="bff-mp-agent" x={a.x} y={a.y} width="20" height="20" rx="4" />
+							))}
+						</g>
+					))
+				}
+				{
+					multiPeople.map(({ x, dx }, i) => (
 						<g>
-							<path class="bff-mp-link" d={`M ${x} 214 Q ${x} 186 ${300 + (x - 300) * 0.4} 162`} style={`--d:${i * 0.5}s`} />
+							<path class="bff-mp-link" d={`M ${x} 214 Q ${x} 186 ${x + dx} 162`} />
+							<g transform={`translate(${x} 214)`}>
+								<g class="bff-mp-rise" style={`--d:${i * -0.4}s;--dy:-52px`}>
+									<g class="bff-mp-drift" style={`--dx:${dx}px`}>
+										<circle class="bff-mp-signal" r="3.5" />
+									</g>
+								</g>
+							</g>
 							<g class="bff-mp-person" transform={`translate(${x} 240) scale(0.75)`}>
 								<circle cx="0" cy="-34" r="16" />
 								<path d="M -28 18 Q -28 -12 0 -12 Q 28 -12 28 18 Z" />
@@ -83,16 +111,27 @@ const multiPeople = [120, 240, 360, 480];
 					<text x="300" y="44" text-anchor="middle">policy · agent registry · evals · audit</text>
 				</g>
 				{
-					fleets.map((f) => (
+					fleets.map((f, i) => (
 						<g>
 							<rect class="bff-mp-fleet" x={f.x} y="80" width="150" height="128" rx="12" />
 							<text class="bff-mp-fleet-label" x={f.x + 14} y="100">
 								{f.label}
 							</text>
-							{f.agents.map((a) => (
-								<rect class="bff-mp-agent" x={a.x} y={a.y} width="16" height="16" rx="3" style={`--d:${a.d}s`} />
+							<path class="bff-mp-link" d={`M ${f.x + 75} 56 L ${f.x + 75} 80`} />
+							<g transform={`translate(${f.x + 75} 56)`}>
+								<g class="bff-mp-rise" style={`--d:${i * -0.5}s;--dy:24px`}>
+									<circle class="bff-mp-signal" r="3" />
+								</g>
+							</g>
+						</g>
+					))
+				}
+				{
+					fleetAgents.map((g) => (
+						<g class="bff-mp-pulse" style={`--d:${g.delay}s`}>
+							{g.agents.map((a) => (
+								<rect class="bff-mp-agent" x={a.x} y={a.y} width="16" height="16" rx="3" />
 							))}
-							<path class="bff-mp-link" d={`M ${f.x + 75} 56 L ${f.x + 75} 80`} style="--d:0s" />
 						</g>
 					))
 				}
@@ -214,8 +253,11 @@ const multiPeople = [120, 240, 360, 480];
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-sm);
 	}
+	/* Only transform and opacity animate, so the loops stay on the compositor. */
 	.bff-mp-agent {
 		fill: var(--bff-floor);
+	}
+	.bff-mp-pulse {
 		animation: bff-mp-work 2.4s var(--bff-ease-soft) var(--d, 0s) infinite;
 	}
 	.bff-mp-link {
@@ -223,7 +265,26 @@ const multiPeople = [120, 240, 360, 480];
 		stroke: var(--bff-hq);
 		stroke-width: 2;
 		stroke-dasharray: 4 6;
-		animation: bff-mp-flow 1.6s linear var(--d, 0s) infinite;
+	}
+	/* A signal travels each link; the two axes ease separately to follow the curve. */
+	.bff-mp-rise {
+		animation: bff-mp-rise 1.6s linear var(--d, 0s) infinite;
+	}
+	.bff-mp-drift {
+		animation: bff-mp-drift 1.6s cubic-bezier(0.333, 0, 0.667, 0.333) var(--d, 0s) infinite;
+	}
+	.bff-mp-signal {
+		fill: var(--bff-hq);
+		opacity: 0;
+		animation: bff-mp-signal 1.6s linear var(--d, 0s) infinite;
+	}
+	.bff-mp-state * {
+		animation-play-state: paused;
+	}
+	.bff-mp[data-selected='low'] [data-state='low'] *,
+	.bff-mp[data-selected='medium'] [data-state='medium'] *,
+	.bff-mp[data-selected='high'] [data-state='high'] * {
+		animation-play-state: running;
 	}
 	.bff-mp-policy rect {
 		fill: color-mix(in oklab, var(--bff-found) 14%, transparent);
@@ -245,8 +306,15 @@ const multiPeople = [120, 240, 360, 480];
 		100% { opacity: 1; }
 		50% { opacity: 0.35; }
 	}
-	@keyframes bff-mp-flow {
-		to { stroke-dashoffset: -20; }
+	@keyframes bff-mp-rise {
+		to { transform: translateY(var(--dy)); }
+	}
+	@keyframes bff-mp-drift {
+		to { transform: translateX(var(--dx)); }
+	}
+	@keyframes bff-mp-signal {
+		0%, 100% { opacity: 0; }
+		15%, 80% { opacity: 1; }
 	}
 	.bff-mp-panel p {
 		margin: 0;
@@ -270,8 +338,10 @@ const multiPeople = [120, 240, 360, 480];
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
-		.bff-mp-agent,
-		.bff-mp-link {
+		.bff-mp-pulse,
+		.bff-mp-rise,
+		.bff-mp-drift,
+		.bff-mp-signal {
 			animation: none;
 		}
 		.bff-mp-state {
