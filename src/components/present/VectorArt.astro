@@ -1,401 +1,50 @@
 ---
 /**
- * Vectors style: concept drawings that stand in for the LEGO renders (the Blocks style).
- * Same 3:2 frame as the renders (viewBox 1536 × 1024), so zone, bay and marker overlays line
- * up in both styles. Drawing language, see DESIGN.md "Presentation mode": people are solid
- * figures, agents are dark bots with green eyes, lit areas are warm, the floor is dark unless
- * people work there. No text. Colours come from present.css ("Vectors"), so both themes work.
- * `k="defs"` renders the shared gradients once per page.
+ * Vectors style: luminous line-art images that stand in for the LEGO renders (the Blocks style).
+ * Same 3:2 frame as the renders; building and dimmer were redrawn from the renders, so zone,
+ * bay and marker overlays line up in both styles. Drawing language, see DESIGN.md
+ * "Presentation mode": people are amber discs, agents are green modules, no text.
+ * Lazy, so the Blocks style never downloads them.
  */
+import { Image } from 'astro:assets';
+
 interface Props {
 	k: string;
 	/** Decorative copies (the overview map) are hidden from assistive tech. */
 	decorative?: boolean;
+	sizes?: string;
 }
-const { k, decorative = false } = Astro.props;
+const { k, decorative = false, sizes = '(min-aspect-ratio: 5/4) and (min-width: 48rem) 62vw, 100vw' } = Astro.props;
+
+const files = import.meta.glob<{ default: ImageMetadata }>('../../assets/present/vec/*.png', { eager: true });
+const art = (key: string) => files[`../../assets/present/vec/${key}.png`]?.default;
+const src = art(k) ?? art('building')!;
 
 const VALT: Record<string, string> = {
-	building: 'A line drawing of the factory in cross-section: a lit Factory HQ on top, a dark factory floor where agents work, foundations of servers and pipes below and an engineering wing on the side.',
-	why: 'Three pillars, green, blue and purple, hold up the factory, while people and agents walk in together.',
-	'bright-dark': 'One room split in two: a dark half where agents work alone, and a lit half where a person steers them.',
-	principles: 'Eight tiles in four coloured pairs, one symbol per principle, with three people in front.',
-	multiplayer: 'Three panels: one person and one agent at a desk, a shared table of people and agents, and people on a balcony over a dark hall of nine agents.',
-	measure: 'A wall of five delivery charts and a five-point radar chart, reviewed by two people.',
-	line: 'A dark factory floor with one conveyor through four stations, each worked by an agent, under a lit strip where people watch.',
+	building: 'A line drawing of the factory in cross-section: a lit Factory HQ on top, a factory floor of agent workstations, foundations of servers below and an engineering wing on the side.',
+	why: 'Three pillars, green, blue and purple, hold up one platform, while people and agents walk in together.',
+	'bright-dark': 'One hall split in two: a dark half where agents work alone, and a lit half where a person steers them.',
+	principles: 'Eight nodes in four coloured pairs, one symbol per principle, joined by one base line.',
+	multiplayer: 'Three steps: one person and one agent at a desk, a shared table of people and agents, then a grid of many agents watched from above.',
+	measure: 'A wall of delivery charts, a stopwatch and a five-point radar chart, reviewed by two people.',
+	line: 'One path through four stations, idea, build, secure and observe, each worked by an agent, with a person overseeing the line.',
 	dimmer: 'A dimmer switch beside three factory bays: lit with people, dimmed, and dark with only agents.',
-	dimback: 'A dimmer pushed back up: lamps come on over the floor, agents keep working and a line of Git commits carries on.',
-	demos: 'A presenter beside a big screen showing the six steps of one session, in front of an audience.',
-	platform: 'Foundations under the factory: green racks on one side and blue racks on the other, with pipes feeding the floor above.',
-	open: 'A baseplate of different bricks, with one slot empty and a new brick lowered into it.',
-	loop: 'A loop of three moves around a bar chart whose shortest bar is highlighted.',
+	dimback: 'A dimmer pushed back up: lamps come on over the agents, and a signal line with one anomaly carries on to a person.',
+	demos: 'A presenter beside a big screen showing one six-step session, in front of an audience.',
+	platform: 'Foundations under the factory: green racks on one side and blue racks on the other, joined as one, feeding agents on the floor above.',
+	open: 'A rail of interchangeable modules, with one slot empty and a new module lowered into it.',
+	loop: 'An improvement loop of three moves around a bar chart whose shortest bar is highlighted.',
 	journey: 'A staircase of four steps with a building growing on each, from a one-room workshop to a full factory.',
-	partners: 'Two teams carrying bricks to one factory under construction, while a crane lifts a new room into place.',
+	partners: 'Two teams adding their own modules to one building under construction, while a crane lifts a new room into place.',
 };
-
-/* ---------- Pictograms ---------- */
-const r1 = (v: number) => Math.round(v * 10) / 10;
-/** A person, feet at (x, y). 77 units tall at s = 1. */
-const person = (x: number, y: number, s = 1, cls = '') =>
-	`<g class="hu${cls ? ` ${cls}` : ''}" transform="translate(${x} ${y}) scale(${s})"><circle cy="-62" r="15"/><path d="M-24 0v-18a24 24 0 0 1 48 0V0z"/></g>`;
-/** An agent, centred on (x, y): a dark bot with green eyes, an antenna and a soft halo. */
-const agent = (x: number, y: number, s = 1) =>
-	`<g class="ag" transform="translate(${x} ${y}) scale(${s})"><circle class="ag-h" r="58"/><path d="M0-21v-13"/><circle class="ag-e" cy="-38" r="5"/><rect x="-21" y="-21" width="42" height="42" rx="9"/><circle class="ag-e" cx="-8" r="4.5"/><circle class="ag-e" cx="8" r="4.5"/></g>`;
-/** A pendant lamp hanging from (x, y). */
-const lamp = (x: number, y: number, len = 260, state: 'on' | 'dim' | 'off' = 'on', drop = 34) => {
-	const b = y + drop;
-	const w = len * 0.42;
-	const cone = state === 'off' ? '' : `<path class="cone" d="M${x - 20} ${b}L${r1(x - w)} ${b + len}H${r1(x + w)}L${x + 20} ${b}z"/>`;
-	return `<g class="lamp ${state}">${cone}<path class="cord" d="M${x} ${y}V${b - 20}"/><path class="shade" d="M${x - 30} ${b}h60l-13-20h-34z"/><circle class="bulb" cx="${x}" cy="${b + 3}" r="7"/></g>`;
-};
-/** An arrowhead with its tip at (x, y), pointing along `deg`. */
-const arrow = (x: number, y: number, deg = 0, s = 16, cls = 'ah') =>
-	`<path class="${cls}" d="M0 0L${r1(-s * 1.6)} ${r1(-s * 0.75)}V${r1(s * 0.75)}z" transform="translate(${x} ${y}) rotate(${deg})"/>`;
-const gear = (cx: number, cy: number, r: number, teeth = 8, cls = 'zs') => {
-	const n = teeth * 4;
-	const pts = Array.from({ length: n }, (_, i) => {
-		const a = (i / n) * Math.PI * 2 - Math.PI / 2;
-		const rr = i % 4 === 1 || i % 4 === 2 ? r : r * 0.78;
-		return `${r1(cx + rr * Math.cos(a))} ${r1(cy + rr * Math.sin(a))}`;
-	});
-	return `<path class="${cls}" d="M${pts.join('L')}z"/><circle class="${cls}" cx="${cx}" cy="${cy}" r="${r1(r * 0.3)}"/>`;
-};
-const rack = (x: number, y: number, w: number, h: number) => {
-	let s = `<rect class="surf" x="${x}" y="${y}" width="${w}" height="${h}" rx="6"/>`;
-	for (let yy = y + 26; yy < y + h - 14; yy += 32) s += `<path class="fa" d="M${x + 12} ${yy}H${x + w - 28}"/><circle class="led" cx="${x + w - 15}" cy="${yy}" r="5"/>`;
-	return s;
-};
-const belt = (x1: number, x2: number, y: number, cls = 'nl') => {
-	let s = `<path class="belt" d="M${x1} ${y}H${x2}"/>`;
-	for (let x = x1 + 24; x < x2 - 10; x += 48) s += `<circle class="${cls}" cx="${x}" cy="${y + 16}" r="6"/>`;
-	return s;
-};
-/** A polyline through normalised values (0 = bottom, 1 = top) inside a box. */
-const spark = (x: number, y: number, w: number, h: number, vals: number[], cls = 'zs') =>
-	`<path class="${cls}" d="M${vals.map((v, i) => `${r1(x + (w * i) / (vals.length - 1))} ${r1(y + h - v * h)}`).join('L')}"/>`;
-const polar = (cx: number, cy: number, r: number, deg: number): [number, number] => [r1(cx + r * Math.cos((deg * Math.PI) / 180)), r1(cy + r * Math.sin((deg * Math.PI) / 180))];
-
-/* ---------- Glyphs, centred on (0, 0), about 140 units across ---------- */
-const GLYPH: Record<string, string> = {
-	control: person(0, 56, 1.45, 'acc'),
-	dimmer: `<rect class="ln2" x="-20" y="-64" width="40" height="128" rx="20"/><rect class="acfill" x="-34" y="-44" width="68" height="32" rx="10"/><path class="ln" d="M64-30V30"/>${arrow(64, -46, -90, 12)}${arrow(64, 46, 90, 12)}`,
-	eye: `<path class="ln2" d="M-74 0Q0-66 74 0Q0 66-74 0z"/><circle class="acfill" r="24"/><circle class="hole" cx="7" cy="-7" r="7"/>`,
-	shield: `<path class="ln2" d="M0-64L54-44V0C54 34 30 54 0 66C-30 54-54 34-54 0V-44z"/><path class="acs thick" d="M-22 0l16 16 30-32"/>`,
-	bricks: `<rect class="ln2" x="-66" y="-2" width="62" height="44" rx="5"/><rect class="ln2" x="4" y="-2" width="62" height="44" rx="5"/><path class="ln2" d="M-56-2v-8h16v8M-30-2v-8h16v8M14-2v-8h16v8M40-2v-8h16v8"/><rect class="acf" x="-31" y="-58" width="62" height="44" rx="5"/><path class="acs" d="M-21-58v-8h16v8M5-58v-8h16v8"/>`,
-	context: `<rect class="ln" x="-30" y="-64" width="94" height="116" rx="8"/><rect class="surf ln2" x="-60" y="-50" width="94" height="116" rx="8"/><path class="acs" d="M-42-20H16M-42 4H16M-42 28H-6"/>`,
-	multiplayer: `<circle class="acfill" cx="-62" r="9"/>${[-24, 0, 24].map((y) => `<circle class="acfill" cx="-16" cy="${y}" r="9"/>`).join('')}${[-24, 0, 24].flatMap((y) => [26, 50, 74].map((x) => `<circle class="acfill" cx="${x}" cy="${y}" r="9"/>`)).join('')}`,
-	measured: `<path class="ln2" d="M-66 52H66"/>${[
-		[-54, 40],
-		[-24, 70],
-		[6, 55],
-		[36, 100],
-	]
-		.map(([x, h], i) => `<rect class="${i === 3 ? 'acfill' : 'barm'}" x="${x}" y="${44 - h}" width="22" height="${h}" rx="3"/>`)
-		.join('')}`,
-	branch: `<path class="acs" d="M-18-34V34M-18 12C-18-10 18-4 18-26"/><circle class="acn" cx="-18" cy="-34" r="10"/><circle class="acn" cx="-18" cy="34" r="10"/><circle class="acn" cx="18" cy="-26" r="10"/>`,
-	cloud: `<path class="acs" d="M-38 22h74a20 20 0 0 0 0-40a28 28 0 0 0-52-6a18 18 0 0 0-22 46z"/>`,
-	link: `<g transform="rotate(-35)"><rect class="acs" x="-44" y="-15" width="52" height="30" rx="15"/><rect class="acs" x="-8" y="-15" width="52" height="30" rx="15"/></g>`,
-};
-const glyph = (name: string, x: number, y: number, s = 1, attrs = '') => `<g transform="translate(${x} ${y}) scale(${s})"${attrs}>${GLYPH[name]}</g>`;
-
-/* ---------- Scenes ---------- */
-function building() {
-	let s = `<path class="fa" d="M40 960H1496"/>`;
-	// Factory HQ: lit, three rooms (multiplayer, principles, measuring).
-	s += `<g data-zone="hq"><rect class="zf" x="144" y="145" width="966" height="235" rx="6"/><path class="wall" d="M124 141H1130"/><path class="zs soft" d="M520 160V380M810 160V380"/>`;
-	s += lamp(332, 145, 190) + lamp(665, 145, 190) + lamp(960, 145, 190);
-	s += `<rect class="surf" x="350" y="300" width="64" height="40" rx="4"/><path class="ln2" d="M300 342H470M314 342V380M456 342V380"/>${person(250, 378)}${agent(492, 352, 0.62)}`;
-	s += `<rect class="surf" x="602" y="214" width="126" height="70" rx="4"/><path class="zs soft" d="M602 237H728M602 260H728M644 214V284M686 214V284"/><path class="ln2" d="M612 336H718M624 336V380M706 336V380"/><rect class="zfill" x="640" y="322" width="48" height="14" rx="2"/>${person(572, 378)}${person(758, 378)}`;
-	s += `<rect class="surf" x="842" y="210" width="110" height="74" rx="4"/>${spark(856, 222, 82, 48, [0.2, 0.5, 0.35, 0.8, 0.65])}<rect class="surf" x="962" y="210" width="96" height="74" rx="4"/>`;
-	s += [0.35, 0.6, 0.45, 0.8].map((v, i) => `<rect class="zfill" x="${976 + i * 19}" y="${r1(274 - v * 52)}" width="12" height="${r1(v * 52)}"/>`).join('');
-	s += `${person(905, 378)}${person(1040, 378)}</g>`;
-	// Factory floor: lights off, agents at four stations, the dimmer on the wall.
-	s += `<g data-zone="floor"><rect class="night zo" x="144" y="395" width="956" height="305" rx="6"/>`;
-	s += lamp(520, 395, 0, 'off', 26) + lamp(880, 395, 0, 'off', 26);
-	s += `<rect class="nl" x="254" y="452" width="44" height="124" rx="12"/><rect class="zfill" x="246" y="540" width="60" height="24" rx="6"/>`;
-	s += belt(330, 1070, 650);
-	for (const cx of [430, 610, 790, 970]) s += `<rect class="nbox" x="${cx - 60}" y="548" width="120" height="86" rx="8"/><rect class="scr" x="${cx - 40}" y="562" width="80" height="38" rx="4"/>${agent(cx, 496, 0.78)}`;
-	s += [520, 700, 880, 1044].map((x) => `<rect class="pk" x="${x - 10}" y="622" width="20" height="20" rx="3"/>`).join('');
-	s += `</g>`;
-	// Foundations: racks, pipes feeding the floor, open sockets.
-	s += `<g data-zone="foundations"><rect class="zf" x="144" y="704" width="956" height="241" rx="6"/>`;
-	s += [196, 262, 328, 394, 460].map((x) => rack(x, 770, 50, 150)).join('');
-	s += `<path class="zs" d="M540 900H690M560 900V706M640 900V706"/>`;
-	s += [770, 830, 860].map((y) => `<circle class="zfill" cx="560" cy="${y}" r="7"/><circle class="zfill" cx="640" cy="${y + 26}" r="7"/>`).join('');
-	s += `<rect class="surf" x="720" y="800" width="340" height="78" rx="10"/><circle class="zs" cx="800" cy="839" r="22"/><rect class="zs" x="868" y="817" width="44" height="44" rx="4"/><path class="zs" d="M990 816L1014 860H966z"/><rect class="zf" x="866" y="732" width="48" height="40" rx="5"/>`;
-	s += `</g>`;
-	// Engineering wing: a lit job, builds the factory itself.
-	s += `<g data-zone="eng"><rect class="zf" x="1110" y="110" width="325" height="865" rx="6"/><path class="zs soft" d="M1110 380H1435M1110 700H1435"/>`;
-	s += `<path class="wall" d="M1400 110V36M1180 36H1470M1400 52L1440 36"/><path class="ln" d="M1232 36V78"/><rect class="zfill" x="1212" y="78" width="40" height="26" rx="3"/>`;
-	s += lamp(1330, 110, 200) + gear(1210, 290, 46, 9) + gear(1282, 322, 30, 7) + person(1380, 378);
-	s += `<circle class="zs thick" cx="1272" cy="543" r="92"/>`;
-	for (const d of [-90, 30, 150]) {
-		const [x, y] = polar(1272, 543, 92, d);
-		s += `<circle class="zfill" cx="${x}" cy="${y}" r="15"/>`;
-	}
-	for (const d of [-30, 90, 210]) {
-		const [x, y] = polar(1272, 543, 92, d);
-		s += arrow(x, y, d + 90, 13, 'ah z');
-	}
-	s += lamp(1272, 700, 220) + person(1190, 960) + `<rect class="zf" x="1290" y="904" width="96" height="56" rx="5"/><rect class="zf" x="1314" y="856" width="72" height="48" rx="5"/>`;
-	s += `<path class="zs dash" d="M1160 470H1060M1160 820H1080"/>${arrow(1056, 470, 180, 12, 'ah z')}${arrow(1076, 820, 180, 12, 'ah z')}`;
-	s += `</g>`;
-	return s;
-}
-
-function why() {
-	let s = `<path class="surf ln2" d="M300 172L768 72L1236 172z"/><rect class="surf ln2" x="330" y="172" width="876" height="56" rx="8"/>`;
-	const pillars: [string, number, string][] = [
-		['green', 470, 'branch'],
-		['blue', 768, 'cloud'],
-		['purple', 1066, 'link'],
-	];
-	for (const [accent, cx, g] of pillars) {
-		s += `<g data-accent="${accent}"><rect class="acf" x="${cx - 75}" y="228" width="150" height="572" rx="4"/><path class="acs soft" d="M${cx - 34} 380V770M${cx} 380V770M${cx + 34} 380V770"/>${glyph(g, cx, 304, 0.95)}</g>`;
-	}
-	s += `<rect class="surf ln2" x="330" y="800" width="876" height="34" rx="4"/><rect class="surf ln2" x="290" y="834" width="956" height="34" rx="4"/><path class="fa" d="M140 868H1396"/>`;
-	s += person(590, 800, 1.15) + agent(652, 762, 0.82) + agent(884, 762, 0.82) + person(946, 800, 1.15);
-	return s;
-}
-
-function brightDark() {
-	let s = `<rect class="night" x="150" y="150" width="618" height="724"/><rect class="warm" x="768" y="150" width="618" height="724"/><rect class="wall" x="150" y="150" width="1236" height="724" rx="10"/>`;
-	s += lamp(459, 150, 0, 'off', 30) + lamp(1077, 150, 640, 'on', 30);
-	s += belt(190, 740, 800) + agent(320, 716, 1.1) + agent(459, 650, 1.1) + agent(600, 716, 1.1);
-	s += belt(800, 1350, 800, 'ln') + `<path class="dash lit-s" d="M1006 660L1150 690M1006 660L1290 690"/>` + person(1000, 800, 1.7) + agent(1170, 716, 1.1) + agent(1290, 716, 1.1);
-	return s;
-}
-
-function principles() {
-	const cols: [string, string, string][] = [
-		['orange', 'control', 'dimmer'],
-		['yellow', 'eye', 'shield'],
-		['green', 'bricks', 'context'],
-		['purple', 'multiplayer', 'measured'],
-	];
-	let s = '';
-	cols.forEach(([accent, a, b], i) => {
-		const x = 238 + i * 280;
-		const cx = x + 110;
-		s += `<g data-accent="${accent}"><rect class="acfill" x="${x}" y="214" width="220" height="12" rx="6"/><rect class="surf" x="${x}" y="246" width="220" height="194" rx="16"/><rect class="surf" x="${x}" y="490" width="220" height="194" rx="16"/><path class="acs" d="M${cx} 440V490"/><circle class="acfill" cx="${cx}" cy="465" r="8"/>${glyph(a, cx, 343, 0.92)}${glyph(b, cx, 587, 0.92)}</g>`;
-	});
-	s += `<path class="fa" d="M200 900H1336"/>` + person(560, 900, 1.3) + person(768, 900, 1.3) + person(976, 900, 1.3);
-	return s;
-}
-
-function multiplayer() {
-	let s = '';
-	// Singleplayer: one person, one laptop, one agent.
-	s += `<rect class="warm" x="128" y="230" width="380" height="540" rx="22"/>${lamp(318, 230, 300)}`;
-	s += `<rect class="surf" x="344" y="664" width="74" height="48" rx="5"/><path class="ln2" d="M296 716H452M310 716V770M438 716V770"/>${person(236, 770, 1.4)}${agent(468, 742, 0.6)}`;
-	// Multiplayer: a shared screen and table.
-	s += `<rect class="warm" x="578" y="230" width="380" height="540" rx="22"/>${lamp(768, 230, 120)}`;
-	s += `<rect class="surf" x="668" y="400" width="200" height="120" rx="8"/><path class="zs" d="M690 432H846M690 460H812M690 488H830"/>`;
-	s += `${agent(700, 684, 0.7)}${agent(768, 684, 0.7)}${agent(836, 684, 0.7)}<path class="ln2" d="M652 716H884M666 716V770M870 716V770"/>${person(616, 770, 1.25)}${person(920, 770, 1.25)}`;
-	// At scale: a lit balcony over a dark hall of agents.
-	s += `<rect class="warm" x="1028" y="230" width="380" height="170" rx="22"/><rect class="night" x="1028" y="400" width="380" height="370" rx="0"/><rect class="wall" x="1028" y="230" width="380" height="540" rx="22"/>`;
-	s += `${lamp(1218, 230, 100)}${person(1148, 396, 1.05)}${person(1290, 396, 1.05)}<path class="ln2" d="M1040 400H1396"/><path class="ln" d="M1060 400V372M1100 400V372M1340 400V372M1380 400V372M1050 372H1390"/>`;
-	for (const y of [486, 588, 690]) for (const x of [1118, 1218, 1318]) s += agent(x, y, 0.66);
-	s += `<path class="ln" d="M520 500H556M970 500H1006"/>${arrow(566, 500, 0, 12)}${arrow(1016, 500, 0, 12)}`;
-	return s;
-}
-
-function measure() {
-	let s = `<rect class="surf ln2" x="170" y="140" width="1196" height="560" rx="18"/><path class="fa" d="M800 180V660"/>`;
-	const tile = (x: number, y: number, inner: string) => `<rect class="tile" x="${x}" y="${y}" width="170" height="190" rx="10"/><g transform="translate(${x} ${y})">${inner}</g>`;
-	s += tile(220, 190, spark(26, 40, 118, 110, [0.85, 0.7, 0.75, 0.4, 0.2]));
-	s += tile(410, 190, [30, 50, 70, 95, 120].map((h, i) => `<rect class="zfill" x="${28 + i * 24}" y="${164 - h}" width="16" height="${h}" rx="2"/>`).join(''));
-	s += tile(600, 190, `<circle class="zs" cx="85" cy="108" r="46"/><rect class="zfill" x="75" y="46" width="20" height="12" rx="2"/><path class="zs" d="M85 108L110 84"/>`);
-	s += tile(315, 410, `<path class="fa thick" d="M25 140A60 60 0 0 1 145 140"/><path class="zs thick" d="M25 140A60 60 0 0 1 36.5 104.7"/><path class="ln2" d="M85 140L44 116"/><circle class="zfill" cx="85" cy="140" r="8"/>`);
-	s += tile(505, 410, `<path class="zs" d="M107.5 66A45 45 0 1 1 62.5 66"/>${arrow(62.5, 66, -30, 11, 'ah z')}`);
-	const cx = 1060;
-	const cy = 430;
-	const axes = [-90, -18, 54, 126, 198];
-	const ring = (f: number) => axes.map((d) => polar(cx, cy, 190 * f, d).join(' ')).join('L');
-	s += [1 / 3, 2 / 3, 1].map((f) => `<path class="fa" d="M${ring(f)}z"/>`).join('');
-	s += axes.map((d) => `<path class="fa" d="M${cx} ${cy}L${polar(cx, cy, 190, d).join(' ')}"/>`).join('');
-	const vals = [0.82, 0.62, 0.74, 0.56, 0.86];
-	s += `<path class="zf" d="M${axes.map((d, i) => polar(cx, cy, 190 * vals[i], d).join(' ')).join('L')}z"/>`;
-	s += axes.map((d, i) => `<circle class="zfill" cx="${polar(cx, cy, 190 * vals[i], d)[0]}" cy="${polar(cx, cy, 190 * vals[i], d)[1]}" r="9"/>`).join('');
-	s += `<path class="fa" d="M200 900H1336"/>${person(600, 900, 1.5)}${person(940, 900, 1.5)}`;
-	return s;
-}
-
-function line() {
-	let s = `<g data-zone="hq"><rect class="warm" x="96" y="96" width="1344" height="166" rx="12"/>${person(420, 256)}${person(768, 256)}${person(1116, 256)}</g><path class="glass" d="M96 264H1440"/>`;
-	s += `<rect class="night zo" x="96" y="270" width="1344" height="640" rx="12"/>`;
-	s += [300, 610, 920, 1230].map((x) => lamp(x, 270, 0, 'off', 28)).join('');
-	s += belt(140, 1380, 790);
-	[300, 610, 920, 1230].forEach((cx, i) => {
-		s += `<rect class="nbox" x="${cx - 95}" y="618" width="190" height="156" rx="12"/><rect class="scr" x="${cx - 70}" y="640" width="140" height="70" rx="6"/><path class="zs" d="M${cx - 50} 662H${cx + 30}M${cx - 50} 688H${cx + 6}"/>${agent(cx, 536, 1)}`;
-		s += `<circle class="${i === 2 ? 'lit' : 'nl'}" cx="${cx}" cy="600" r="9"/>`;
-	});
-	s += [455, 765, 1075].map((x) => `<rect class="pk" x="${x - 14}" y="760" width="28" height="28" rx="4"/>`).join('');
-	s += arrow(1420, 790, 0, 18, 'ah z');
-	return s;
-}
-
-function dimmer() {
-	let s = `<rect class="surf" x="96" y="400" width="120" height="430" rx="26"/><rect class="track" x="146" y="440" width="20" height="350" rx="10"/><path class="ln" d="M116 480H134M178 480H196M116 615H134M178 615H196M116 750H134M178 750H196"/><rect class="knob" x="114" y="455" width="84" height="50" rx="12"/><path class="ln" d="M216 615H262"/>`;
-	s += `<rect class="warm" x="280" y="400" width="470" height="430"/><rect class="dimbay" x="805" y="400" width="259" height="430"/><rect class="night" x="1120" y="400" width="280" height="430"/>`;
-	s += `<path class="wall" d="M250 400H1430M250 830H1430"/>`;
-	s += lamp(515, 400, 360) + lamp(935, 400, 360, 'dim') + lamp(1260, 400, 0, 'off');
-	s += person(410, 830, 1.35) + agent(515, 770, 1) + person(620, 830, 1.35);
-	s += agent(866, 788, 0.82) + agent(946, 744, 0.82) + person(1020, 830, 1.15, 'on-dark');
-	s += agent(1180, 788, 0.85) + agent(1260, 714, 0.85) + agent(1340, 788, 0.85);
-	return s;
-}
-
-function dimback() {
-	let s = `<rect class="surf" x="170" y="200" width="160" height="600" rx="30"/><rect class="track" x="236" y="250" width="28" height="500" rx="14"/><rect class="knob-lit" x="200" y="258" width="100" height="56" rx="14"/>`;
-	s += `<path class="lit-s thick" d="M372 640V330"/>${arrow(372, 300, -90, 16, 'ah lit')}`;
-	s += `<rect class="warm" x="440" y="200" width="940" height="600" rx="12"/>`;
-	s += [600, 800, 1000, 1200].map((x) => lamp(x, 200, 300)).join('');
-	s += agent(700, 560, 0.9) + agent(900, 560, 0.9) + agent(1100, 560, 0.9);
-	s += `<path class="ln2" d="M480 700H1250M740 700C780 700 780 652 820 652H960C1000 652 1000 700 1040 700"/>`;
-	s += [520, 620, 740, 1060, 1160].map((x) => `<circle class="cm" cx="${x}" cy="700" r="14"/>`).join('') + [860, 940].map((x) => `<circle class="cm" cx="${x}" cy="652" r="14"/>`).join('');
-	s += `<circle class="lit" cx="1250" cy="700" r="16"/>${person(1320, 800, 1.4)}`;
-	return s;
-}
-
-function demos() {
-	let s = `<rect class="surf ln2" x="290" y="130" width="956" height="520" rx="18"/><path class="ln2" d="M768 650V700M680 700H856"/>`;
-	const xs = Array.from({ length: 6 }, (_, i) => r1(400 + i * 147.2));
-	s += `<path class="zs" d="M400 470H1136"/>`;
-	s += xs.map((x, i) => `<circle class="${i < 4 ? 'node-on' : 'node'}" cx="${x}" cy="470" r="18"/>`).join('');
-	const icons = [
-		`<rect class="ln" x="-20" y="-38" width="40" height="76" rx="8"/><path class="ln" d="M-6 26H6"/>`,
-		`<path class="ln" d="M-38 22h74a20 20 0 0 0 0-40a28 28 0 0 0-52-6a18 18 0 0 0-22 46z"/>`,
-		`<rect class="ln" x="-36" y="-30" width="72" height="48" rx="5"/><path class="ln" d="M-48 26H48"/>`,
-		`<path class="ln" d="M0-40L34-28V0C34 22 18 34 0 42C-18 34-34 22-34 0V-28z"/><path class="ln" d="M-14 0l10 10 18-20"/>`,
-		`<path class="ln" d="M-38-30H38V16H-6L-24 32V16H-38z"/><path class="ln" d="M-14-8l9 9 17-17"/>`,
-		`<path class="ln" d="M-44 6H-22L-10-24L6 30L18 0H44"/>`,
-	];
-	s += xs.map((x, i) => `<g transform="translate(${x} 330)">${icons[i]}</g>`).join('');
-	s += `<path class="fa" d="M330 590H1206"/>${person(206, 860, 1.5)}`;
-	for (const [y, xs2] of [
-		[930, [470, 590, 710, 830, 950, 1070]],
-		[1010, [530, 650, 770, 890, 1010]],
-	] as const)
-		s += xs2.map((x) => person(x, y, 1.05)).join('');
-	s += agent(1350, 780, 0.9) + agent(1430, 858, 0.9);
-	return s;
-}
-
-function platform() {
-	let s = `<g data-zone="hq"><rect class="zf soft" x="180" y="96" width="1176" height="140" rx="10"/></g><rect class="night" x="180" y="256" width="1176" height="200" rx="10"/>`;
-	s += agent(470, 356, 0.7) + agent(768, 356, 0.7) + agent(1066, 356, 0.7);
-	s += `<rect class="zf" x="150" y="500" width="1236" height="400" rx="14"/><path class="fa" d="M768 530V870"/><path class="ln2" d="M720 540H816"/>`;
-	for (const [vendor, x0] of [
-		['github', 210],
-		['microsoft', 830],
-	] as const) {
-		s += `<g data-vendor="${vendor}">${[0, 1, 2, 3, 4].map((i) => rack(x0 + i * 100, 580, 76, 280)).join('')}`;
-		for (const x of [x0 + 138, x0 + 338]) s += `<path class="acs" d="M${x} 576V470"/>${arrow(x, 460, -90, 12, 'ah acc')}<circle class="acfill" cx="${x}" cy="540" r="7"/><circle class="acfill" cx="${x}" cy="500" r="7"/>`;
-		s += `</g>`;
-	}
-	return s;
-}
-
-function open() {
-	let s = `<rect class="surf ln2" x="160" y="690" width="1216" height="80" rx="10"/>`;
-	for (let x = 186; x < 1350; x += 64) s += `<rect class="stud" x="${x}" y="674" width="34" height="16" rx="3"/>`;
-	const bricks: [number, string, string][] = [
-		[200, 'green', `<circle class="acs thick" r="26"/>`],
-		[390, 'blue', `<rect class="acs thick" x="-24" y="-24" width="48" height="48" rx="4"/>`],
-		[580, 'purple', `<path class="acs thick" d="M0-28L28 22H-28z"/>`],
-		[960, 'orange', `<path class="acs thick" d="M0-30L26-15V15L0 30L-26 15V-15z"/>`],
-		[1150, 'yellow', `<path class="acs thick" d="M0-30L30 0L0 30L-30 0z"/>`],
-	];
-	for (const [x, accent, shape] of bricks) s += `<g data-accent="${accent}"><rect class="acf" x="${x}" y="560" width="160" height="130" rx="8"/><g transform="translate(${x + 80} 625)">${shape}</g></g>`;
-	s += `<rect class="slot" x="770" y="560" width="160" height="130" rx="8"/>`;
-	s += `<g data-accent="pink"><rect class="acf" x="770" y="250" width="160" height="130" rx="8"/><g transform="translate(850 315)"><circle class="acs thick" r="14"/><path class="acs thick" d="M-30 0H-14M14 0H30M0-30V-14M0 14V30"/></g></g>`;
-	s += `<path class="ln" d="M850 400V520"/>${arrow(850, 536, 90, 16)}<path class="wall" d="M850 90V250M760 90H940"/>`;
-	return s;
-}
-
-function loop() {
-	const cx = 768;
-	const cy = 512;
-	const R = 300;
-	let s = `<circle class="zs thick" cx="${cx}" cy="${cy}" r="${R}"/>`;
-	for (const d of [-30, 90, 210]) {
-		const [x, y] = polar(cx, cy, R, d);
-		s += arrow(x, y, d + 90, 22, 'ah z');
-	}
-	const nodes: [number, string][] = [
-		[-90, `<path class="zs" d="M-30-36V36M0-36V36M30-36V36"/><rect class="zfill" x="-40" y="-20" width="20" height="14" rx="3"/><rect class="zfill" x="-10" y="8" width="20" height="14" rx="3"/><rect class="zfill" x="20" y="-30" width="20" height="14" rx="3"/>`],
-		[30, gear(0, 0, 44, 9)],
-		[150, `<rect class="zs" x="-44" y="10" width="88" height="30" rx="4"/><rect class="zs" x="-30" y="-24" width="60" height="30" rx="4"/><rect class="zfill" x="-16" y="-52" width="32" height="24" rx="4"/>`],
-	];
-	for (const [d, inner] of nodes) {
-		const [x, y] = polar(cx, cy, R, d);
-		s += `<circle class="zf" cx="${x}" cy="${y}" r="84"/><g transform="translate(${x} ${y})">${inner}</g>`;
-	}
-	s += `<path class="ln2" d="M672 588H864"/>`;
-	s += [120, 92, 40, 104].map((h, i) => `<rect class="${i === 2 ? 'zfill' : 'barm'}" x="${684 + i * 46}" y="${582 - h}" width="34" height="${h}" rx="4"/>`).join('');
-	s += `<circle class="zs" cx="${684 + 2 * 46 + 17}" cy="${582 - 40 - 34}" r="16"/>`;
-	return s;
-}
-
-function journey() {
-	let s = `<path class="wall" d="M120 880H430V770H740V660H1050V550H1420"/>`;
-	s += `<rect class="warm" x="220" y="770" width="140" height="110" rx="4"/><path class="wall" d="M206 772L290 712L374 772"/>${person(290, 876, 0.95)}`;
-	s += `<rect class="warm" x="514" y="560" width="152" height="105"/><rect class="night" x="514" y="665" width="152" height="105"/>${person(590, 660, 0.85)}${agent(590, 724, 0.62)}<path class="wall" d="M500 562L590 506L680 562"/>`;
-	s += `<rect class="warm" x="810" y="390" width="180" height="90"/><rect class="night" x="810" y="480" width="180" height="100"/><g data-zone="foundations"><rect class="zf" x="810" y="580" width="180" height="80"/></g>${person(860, 476, 0.8)}${person(940, 476, 0.8)}${agent(862, 530, 0.55)}${agent(938, 530, 0.55)}`;
-	s += `<g data-zone="hq"><rect class="zf" x="1110" y="190" width="230" height="110"/></g>${lamp(1225, 190, 76)}<rect class="night" x="1110" y="300" width="230" height="140"/><g data-zone="foundations"><rect class="zf" x="1110" y="440" width="230" height="110"/></g><g data-zone="eng"><rect class="zf" x="1340" y="170" width="56" height="380"/></g>`;
-	s += person(1170, 296, 0.75) + person(1280, 296, 0.75) + agent(1160, 380, 0.55) + agent(1225, 380, 0.55) + agent(1290, 380, 0.55) + `<path class="ln" d="M1140 480H1310M1140 512H1310"/>`;
-	s += `<path class="lit-s dash thick" d="M300 690C420 600 520 470 640 440S900 300 1060 200"/>${arrow(1080, 186, -35, 16, 'ah lit')}`;
-	return s;
-}
-
-function partners() {
-	let s = `<path class="fa" d="M60 900H1476"/>`;
-	s += `<g data-zone="foundations"><rect class="zf" x="560" y="760" width="416" height="140"/></g><rect class="night" x="560" y="600" width="416" height="160"/>${agent(690, 690, 0.8)}${agent(846, 690, 0.8)}<rect class="slot" x="560" y="440" width="416" height="160"/>`;
-	s += `<path class="wall" d="M1446 900V60M640 120H1520M1446 60L640 120M1446 60L1520 120"/><rect class="surf" x="1470" y="120" width="50" height="44" rx="4"/><path class="ln" d="M768 120V300"/>`;
-	s += `<g data-zone="hq"><rect class="zf" x="680" y="300" width="176" height="96" rx="6"/></g>${person(740, 392, 0.75)}${person(800, 392, 0.75)}`;
-	s += `<g data-accent="green"><rect class="acf" x="262" y="740" width="96" height="56" rx="6"/></g>${person(200, 900, 1.35)}${person(310, 900, 1.35)}${person(420, 900, 1.35)}`;
-	s += `<g data-accent="purple"><rect class="acf" x="1168" y="740" width="96" height="56" rx="6"/></g>${person(1100, 900, 1.35)}${person(1214, 900, 1.35)}${person(1328, 900, 1.35)}`;
-	return s;
-}
-
-const SCENES: Record<string, () => string> = {
-	building,
-	why,
-	'bright-dark': brightDark,
-	principles,
-	multiplayer,
-	measure,
-	line,
-	dimmer,
-	dimback,
-	demos,
-	platform,
-	open,
-	loop,
-	journey,
-	partners,
-};
-const body = k === 'defs' ? '' : (SCENES[k] ?? building)();
-const label = VALT[k] ?? VALT.building;
 ---
 
-{
-	k === 'defs' ? (
-		<svg class="pz-defs" width="0" height="0" aria-hidden="true" focusable="false">
-			<defs>
-				<radialGradient id="pzv-halo">
-					<stop offset="0" class="pzv-s-ag" stop-opacity="0.4" />
-					<stop offset="1" class="pzv-s-ag" stop-opacity="0" />
-				</radialGradient>
-				<linearGradient id="pzv-cone" x1="0" y1="0" x2="0" y2="1">
-					<stop offset="0" class="pzv-s-lit" stop-opacity="0.5" />
-					<stop offset="1" class="pzv-s-lit" stop-opacity="0" />
-				</linearGradient>
-			</defs>
-		</svg>
-	) : decorative ? (
-		<svg class="pz-vec" viewBox="0 0 1536 1024" aria-hidden="true" focusable="false" set:html={body} />
-	) : (
-		<svg class="pz-vec" viewBox="0 0 1536 1024" role="img" aria-label={label} focusable="false" set:html={body} />
-	)
-}
+<Image
+	class="pz-vec"
+	src={src}
+	alt={decorative ? '' : (VALT[k] ?? VALT.building)}
+	widths={[640, 960, 1280, 1536]}
+	sizes={sizes}
+	loading="lazy"
+	decoding="async"
+/>

@@ -10,7 +10,7 @@
  * per slide, and every slide links to the page it summarises.
  *
  * Two audience controls, both on <html> and switchable live (DESIGN.md "Presentation mode"):
- * data-style = vectors (concept drawings, default) | blocks (LEGO renders), and
+ * data-style = vectors (line-art images, default) | blocks (LEGO renders), and
  * data-tech = l200 (the story, default) | l400 (same slide, the deeper layer: products,
  * mechanisms and tables). Keys V and L, URL ?style=blocks&tech=l400, kept in localStorage.
  */
@@ -247,7 +247,6 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 		</script>
 	</head>
 	<body>
-		<VectorArt k="defs" />
 		<div class="pz-app">
 			<main class="pz-main">
 				<section class="pz-stage" data-zone="building" data-cur="cover" aria-roledescription="carousel" aria-label="Bright Factory Framework, presentation">
@@ -945,7 +944,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 						<legend class="pz-sr">Visual style</legend>
 						<span class="pz-pick-name" aria-hidden="true">Style</span>
 						<span class="pz-seg pz-seg-2">
-							<label title="Concept drawings (V)"><input type="radio" name="pz-style" value="vectors" /><span>Vectors</span></label>
+							<label title="Line-art images (V)"><input type="radio" name="pz-style" value="vectors" /><span>Vectors</span></label>
 							<label title="LEGO renders (V)"><input type="radio" name="pz-style" value="blocks" /><span>Blocks</span></label>
 						</span>
 					</fieldset>
@@ -985,7 +984,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 				<div class="pz-ov-map">
 					<div class="pz-imgbox pz-ov-bimg">
 						<Image src={building} alt="" widths={[960, 1536]} sizes="(min-aspect-ratio: 5/4) 60vw, 100vw" loading="lazy" decoding="async" />
-						<VectorArt k="building" decorative />
+						<VectorArt k="building" decorative sizes="(min-aspect-ratio: 5/4) 60vw, 100vw" />
 						{
 							SLIDES.map(
 								(s, i) =>
