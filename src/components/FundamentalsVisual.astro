@@ -83,11 +83,13 @@ const captions: Record<string, string> = {
 		</div>
 
 		<div class="bff-fv-layer bff-fv-factory" data-frames="dark bright dimmer">
-			<FactoryThumb level="medium" frames={['dark', 'low', 'medium', 'high']} sizes="(min-width: 62em) 36rem, 92vw" />
-			<div class="bff-fv-tags">
-				<span class="bff-fv-tag" data-show="bright" data-tone="hq">HQ · lights on</span>
-				<span class="bff-fv-tag" data-show="bright" data-tone="floor">Floor · dimmed</span>
-				<span class="bff-fv-tag" data-show="dark" data-tone="alert">Nobody watching</span>
+			<div class="bff-fv-stage">
+				<FactoryThumb level="medium" frames={['dark', 'low', 'medium', 'high']} sizes="(min-width: 62em) 36rem, 92vw" />
+				<div class="bff-fv-tags">
+					<span class="bff-fv-tag" data-show="bright" data-tone="hq">HQ · lights on</span>
+					<span class="bff-fv-tag" data-show="bright" data-tone="floor">Floor · dimmed</span>
+					<span class="bff-fv-tag" data-show="dark" data-tone="alert">Nobody watching</span>
+				</div>
 			</div>
 			<div class="bff-fv-dimmer" data-show="dimmer">
 				{LEVEL_ORDER.map((k) => <span data-k={k}>{LEVELS[k].gait}</span>)}
@@ -330,6 +332,11 @@ const captions: Record<string, string> = {
 	.bff-fv-factory :global(.bff-thumb) {
 		inline-size: 100%;
 	}
+	/* Tags are placed in image coordinates, so they stay on their level at any size. */
+	.bff-fv-stage {
+		position: relative;
+		inline-size: 100%;
+	}
 	.bff-fv-tags {
 		position: absolute;
 		inset: 0;
@@ -337,6 +344,9 @@ const captions: Record<string, string> = {
 	}
 	.bff-fv-tag {
 		position: absolute;
+		inset: var(--y) auto auto var(--x);
+		translate: -50% -50%;
+		white-space: nowrap;
 		padding: 0.2rem 0.6rem;
 		border-radius: var(--bff-radius-pill);
 		background: var(--sl-color-black);
@@ -348,9 +358,9 @@ const captions: Record<string, string> = {
 		opacity: 0;
 		transition: opacity 0.4s var(--bff-ease-soft) 0.3s;
 	}
-	.bff-fv-tag[data-tone='hq'] { inset: 22% 14% auto auto; border: 1px solid var(--bff-hq); }
-	.bff-fv-tag[data-tone='floor'] { inset: auto auto 34% 12%; border: 1px solid var(--bff-floor); }
-	.bff-fv-tag[data-tone='alert'] { inset: 22% auto auto 50%; translate: -50% 0; border: 1px solid var(--bff-alert); }
+	.bff-fv-tag[data-tone='hq'] { --x: 77%; --y: 14%; border: 1px solid var(--bff-hq); }
+	.bff-fv-tag[data-tone='floor'] { --x: 22%; --y: 56%; border: 1px solid var(--bff-floor); }
+	.bff-fv-tag[data-tone='alert'] { --x: 50%; --y: 14%; border: 1px solid var(--bff-alert); }
 	:global(.bff-scrolly[data-frame='bright']) [data-show='bright'],
 	:global(.bff-scrolly[data-frame='dark']) [data-show='dark'] {
 		opacity: 1;
