@@ -8,6 +8,8 @@ const bands = (['hq', 'floor', 'foundations'] as const).map((k) => ({
 	meta: LAYER_META[k],
 	anchor: k === 'hq' ? 'factory-hq' : k === 'floor' ? 'factory-floor' : 'factory-foundations',
 }));
+// Engineering loop steps map one-to-one onto the layers they improve.
+const steps = data.loop.map((l, i) => ({ ...l, layer: bands[i].key, label: bands[i].label }));
 const vendors = Object.keys(VENDOR_LABEL) as Vendor[];
 const uid = 'bff-bp';
 ---
@@ -83,20 +85,34 @@ const uid = 'bff-bp';
 			}
 		</div>
 		<aside class="bff-bp-eng" data-layer="engineering" aria-labelledby="factory-engineering">
-			<p class="bff-bp-who">Platform + AI engineers</p>
-			<h3 id="factory-engineering">Factory engineering</h3>
-			<p class="bff-bp-tag">Sets up the factory and improves it every loop.</p>
-			<ol>
-				{
-					data.loop.map((l) => (
-						<li>
-							<strong>{l.step}</strong>
-							<span>{l.detail}</span>
-						</li>
-					))
-				}
-			</ol>
-			<a class="bff-card-more" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/framework/engineering/`}>The engineering loop →</a>
+			{
+				steps.map((s, i) => (
+					<>
+						{i === 1 && <div class="bff-bp-eng-cell" aria-hidden="true" />}
+						<div class="bff-bp-eng-cell">
+							{i === 0 && (
+								<header>
+									<p class="bff-bp-who">Platform + AI engineers</p>
+									<h3 id="factory-engineering">Factory engineering</h3>
+									<p class="bff-bp-tag">Sets up the factory and improves it every loop.</p>
+								</header>
+							)}
+							<div class="bff-bp-step" data-layer={s.layer}>
+								<h4>
+									<span class="bff-bp-step-n">{i + 1}</span> {s.step}
+								</h4>
+								<p>{s.detail}</p>
+								<p class="sr-only">Improves the {s.label}.</p>
+							</div>
+							{i === steps.length - 1 && (
+								<a class="bff-card-more" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/framework/engineering/`}>
+									The engineering loop →
+								</a>
+							)}
+						</div>
+					</>
+				))
+			}
 		</aside>
 	</div>
 	<p class="bff-bp-status" aria-live="polite" data-status></p>
@@ -188,17 +204,23 @@ const uid = 'bff-bp';
 	.bff-bp-vendor[data-vendor='third-party'] { --vendor: var(--bff-vendor-third); }
 
 	.bff-bp-grid {
+		--bp-pad: clamp(0.9rem, 2vw, 1.25rem);
+		--bp-col-gap: 1.25rem;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) minmax(12rem, 15rem);
-		gap: 1rem;
+		grid-template-rows: repeat(4, auto);
+		gap: 0.75rem var(--bp-col-gap);
 	}
-	.bff-bp-bands {
+	/* Bands and the engineering rail share rows, so each loop step sits beside the layer it improves. */
+	.bff-bp-bands,
+	.bff-bp-eng {
 		display: grid;
-		gap: 0.75rem;
+		grid-row: 1 / -1;
+		grid-template-rows: subgrid;
 	}
 	.bff-bp-band,
 	.bff-bp-eng {
-		padding: clamp(0.9rem, 2vw, 1.25rem);
+		padding: var(--bp-pad);
 		border: 1px solid var(--sl-color-hairline);
 		border-radius: var(--bff-radius);
 		background: var(--bff-surface);
@@ -218,7 +240,7 @@ const uid = 'bff-bp';
 			var(--bff-surface);
 	}
 	.bff-bp-band header,
-	.bff-bp-eng > :is(p, h3) {
+	.bff-bp-eng header > :is(p, h3) {
 		margin-bottom: 0.75rem;
 	}
 	.bff-bp-band header {
@@ -317,40 +339,67 @@ const uid = 'bff-bp';
 		font-weight: 700;
 	}
 	.bff-bp-eng {
+		padding-inline: var(--bp-pad);
+	}
+	.bff-bp-eng-cell {
 		display: flex;
 		flex-direction: column;
 	}
-	.bff-bp-eng ol {
-		display: grid;
-		gap: 0.75rem;
-		margin: 0 0 1rem;
-		padding: 0;
-		list-style: none;
-		counter-reset: step;
+	.bff-bp-eng header {
+		display: flex;
+		flex-direction: column;
 	}
-	.bff-bp-eng li {
+	.bff-bp-step {
+		position: relative;
 		display: grid;
 		gap: 0.15rem;
-		margin: 0;
+		margin-block: auto;
 		padding: 0.75rem;
 		border: 1px solid var(--sl-color-hairline);
+		border-left: 3px solid var(--accent);
 		border-radius: var(--bff-radius-md);
 		background: var(--sl-color-black);
-		counter-increment: step;
 	}
-	.bff-bp-eng li strong {
+	/* Connector from the step to its layer band, across the rail padding and the column gap. */
+	.bff-bp-step::before,
+	.bff-bp-step::after {
+		content: '';
+		position: absolute;
+		inset-block-start: 50%;
+		pointer-events: none;
+	}
+	.bff-bp-step::before {
+		inset-inline-end: calc(100% + 3px);
+		inline-size: calc(var(--bp-pad) + var(--bp-col-gap) + 1px);
+		border-top: 1px dashed color-mix(in oklab, var(--accent) 70%, transparent);
+	}
+	.bff-bp-step::after {
+		inset-inline-end: calc(100% + 4px + var(--bp-pad) + var(--bp-col-gap) - 0.2rem);
+		inline-size: 0.4rem;
+		block-size: 0.4rem;
+		margin-top: -0.2rem;
+		border-radius: 50%;
+		background: var(--accent);
+		translate: 0 0.5px;
+	}
+	.bff-bp-step h4 {
+		margin: 0;
 		font-size: var(--bff-text-sm);
+		font-weight: 600;
 		color: var(--sl-color-white);
 	}
-	.bff-bp-eng li strong::before {
-		content: counter(step) ' ';
+	.bff-bp-step-n {
 		font-family: var(--bff-font-mono);
 		color: var(--accent);
 	}
-	.bff-bp-eng li span {
+	.bff-bp-step p {
+		margin: 0;
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);
 		color: var(--sl-color-gray-3);
+	}
+	.bff-bp-eng .bff-card-more {
+		margin-top: 0.75rem;
 	}
 	.bff-bp-status {
 		min-block-size: 1.2em;
@@ -361,6 +410,23 @@ const uid = 'bff-bp';
 	@media (max-width: 62em) {
 		.bff-bp-grid {
 			grid-template-columns: 1fr;
+			grid-template-rows: none;
+		}
+		.bff-bp-bands,
+		.bff-bp-eng {
+			grid-row: auto;
+			grid-template-rows: none;
+			gap: 0.75rem;
+		}
+		.bff-bp-eng {
+			padding-block: var(--bp-pad);
+		}
+		.bff-bp-eng-cell:empty {
+			display: none;
+		}
+		.bff-bp-step::before,
+		.bff-bp-step::after {
+			display: none;
 		}
 	}
 </style>
