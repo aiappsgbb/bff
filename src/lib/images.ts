@@ -2,7 +2,7 @@ import type { ImageMetadata } from 'astro';
 
 const stepFiles = import.meta.glob<{ default: ImageMetadata }>('../assets/steps/*.svg', { eager: true });
 
-/** LEGO instruction-step SVGs for the six principles, e.g. `STEPS.composable`. */
+/** LEGO instruction-step SVGs for the seven principles, e.g. `STEPS.composable`. */
 export const STEPS: Record<string, ImageMetadata> = Object.fromEntries(
 	Object.entries(stepFiles).map(([path, mod]) => [path.split('/').pop()!.replace(/\.svg$/, ''), mod.default])
 );
@@ -14,6 +14,7 @@ export const STEPS_ALT: Record<string, string> = {
 	glass: 'LEGO instruction step 4: a blue agent brick and a lamp inside a glass case, with a zoom callout on the agent’s face.',
 	reversible: 'LEGO instruction step 5: a pink slider is fitted on a dimmer rail under three lamps; a double arrow shows it slides both ways.',
 	multiplayer: 'LEGO instruction step 6: three minifigure sub-assemblies stand around one shared plate with a white agent stack.',
+	measure: 'LEGO instruction step 7: an orange dashboard panel with bars and a dial drops onto the green Factory HQ brick beside a minifigure; a dashed line carries a signal from a blue agent brick on the floor.',
 };
 
 export const LEGO_ALT: Record<string, string> = {

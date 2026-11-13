@@ -1,0 +1,176 @@
+---
+import { MEASURE } from '../data/content';
+import { withBase } from '../data/site';
+
+interface Props {
+	kind: 'dora' | 'space' | 'moves';
+}
+const { kind } = Astro.props;
+const caption = {
+	dora: 'The five DORA software delivery metrics, and what each one tells the factory',
+	space: 'The five SPACE dimensions, and the signals to read in the factory',
+	moves: 'Which engineering move answers each signal',
+}[kind];
+const LAYER_NAME = { hq: 'HQ', floor: 'Floor', foundations: 'Foundations' } as const;
+---
+
+<div class="bff-mt-wrap not-content">
+<div class="bff-table-wrap" role="region" aria-label={caption} tabindex="0">
+	<table class="bff-table bff-mt">
+		<caption class="sr-only">{caption}</caption>
+		{
+			kind === 'dora' && (
+				<>
+					<thead>
+						<tr>
+							<th scope="col">Metric</th>
+							<th scope="col">What it measures</th>
+							<th scope="col">In the factory</th>
+						</tr>
+					</thead>
+					<tbody>
+						{MEASURE.dora.map((m) => (
+							<tr>
+								<th scope="row">
+									{m.name}
+									<span class="bff-mt-tag">{m.group}</span>
+								</th>
+								<td data-label="What it measures">{m.means}</td>
+								<td data-label="In the factory">{m.factory}</td>
+							</tr>
+						))}
+					</tbody>
+				</>
+			)
+		}
+		{
+			kind === 'space' && (
+				<>
+					<thead>
+						<tr>
+							<th scope="col">Dimension</th>
+							<th scope="col">What it covers</th>
+							<th scope="col">Signals in the factory</th>
+						</tr>
+					</thead>
+					<tbody>
+						{MEASURE.space.map((d) => (
+							<tr>
+								<th scope="row">{d.name}</th>
+								<td data-label="What it covers">{d.means}</td>
+								<td data-label="Signals in the factory">{d.factory}</td>
+							</tr>
+						))}
+					</tbody>
+				</>
+			)
+		}
+		{
+			kind === 'moves' && (
+				<>
+					<thead>
+						<tr>
+							<th scope="col">When the HQ sees</th>
+							<th scope="col">Engineering move</th>
+							<th scope="col">What it looks like</th>
+						</tr>
+					</thead>
+					<tbody>
+						{MEASURE.moves.map((m) => (
+							<tr>
+								<th scope="row">{m.signal}</th>
+								<td data-layer={m.layer} data-label="Engineering move">
+									<span class="bff-mt-move">{m.move}</span>
+									<span class="bff-mt-tag">{LAYER_NAME[m.layer]}</span>
+								</td>
+								<td data-label="What it looks like">{m.how}</td>
+							</tr>
+						))}
+					</tbody>
+				</>
+			)
+		}
+	</table>
+</div>
+</div>
+{
+	kind === 'moves' && (
+		<p class="bff-mt-note">
+			The three engineering moves come from the <a href={withBase('/framework/engineering/')}>factory engineering loop</a>. Dimming
+			back up follows the <a href={withBase('/levels/dim-back-up/')}>dim-back-up runbook</a>.
+		</p>
+	)
+}
+
+<style>
+	.bff-mt-wrap {
+		container-type: inline-size;
+	}
+	.bff-mt tbody th {
+		white-space: normal;
+	}
+	/* Narrow columns read better as one labelled block per row than as a sideways scroll. */
+	@container (width < 34rem) {
+		.bff-mt thead {
+			position: absolute;
+			inline-size: 1px;
+			block-size: 1px;
+			overflow: hidden;
+			clip-path: inset(50%);
+			white-space: nowrap;
+		}
+		.bff-mt tr {
+			display: grid;
+			gap: 0.5rem;
+			padding: 0.85rem 1rem;
+			border-bottom: 1px solid var(--sl-color-hairline);
+		}
+		.bff-mt tbody tr:last-child {
+			border-bottom: 0;
+		}
+		.bff-mt :is(th, td) {
+			display: block;
+			padding: 0;
+			border: 0;
+		}
+		.bff-mt td::before {
+			content: attr(data-label);
+			display: block;
+			margin-bottom: 0.1rem;
+			font-family: var(--bff-font-mono);
+			font-size: var(--bff-text-2xs);
+			font-weight: 600;
+			letter-spacing: 0.06em;
+			text-transform: uppercase;
+			color: var(--sl-color-gray-3);
+		}
+	}
+	.bff-mt-tag {
+		display: block;
+		margin-top: 0.15rem;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		font-weight: 500;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-mt-move {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-mt-move::before {
+		content: '';
+		flex: none;
+		inline-size: 0.5rem;
+		block-size: 0.5rem;
+		background: var(--accent);
+	}
+	.bff-mt-note {
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-3);
+	}
+</style>

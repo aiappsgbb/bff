@@ -22,6 +22,7 @@ export const NAV = [
 			{ slug: 'framework/principles' },
 			{ slug: 'framework/multiplayer' },
 			{ slug: 'framework/engineering' },
+			{ slug: 'framework/measuring' },
 		],
 	},
 	{

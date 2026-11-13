@@ -43,11 +43,13 @@ import { withBase } from '../../data/site';
 	<WorkflowLine />
 </Section>
 
-<Section id="principles" eyebrow="framework.principles()" accent="purple" title="Six principles behind every bright factory." lede="They hold at every autonomy level, for every work type, whatever tools you bring.">
-	<div class="bff-grid">
-		{PRINCIPLES.map((p) => (
-			<FeatureCard title={p.title} image={p.image} accent={p.accent} href={`/framework/principles/#${p.title.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-')}`}>{p.short}</FeatureCard>
-		))}
+<Section id="principles" eyebrow="framework.principles()" accent="purple" title="Seven principles behind every bright factory." lede="They hold at every autonomy level, for every work type, whatever tools you bring.">
+	<div class="bff-principles">
+		<div class="bff-grid" data-layout="principles">
+			{PRINCIPLES.map((p) => (
+				<FeatureCard title={p.title} image={p.image} accent={p.accent} href={`/framework/principles/#${p.title.toLowerCase().replace(/[^a-z0-9 -]/g, '').replace(/ /g, '-')}`}>{p.short}</FeatureCard>
+			))}
+		</div>
 	</div>
 </Section>
 

@@ -1,0 +1,309 @@
+---
+import { LEVELS, LEVEL_ORDER } from '../data/site';
+import { MEASURE } from '../data/content';
+
+const uid = 'bff-mb';
+const inFocus = (lens: 'dora' | 'space', key: string) =>
+	Object.fromEntries(
+		LEVEL_ORDER.filter((k) => (MEASURE.levels[k][lens] as readonly string[]).includes(key)).map((k) => [`data-on-${k}`, ''])
+	);
+---
+
+<figure class="bff-figure bff-mb not-content" data-selected="medium" aria-labelledby={`${uid}-cap`}>
+	<div class="bff-figure-bar">
+		<p class="bff-eyebrow" data-accent="orange"><span class="bff-eyebrow-square" aria-hidden="true"></span>factory.hq.measure()</p>
+		<div class="bff-tabs" role="tablist" aria-label="Autonomy level">
+			{
+				LEVEL_ORDER.map((k) => (
+					<button
+						class="bff-tab"
+						type="button"
+						role="tab"
+						id={`${uid}-tab-${k}`}
+						aria-controls={`${uid}-panel-${k}`}
+						aria-selected={k === 'medium' ? 'true' : 'false'}
+						tabindex={k === 'medium' ? 0 : -1}
+						data-level={k}
+					>
+						{LEVELS[k].short}
+					</button>
+				))
+			}
+		</div>
+	</div>
+
+	<div class="bff-mb-board">
+		<section class="bff-mb-lens" aria-labelledby={`${uid}-dora`}>
+			<p class="bff-mb-lens-title" id={`${uid}-dora`}>
+				<span>DORA</span> How well the factory delivers
+			</p>
+			<ul class="bff-mb-rows" role="list">
+				{
+					MEASURE.dora.map((m, i) => (
+						<>
+							{(i === 0 || MEASURE.dora[i - 1].group !== m.group) && (
+								<li class="bff-mb-group" aria-hidden="true">
+									{m.group}
+								</li>
+							)}
+							<li class="bff-mb-row" {...inFocus('dora', m.key)}>
+								<span class="bff-mb-lamp" aria-hidden="true" />
+								<span class="bff-mb-name">{m.name}</span>
+							</li>
+						</>
+					))
+				}
+			</ul>
+		</section>
+		<section class="bff-mb-lens" aria-labelledby={`${uid}-space`}>
+			<p class="bff-mb-lens-title" id={`${uid}-space`}>
+				<span>SPACE</span> How it works for the people in it
+			</p>
+			<ul class="bff-mb-rows" role="list">
+				{
+					MEASURE.space.map((d) => (
+						<li class="bff-mb-row" {...inFocus('space', d.key)}>
+							<span class="bff-mb-letter" aria-hidden="true">
+								{d.letter}
+							</span>
+							<span class="bff-mb-name">{d.name}</span>
+						</li>
+					))
+				}
+			</ul>
+		</section>
+	</div>
+
+	{
+		LEVEL_ORDER.map((k) => {
+			const l = MEASURE.levels[k];
+			return (
+				<div class="bff-mb-panel" role="tabpanel" id={`${uid}-panel-${k}`} aria-labelledby={`${uid}-tab-${k}`} hidden={k !== 'medium'} tabindex="0">
+					<p class="bff-mb-question">
+						<span class="bff-mb-asks">The HQ asks</span>
+						{l.question}
+					</p>
+					<dl class="bff-mb-readout">
+						<div data-layer="hq">
+							<dt>DORA in focus</dt>
+							<dd>{l.doraNote}</dd>
+						</div>
+						<div data-layer="hq">
+							<dt>SPACE in focus</dt>
+							<dd>{l.spaceNote}</dd>
+						</div>
+						<div data-layer="floor">
+							<dt>Floor signals</dt>
+							<dd>{l.signals}</dd>
+						</div>
+						<div data-layer="engineering">
+							<dt>Engineering moves</dt>
+							<dd>{l.move}</dd>
+						</div>
+					</dl>
+				</div>
+			);
+		})
+	}
+	<figcaption id={`${uid}-cap`}>
+		The HQ reads both lenses for every service and work type. Highlighted rows are where it looks first at each level; the rest stay
+		on the board.
+	</figcaption>
+</figure>
+
+<script>
+	import { bindTabs } from '../lib/tabs';
+	document.querySelectorAll<HTMLElement>('.bff-mb').forEach((el) => bindTabs(el, { syncLevel: true }));
+</script>
+
+<style>
+	.bff-mb {
+		container-type: inline-size;
+	}
+	.bff-mb-board {
+		display: grid;
+		gap: 0.75rem;
+	}
+	@container (min-width: 36rem) {
+		.bff-mb-board {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	.bff-mb-lens {
+		padding: 0.9rem 1rem 1rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-md);
+		background: var(--sl-color-black);
+	}
+	.bff-mb-lens-title {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 0.15rem 0.5rem;
+		margin: 0 0 0.6rem;
+		font-size: var(--bff-text-sm);
+		font-weight: 500;
+		line-height: 1.35;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-mb-lens-title span {
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-md);
+		font-weight: 700;
+		letter-spacing: 0.02em;
+		color: var(--sl-color-white);
+	}
+	.bff-mb-rows {
+		display: grid;
+		gap: 0.3rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-mb-group {
+		margin: 0.35rem 0 0;
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+		color: var(--sl-color-gray-3);
+	}
+	.bff-mb-group:first-child {
+		margin-top: 0;
+	}
+	.bff-mb-row {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin: 0;
+		min-block-size: 2.25rem;
+		padding: 0.3rem 0.6rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-sm);
+		transition:
+			border-color 0.35s var(--bff-ease-soft),
+			background-color 0.35s var(--bff-ease-soft);
+	}
+	.bff-mb-name {
+		font-size: var(--bff-text-sm);
+		font-weight: 500;
+		line-height: 1.3;
+		color: var(--sl-color-gray-3);
+		transition: color 0.35s var(--bff-ease-soft);
+	}
+	.bff-mb-lamp {
+		position: relative;
+		flex: none;
+		inline-size: 0.7rem;
+		block-size: 0.7rem;
+		border: 1.5px solid var(--sl-color-gray-4);
+		border-radius: 50%;
+	}
+	.bff-mb-lamp::after {
+		content: '';
+		position: absolute;
+		inset: -1.5px;
+		border-radius: 50%;
+		background: var(--bff-hq);
+		opacity: 0;
+		transform: scale(0.4);
+		transition:
+			opacity 0.35s var(--bff-ease-soft),
+			transform 0.35s var(--bff-ease-out);
+	}
+	.bff-mb-letter {
+		display: inline-grid;
+		place-items: center;
+		flex: none;
+		inline-size: 1.5rem;
+		block-size: 1.5rem;
+		border-radius: var(--bff-radius-sm);
+		background: var(--sl-color-gray-5);
+		color: var(--sl-color-gray-2);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-xs);
+		font-weight: 700;
+	}
+	.bff-mb[data-selected='low'] [data-on-low],
+	.bff-mb[data-selected='medium'] [data-on-medium],
+	.bff-mb[data-selected='high'] [data-on-high] {
+		border-color: color-mix(in oklab, var(--bff-hq) 55%, var(--sl-color-hairline));
+		background: var(--bff-surface);
+	}
+	.bff-mb[data-selected='low'] [data-on-low] .bff-mb-name,
+	.bff-mb[data-selected='medium'] [data-on-medium] .bff-mb-name,
+	.bff-mb[data-selected='high'] [data-on-high] .bff-mb-name {
+		color: var(--sl-color-white);
+		font-weight: 600;
+	}
+	.bff-mb[data-selected='low'] [data-on-low] .bff-mb-lamp::after,
+	.bff-mb[data-selected='medium'] [data-on-medium] .bff-mb-lamp::after,
+	.bff-mb[data-selected='high'] [data-on-high] .bff-mb-lamp::after {
+		opacity: 1;
+		transform: none;
+	}
+	.bff-mb[data-selected='low'] [data-on-low] .bff-mb-letter,
+	.bff-mb[data-selected='medium'] [data-on-medium] .bff-mb-letter,
+	.bff-mb[data-selected='high'] [data-on-high] .bff-mb-letter {
+		background: var(--bff-hq);
+		color: var(--bff-on-accent);
+	}
+	.bff-mb-panel {
+		margin-top: 1rem;
+	}
+	.bff-mb-question {
+		display: grid;
+		gap: 0.2rem;
+		margin: 0 0 0.9rem;
+		font-size: var(--bff-text-xl);
+		font-weight: 560;
+		line-height: 1.3;
+		color: var(--sl-color-white);
+		text-wrap: balance;
+	}
+	.bff-mb-asks {
+		font-size: var(--bff-text-sm);
+		font-weight: 500;
+		color: var(--bff-hq-ink);
+	}
+	.bff-mb-readout {
+		display: grid;
+		gap: 0.6rem 1.25rem;
+		margin: 0;
+	}
+	@container (min-width: 36rem) {
+		.bff-mb-readout {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+	.bff-mb-readout > div {
+		margin: 0;
+	}
+	.bff-mb-readout dt {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+		font-size: var(--bff-text-sm);
+		font-weight: 600;
+		color: var(--accent-ink);
+	}
+	.bff-mb-readout dt::before {
+		content: '';
+		flex: none;
+		inline-size: 0.5rem;
+		block-size: 0.5rem;
+		background: var(--accent);
+	}
+	.bff-mb-readout dd {
+		margin: 0.15rem 0 0;
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-2);
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.bff-mb-row,
+		.bff-mb-name,
+		.bff-mb-lamp::after {
+			transition: none;
+		}
+	}
+</style>

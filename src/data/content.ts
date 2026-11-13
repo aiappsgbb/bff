@@ -73,7 +73,154 @@ export const PRINCIPLES = [
 		short: 'From one laptop to the whole organisation.',
 		text: 'Start with one developer and their agents on a laptop. Move to shared cloud sessions the team can see and steer, then to fleets of agents at organisation scale.',
 	},
+	{
+		key: 'measured',
+		image: 'measure',
+		accent: 'orange',
+		title: 'Measured, not guessed',
+		short: 'The HQ measures the factory. Engineering improves it.',
+		text: 'DORA shows how well the factory delivers. SPACE shows how it works for the people in it. The HQ tracks both per service and work type as the floor dims, and the engineering loop turns the weakest signal into its next improvement.',
+	},
 ] as const;
+
+/** Measuring progress: DORA for delivery, SPACE for people. Definitions follow dora.dev and the SPACE paper. */
+export const MEASURE = {
+	dora: [
+		{
+			key: 'lead',
+			name: 'Change lead time',
+			group: 'Throughput',
+			means: 'Time from a commit to that change running in production.',
+			factory: 'Agents shrink coding time. If lead time doesn’t fall, the wait has moved to review, CI or deployment.',
+		},
+		{
+			key: 'freq',
+			name: 'Deployment frequency',
+			group: 'Throughput',
+			means: 'How often changes reach production.',
+			factory: 'Agent pull requests count when they ship, not when they open. Keep the batches small.',
+		},
+		{
+			key: 'recovery',
+			name: 'Failed deployment recovery time',
+			group: 'Throughput',
+			means: 'Time to recover from a deployment that needs immediate intervention.',
+			factory: 'Includes how fast a work type can dim back up, with work continuing from Git.',
+		},
+		{
+			key: 'cfr',
+			name: 'Change fail rate',
+			group: 'Instability',
+			means: 'Share of deployments that need immediate intervention, such as a rollback or hotfix.',
+			factory: 'Split it by work type and by author, agent or person. It’s the evidence for moving a level up or down.',
+		},
+		{
+			key: 'rework',
+			name: 'Deployment rework rate',
+			group: 'Instability',
+			means: 'Share of deployments that are unplanned, made to fix an incident in production.',
+			factory: 'Rising rework means agents ship faster than the gates can verify.',
+		},
+	],
+	space: [
+		{
+			key: 'satisfaction',
+			letter: 'S',
+			name: 'Satisfaction and well-being',
+			means: 'How fulfilled and healthy people are with their work, tools and team.',
+			factory: 'Short pulse surveys for developers, reviewers and approvers. Is toil going down? Is review fatigue going up?',
+		},
+		{
+			key: 'performance',
+			letter: 'P',
+			name: 'Performance',
+			means: 'The outcome of the system, not the output of a person.',
+			factory: 'SLOs, change fail rate, eval scores and customer impact.',
+		},
+		{
+			key: 'activity',
+			letter: 'A',
+			name: 'Activity',
+			means: 'Counts of actions and outputs.',
+			factory: 'Pull requests, sessions and deployments. Context for the other signals, never a target.',
+		},
+		{
+			key: 'collaboration',
+			letter: 'C',
+			name: 'Communication and collaboration',
+			means: 'How people and teams share work and knowledge.',
+			factory: 'Review wait, hand-offs between people and agents, and sessions that others steer or continue.',
+		},
+		{
+			key: 'efficiency',
+			letter: 'E',
+			name: 'Efficiency and flow',
+			means: 'Getting work done with few interruptions and delays.',
+			factory: 'Cycle time, flow efficiency, work in progress and the queue of agent pull requests waiting for review.',
+		},
+	],
+	levels: {
+		low: {
+			question: 'Do agents help our developers?',
+			dora: ['lead', 'freq', 'recovery', 'cfr', 'rework'],
+			space: ['satisfaction', 'efficiency'],
+			doraNote: 'Baseline all five per service before agents change how the work is done.',
+			spaceNote: 'Satisfaction and flow for developers working with agents in the IDE, CLI and Copilot app.',
+			signals: 'Copilot usage metrics, read as context for adoption, never as a target.',
+			move: 'Instructions, golden environments and a CI the team trusts.',
+		},
+		medium: {
+			question: 'Does agent work flow safely through the line?',
+			dora: ['lead', 'cfr', 'rework'],
+			space: ['collaboration', 'efficiency'],
+			doraNote: 'Lead time, change fail rate and rework per work type, with agent-authored changes shown next to the baseline.',
+			spaceNote: 'Review wait, hand-offs between people and agents, and how smoothly agent work flows.',
+			signals: 'Merge rate of agent pull requests, rework after review and how complete each evidence bundle is.',
+			move: 'Smaller tasks, automated review and approval by risk.',
+		},
+		high: {
+			question: 'Does the factory deliver outcomes at scale, inside its guardrails?',
+			dora: ['freq', 'recovery', 'cfr'],
+			space: ['performance', 'satisfaction'],
+			doraNote: 'Deployment frequency, recovery and change fail rate per service and work type, as fleets ship more often. Recovery includes dimming back up.',
+			spaceNote: 'Outcomes, and the well-being of the people who approve by exception.',
+			signals: 'Eval scores per agent, cost per merged change and how often a work type dims back up.',
+			move: 'Policy as code, evals for every agent and skills learned from traces.',
+		},
+	},
+	moves: [
+		{
+			signal: 'Agent pull requests wait for review',
+			move: 'Tune trust and control',
+			layer: 'hq',
+			how: 'Approval by risk, automated review and an evidence bundle on every pull request.',
+		},
+		{
+			signal: 'Lead time stalls in CI or deployment',
+			move: 'Expand automation',
+			layer: 'floor',
+			how: 'Faster pipelines, ephemeral environments and progressive delivery.',
+		},
+		{
+			signal: 'Agent rework or eval scores regress',
+			move: 'Strengthen foundations',
+			layer: 'foundations',
+			how: 'Sharper specs, skills and context. Turn recurring review comments into instructions.',
+		},
+		{
+			signal: 'Change fail rate rises for a work type',
+			move: 'Dim it back up',
+			layer: 'hq',
+			how: 'Return approvals to people for that work type until the signal recovers.',
+		},
+		{
+			signal: 'Surveys show review fatigue',
+			move: 'Shrink the batch',
+			layer: 'floor',
+			how: 'Smaller tasks and work-in-progress limits on agent pull requests.',
+		},
+	],
+} as const;
 
 export const PATTERNS = [
 	{

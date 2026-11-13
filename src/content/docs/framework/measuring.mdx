@@ -1,0 +1,77 @@
+---
+title: Measuring progress
+description: The HQ measures the factory with DORA and SPACE. Factory engineering turns the weakest signal into its next move.
+eyebrow: framework.measure()
+accent: orange
+---
+import MeasureBoard from '../../../components/MeasureBoard.astro';
+import MeasureTable from '../../../components/MeasureTable.astro';
+
+<MeasureBoard />
+
+## Measure before you move the dimmer
+
+A bright factory only moves up when the evidence says it's ready. As autonomy rises, more work flows through agents and fewer people see each change. The Factory HQ needs a steady read on two things: how well the factory delivers, and how it works for the people in it. Factory engineering needs to know where the factory is weakest, so its next move lands where it matters.
+
+The framework uses two well-tested lenses for this, and adds one rule: every signal points to an engineering move.
+
+## Two lenses, one factory
+
+**DORA** measures software delivery: how fast changes reach production and how often they go wrong. It's outcome-focused and works the same whether a person or an agent wrote the change.
+
+**SPACE** measures the people side of productivity across five dimensions. It was written by researchers from GitHub, Microsoft Research and the University of Victoria, and its core advice fits agents well: never trust a single metric, and pair what you can count with what people tell you.
+
+Read them together. DORA tells you *that* the factory is slowing down or breaking more often. SPACE helps you see *why*: a review queue full of agent pull requests, a team that has stopped trusting the output, or work that waits on hand-offs.
+
+### DORA: how well the factory delivers
+
+<MeasureTable kind="dora" />
+
+### SPACE: how it works for the people in it
+
+<MeasureTable kind="space" />
+
+## What the HQ watches at each level
+
+The board above shows where the HQ looks first. All ten signals stay on the board at every level; the focus shifts as the work changes.
+
+- **Low autonomy:** baseline all five DORA metrics before agents take on real work, and ask developers whether agents help. Satisfaction and time saved matter more than speed here.
+- **Medium autonomy:** follow agent work through the line. Lead time shows where agent pull requests wait, and rework shows whether the specs and skills are good enough.
+- **High autonomy:** watch outcomes per service and work type. Change fail rate and recovery decide whether a work type keeps its level, and the people approving by exception need to stay well.
+
+Activity never takes the focus. Agents make activity cheap, so pull request and commit counts show that the factory is busy, not that it's delivering.
+
+## From signal to engineering move
+
+The HQ reads the signals. Factory engineering turns the weakest one into its next move: tune trust and control, expand automation, or strengthen foundations.
+
+<MeasureTable kind="moves" />
+
+## Run the loop
+
+1. **Baseline.** Before moving a work type up a level, record its DORA metrics and run a short pulse survey with the people who review it.
+2. **Follow the work.** Pick a recent change and trace it from idea to production. Where did it wait, and for whom? When agents write the code, most of the time left is waiting: for review, for CI or for a deployment.
+3. **Improve.** Choose one engineering move for the weakest signal. Keep the change small enough to see its effect in the next read.
+4. **Decide.** Compare with the baseline. Hold the level, move the work type up, or dim it back up.
+
+## Rules for measuring a bright factory
+
+- **Measure teams, services and work types. Never individuals.** Compare agent work with its work type's own baseline to set the dimmer, not to rank people against agents.
+- **Pair metrics in tension.** Speed with stability, throughput with well-being. Any one number on its own will be gamed.
+- **Inform, don't target.** Lines of code, suggestion acceptance and token counts show that tools are used. They don't show impact.
+- **Compare with yourself.** Your own baseline is the benchmark, not another team or an industry average.
+- **Be transparent.** Teams see the same dashboards the HQ sees, and know what each number is used for.
+- **Keep batches small.** Agents can open more pull requests than people can review. Work-in-progress limits protect lead time and the reviewers.
+
+## Where the data comes from
+
+- **GitHub:** [Copilot usage metrics](https://docs.github.com/en/copilot/concepts/billing-and-usage/copilot-usage-metrics/copilot-metrics) for adoption, pull request, deployment and Actions data through the GitHub APIs for delivery, and the [enterprise audit log](https://docs.github.com/en/enterprise-cloud@latest/admin/concepts/security-and-compliance/audit-log-for-an-enterprise) for who or what approved each change.
+- **Microsoft:** [Azure Monitor](https://azure.microsoft.com/en-us/products/monitor) and Application Insights for production health, [Foundry observability](https://learn.microsoft.com/en-us/azure/foundry/concepts/observability) for agent traces and evaluations, and Microsoft Fabric with Power BI to bring it together in one HQ view.
+- **Open:** keep the engineering intelligence tools you already use. [OpenTelemetry](https://opentelemetry.io/) carries traces from agents, pipelines and services into whichever backend you choose.
+
+## Learn more
+
+- [DORA's software delivery performance metrics](https://dora.dev/guides/dora-metrics/)
+- [The SPACE of developer productivity](https://queue.acm.org/detail.cfm?id=3454124), ACM Queue
+- [Developer productivity](https://www.swarmia.com/build/03-developer-productivity/), a practical guide to using both frameworks
+- [Engineering the factory](/framework/engineering/), for the three moves in detail

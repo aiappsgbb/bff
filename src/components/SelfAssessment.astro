@@ -66,6 +66,15 @@ const QUESTIONS = [
 		href: '/framework/principles/',
 	},
 	{
+		key: 'measure',
+		area: 'Measuring progress',
+		q: 'Do you measure how the factory delivers?',
+		hint: 'DORA metrics and how people find the work, per work type.',
+		a: ['Not systematically', 'Some delivery metrics, per team', 'DORA and SPACE per work type, and they move the dimmer'],
+		next: 'Baseline DORA for one service and run a pulse survey before you move it up a level.',
+		href: '/framework/measuring/',
+	},
+	{
 		key: 'reverse',
 		area: 'Dimming back up',
 		q: 'Can you move a work type back to human approvals in minutes?',
@@ -175,7 +184,7 @@ const QUESTIONS = [
 	/** The quiz result, read by LevelsStrip to mark "Your level". */
 	const RESULT = 'bff:assess-level';
 	const NAME: Record<Level, string> = { low: 'low autonomy', medium: 'medium autonomy', high: 'high autonomy' };
-	const RANGE: Record<Level, string> = { low: 'up to 5', medium: '6 to 11', high: '12 or more' };
+	const RANGE: Record<Level, string> = { low: 'up to 6', medium: '7 to 12', high: '13 or more' };
 
 	document.querySelectorAll<HTMLElement>('[data-assess]').forEach((root) => {
 		const form = root.querySelector('form')!;
@@ -219,7 +228,7 @@ const QUESTIONS = [
 				return;
 			}
 
-			const byScore: Level = total <= 5 ? 'low' : total <= 11 ? 'medium' : 'high';
+			const byScore: Level = total <= 6 ? 'low' : total <= 12 ? 'medium' : 'high';
 			let level = byScore;
 			let why = `You scored ${total} of ${max}: ${RANGE[byScore]} is ${NAME[byScore]}.`;
 			if (s.gates === 0) {
@@ -418,7 +427,7 @@ const QUESTIONS = [
 		outline-offset: 2px;
 	}
 
-	/* Compact progress bar for one-column layouts, where the result sits below all eight questions. */
+	/* Compact progress bar for one-column layouts, where the result sits below all nine questions. */
 	.bff-assess-jump {
 		position: sticky;
 		bottom: 0.75rem;
