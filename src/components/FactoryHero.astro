@@ -118,19 +118,23 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 			undo.disabled = level === 'low';
 			if (persist) {
 				try { localStorage.setItem(KEY, level); } catch {}
-				const url = new URL(location.href);
-				url.searchParams.set('level', level);
-				history.replaceState(null, '', url);
 			}
 			if (announce) live.textContent = `${LEVELS[level].name}: ${LEVELS[level].tagline}`;
 			window.dispatchEvent(new CustomEvent('bff:level', { detail: level }));
 		};
 
-		const fromUrl = new URL(location.href).searchParams.get('level') as Level | null;
+		// A shared ?level= link still sets the level; it is saved and then dropped from
+		// the address so the URL never goes stale as the reader moves the dimmer.
+		const url = new URL(location.href);
+		const fromUrl = url.searchParams.get('level') as Level | null;
 		let stored: Level | null = null;
 		try { stored = localStorage.getItem(KEY) as Level | null; } catch {}
 		const initial = [fromUrl, stored].find((l): l is Level => !!l && ORDER.includes(l)) ?? 'medium';
 		apply(initial, { announce: false, persist: !!fromUrl });
+		if (url.searchParams.has('level')) {
+			url.searchParams.delete('level');
+			history.replaceState(history.state, '', url);
+		}
 
 		const choose = (level: Level) => {
 			dismissHint();
