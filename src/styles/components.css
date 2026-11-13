@@ -274,71 +274,60 @@ a.bff-chip:hover {
 .bff-grid[data-cols='2'] {
 	grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
 }
-/* Principles: 1, 2 or 3 columns. A card left alone on the last row spans it, image beside text. */
+/* Principles: compact cards, picture beside text. 1, 2 or 3 per row; a short last row is centred. */
 .bff-principles {
 	container-type: inline-size;
 }
 .bff-grid[data-layout='principles'] {
-	grid-template-columns: minmax(0, 1fr);
+	--cols: 1;
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.75rem;
 }
-@container (34rem <= width < 54rem) {
+.bff-grid[data-layout='principles'] > .bff-card {
+	flex: 0 0 calc((100% - (var(--cols) - 1) * 0.75rem) / var(--cols));
+	display: grid;
+	grid-template-columns: 7rem minmax(0, 1fr);
+	grid-template-rows: auto auto 1fr;
+	align-content: start;
+	gap: 0.25rem 0.9rem;
+	padding: 0.75rem;
+}
+.bff-grid[data-layout='principles'] > .bff-card > .bff-card-media {
+	grid-row: 1 / -1;
+	align-self: start;
+	margin: 0;
+}
+.bff-grid[data-layout='principles'] > .bff-card > :not(.bff-card-media) {
+	grid-column: 2;
+}
+.bff-grid[data-layout='principles'] h3 {
+	margin-block-start: 0.15rem;
+	font-size: var(--bff-text-lg);
+	text-wrap: balance;
+}
+.bff-grid[data-layout='principles'] .bff-feature-body {
+	font-size: var(--bff-text-sm);
+	line-height: 1.45;
+	text-wrap: pretty;
+}
+.bff-grid[data-layout='principles'] .bff-card-more {
+	align-self: end;
+	padding-top: 0.1rem;
+	font-size: var(--bff-text-xs);
+}
+@container (width >= 42rem) {
 	.bff-grid[data-layout='principles'] {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(odd) {
-		grid-column: 1 / -1;
-		display: grid;
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-		grid-template-rows: 1fr auto auto auto 1fr;
-		gap: 0.6rem 1.5rem;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(odd) > .bff-card-media {
-		grid-column: 1;
-		grid-row: 1 / -1;
-		align-self: center;
-		margin: -0.25rem;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(odd) > :not(.bff-card-media) {
-		grid-column: 2;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(odd) > :nth-child(2) {
-		grid-row: 2;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(odd) > :nth-child(3) {
-		grid-row: 3;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(odd) > :nth-child(4) {
-		grid-row: 4;
+		--cols: 2;
 	}
 }
-@container (width >= 54rem) {
+@container (width >= 64rem) {
 	.bff-grid[data-layout='principles'] {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		--cols: 3;
 	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(3n + 1) {
-		grid-column: 1 / -1;
-		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-		grid-template-rows: 1fr auto auto auto 1fr;
-		gap: 0.6rem 1.5rem;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(3n + 1) > .bff-card-media {
-		grid-column: 1;
-		grid-row: 1 / -1;
-		align-self: center;
-		margin: -0.25rem;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(3n + 1) > :not(.bff-card-media) {
-		grid-column: 2;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(3n + 1) > :nth-child(2) {
-		grid-row: 2;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(3n + 1) > :nth-child(3) {
-		grid-row: 3;
-	}
-	.bff-grid[data-layout='principles'] > :last-child:nth-child(3n + 1) > :nth-child(4) {
-		grid-row: 4;
+	.bff-grid[data-layout='principles'] > .bff-card {
+		grid-template-columns: 8rem minmax(0, 1fr);
 	}
 }
 .bff-card {
