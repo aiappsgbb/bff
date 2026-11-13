@@ -85,6 +85,13 @@ const uid = 'bff-bp';
 			}
 		</div>
 		<aside class="bff-bp-eng" data-layer="engineering" aria-labelledby="factory-engineering">
+			<svg class="bff-bp-loop" aria-hidden="true" focusable="false">
+				<path class="bff-bp-loop-track" data-track />
+				<path class="bff-bp-loop-trail" data-trail />
+				<g class="bff-bp-loop-heads" data-heads />
+				<g class="bff-bp-loop-label" data-label><rect /><text>self-improving loop</text></g>
+				<circle class="bff-bp-loop-dot" data-dot r="3.5" />
+			</svg>
 			{
 				steps.map((s, i) => (
 					<>
@@ -102,7 +109,9 @@ const uid = 'bff-bp';
 									<span class="bff-bp-step-n">{i + 1}</span> {s.step}
 								</h4>
 								<p>{s.detail}</p>
-								<p class="sr-only">Improves the {s.label}.</p>
+								<p class="sr-only">
+									Improves the {s.label}.{i === steps.length - 1 && ' Then the loop repeats from step 1.'}
+								</p>
 							</div>
 							{i === steps.length - 1 && (
 								<a class="bff-card-more" href={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/framework/engineering/`}>
@@ -144,6 +153,112 @@ const uid = 'bff-bp';
 			}),
 		);
 		boxes.forEach((b) => b.addEventListener('change', update));
+	});
+
+	// Engineering loop: arrows 1 → 2 → 3, a return rail back to 1, and a token that lights each step it passes.
+	document.querySelectorAll<HTMLElement>('.bff-bp-eng').forEach((eng) => {
+		const svg = eng.querySelector<SVGSVGElement>('.bff-bp-loop')!;
+		const track = svg.querySelector<SVGPathElement>('[data-track]')!;
+		const trail = svg.querySelector<SVGPathElement>('[data-trail]')!;
+		const heads = svg.querySelector<SVGGElement>('[data-heads]')!;
+		const label = svg.querySelector<SVGGElement>('[data-label]')!;
+		const labelText = label.querySelector('text')!;
+		const labelBg = label.querySelector('rect')!;
+		const dot = svg.querySelector<SVGCircleElement>('[data-dot]')!;
+		const steps = [...eng.querySelectorAll<HTMLElement>('.bff-bp-step')];
+		const SPEED = 130; // px per second between steps
+		const TRAIL = 36;
+		let len = 0;
+		let pos = 0;
+		let rects: { l: number; r: number; t: number; b: number }[] = [];
+
+		const layout = () => {
+			const box = eng.getBoundingClientRect();
+			if (!box.width || steps.length < 2) return;
+			svg.setAttribute('viewBox', `0 0 ${box.width} ${box.height}`);
+			rects = steps.map((s) => {
+				const r = s.getBoundingClientRect();
+				return { l: r.left - box.left, r: r.right - box.left, t: r.top - box.top, b: r.bottom - box.top };
+			});
+			const first = rects[0];
+			const last = rects[rects.length - 1];
+			const x = (first.l + first.r) / 2;
+			const y0 = (first.t + first.b) / 2;
+			const y1 = (last.t + last.b) / 2;
+			const rail = (first.r + box.width) / 2;
+			const k = Math.min(6, (rail - first.r) / 2);
+			track.setAttribute(
+				'd',
+				`M${x} ${y0}V${y1}H${rail - k}Q${rail} ${y1} ${rail} ${y1 - k}V${y0 + k}Q${rail} ${y0} ${rail - k} ${y0}H${x}`,
+			);
+			trail.setAttribute('d', track.getAttribute('d')!);
+			const down = (y: number) => `M${x - 4} ${y - 5}L${x} ${y}L${x + 4} ${y - 5}`;
+			heads.innerHTML = rects
+				.slice(1)
+				.map((r) => `<path d="${down(r.t - 2)}"/>`)
+				.concat(`<path d="M${first.r + 7} ${y0 - 4}L${first.r + 2} ${y0}L${first.r + 7} ${y0 + 4}"/>`)
+				.join('');
+			label.setAttribute('transform', `translate(${rail} ${(y0 + y1) / 2}) rotate(-90)`);
+			label.style.display = '';
+			const t = labelText.getBBox();
+			Object.entries({ x: t.x - 4, y: t.y, width: t.width + 8, height: t.height }).forEach(([a, v]) =>
+				labelBg.setAttribute(a, String(v)),
+			);
+			label.style.display = y1 - y0 > t.width + 24 ? '' : 'none';
+			const next = track.getTotalLength();
+			pos = len ? (pos / len) * next : 0;
+			len = next;
+			trail.style.strokeDasharray = `${TRAIL} ${len}`;
+		};
+
+		let raf = 0;
+		let then = 0;
+		let inside = false;
+		const frame = (t: number) => {
+			const speed = inside ? SPEED * 0.4 : SPEED;
+			pos = (pos + (speed * Math.min(t - (then || t), 100)) / 1000) % len;
+			then = t;
+			const p = track.getPointAtLength(pos);
+			dot.setAttribute('cx', String(p.x));
+			dot.setAttribute('cy', String(p.y));
+			trail.style.strokeDashoffset = String(TRAIL - pos);
+			inside = false;
+			steps.forEach((s, i) => {
+				const r = rects[i];
+				const hit = p.x >= r.l && p.x <= r.r && p.y >= r.t && p.y <= r.b;
+				inside ||= hit;
+				s.toggleAttribute('data-active', hit);
+			});
+			raf = requestAnimationFrame(frame);
+		};
+		const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+		let visible = false;
+		const sync = () => {
+			const run = visible && !reduce.matches && !document.hidden && len > 0;
+			eng.toggleAttribute('data-running', run);
+			if (run && !raf) {
+				then = 0;
+				raf = requestAnimationFrame(frame);
+			} else if (!run && raf) {
+				cancelAnimationFrame(raf);
+				raf = 0;
+				steps.forEach((s) => s.removeAttribute('data-active'));
+			}
+		};
+
+		const ro = new ResizeObserver(() => {
+			layout();
+			sync();
+		});
+		ro.observe(eng);
+		eng.parentElement?.querySelectorAll('.bff-bp-band').forEach((b) => ro.observe(b));
+		document.fonts?.ready.then(layout);
+		new IntersectionObserver(([e]) => {
+			visible = e.isIntersecting;
+			sync();
+		}).observe(eng);
+		reduce.addEventListener('change', sync);
+		document.addEventListener('visibilitychange', sync);
 	});
 </script>
 
@@ -339,11 +454,65 @@ const uid = 'bff-bp';
 		font-weight: 700;
 	}
 	.bff-bp-eng {
-		padding-inline: var(--bp-pad);
+		position: relative;
+		padding-inline: var(--bp-pad) calc(var(--bp-pad) + 0.75rem);
 	}
 	.bff-bp-eng-cell {
+		position: relative;
+		z-index: 1;
 		display: flex;
 		flex-direction: column;
+	}
+	/* Loop overlay sits under the step cards, so the token disappears into a step while that step "works". */
+	.bff-bp-loop {
+		position: absolute;
+		inset: 0;
+		inline-size: 100%;
+		block-size: 100%;
+		overflow: visible;
+		pointer-events: none;
+		fill: none;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	.bff-bp-loop-track {
+		stroke: color-mix(in oklab, var(--accent) 45%, transparent);
+		stroke-width: 1.5;
+	}
+	.bff-bp-loop-heads {
+		stroke: var(--accent);
+		stroke-width: 1.75;
+	}
+	.bff-bp-loop-trail,
+	.bff-bp-loop-dot {
+		opacity: 0;
+		transition: opacity 0.4s var(--bff-ease-soft);
+	}
+	.bff-bp-loop-trail {
+		stroke: var(--accent);
+		stroke-width: 2.5;
+	}
+	.bff-bp-loop-dot {
+		fill: var(--accent);
+		filter: drop-shadow(0 0 4px var(--accent));
+	}
+	.bff-bp-eng[data-running] :is(.bff-bp-loop-trail, .bff-bp-loop-dot) {
+		opacity: 1;
+	}
+	.bff-bp-eng[data-running] .bff-bp-loop-trail {
+		opacity: 0.55;
+	}
+	.bff-bp-loop-label rect {
+		fill: var(--bff-surface);
+	}
+	.bff-bp-loop-label text {
+		font-family: var(--bff-font-mono);
+		font-size: 0.625rem;
+		letter-spacing: 0.12em;
+		text-transform: uppercase;
+		text-anchor: middle;
+		dominant-baseline: central;
+		fill: var(--accent);
 	}
 	.bff-bp-eng header {
 		display: flex;
@@ -359,6 +528,14 @@ const uid = 'bff-bp';
 		border-left: 3px solid var(--accent);
 		border-radius: var(--bff-radius-md);
 		background: var(--sl-color-black);
+		transition:
+			border-color 0.6s var(--bff-ease-soft),
+			box-shadow 0.6s var(--bff-ease-soft);
+	}
+	.bff-bp-step[data-active] {
+		border-color: color-mix(in oklab, var(--accent) 55%, var(--sl-color-hairline));
+		border-left-color: var(--accent);
+		box-shadow: 0 0 1.25rem -0.4rem color-mix(in oklab, var(--accent) 70%, transparent);
 	}
 	/* Connector from the step to its layer band, across the rail padding and the column gap. */
 	.bff-bp-step::before,
@@ -381,6 +558,14 @@ const uid = 'bff-bp';
 		border-radius: 50%;
 		background: var(--accent);
 		translate: 0 0.5px;
+		transition: scale 0.6s var(--bff-ease-soft), box-shadow 0.6s var(--bff-ease-soft);
+	}
+	.bff-bp-step[data-active]::before {
+		border-top-style: solid;
+	}
+	.bff-bp-step[data-active]::after {
+		scale: 1.5;
+		box-shadow: 0 0 0 0.2rem color-mix(in oklab, var(--accent) 25%, transparent);
 	}
 	.bff-bp-step h4 {
 		margin: 0;
