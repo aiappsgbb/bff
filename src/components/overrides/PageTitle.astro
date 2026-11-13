@@ -10,22 +10,26 @@ const data = entry.data as typeof entry.data & {
 	wide?: boolean;
 };
 const [section = 'index', ...rest] = entry.id.split('/');
-const SECTION_ACCENT: Record<string, string> = {
-	fundamentals: 'blue',
-	framework: 'green',
-	levels: 'purple',
-	playbooks: 'pink',
-	'get-started': 'yellow',
-	reference: 'orange',
+/*
+ * Default eyebrow colours follow the factory palette: green for agents and the default, orange
+ * for people and governance, blue for platform, purple for the engineering loop only. Level and
+ * playbook pages take their level's colour (Low yellow, Medium green, High blue). Pink is not used.
+ */
+const LEVEL_ACCENT: Record<string, string> = { low: 'yellow', medium: 'green', high: 'blue' };
+const PAGE_ACCENT: Record<string, string> = {
+	'framework/engineering': 'purple',
+	'levels/dim-back-up': 'orange',
 };
-const accent = data.accent ?? SECTION_ACCENT[section] ?? 'green';
 const leaf = rest.at(-1) ?? 'overview';
+const pageKey = entry.id.replace(/\/$/, '');
+const levelAccent = section === 'levels' || section === 'playbooks' ? LEVEL_ACCENT[leaf] : undefined;
+const accent = data.accent ?? PAGE_ACCENT[pageKey] ?? levelAccent ?? 'green';
 const eyebrow = data.eyebrow ?? `${section}.${leaf.replace(/-([a-z])/g, (_, c) => c.toUpperCase())}()`;
 ---
 
 {
 	data.hideTitle ? (
-		<h1 id="_top" class="sr-only">
+		<h1 id="_top" class="sr-only bff-hidden-title">
 			{data.title}
 		</h1>
 	) : (
@@ -38,3 +42,14 @@ const eyebrow = data.eyebrow ?? `${section}.${leaf.replace(/-([a-z])/g, (_, c) =
 	)
 }
 {data.wide && <span class="bff-wide-page" hidden />}
+
+<style>
+	/* A hidden title (the home splash) leaves no empty panel above the hero. */
+	:global(.content-panel:has(> .sl-container > .bff-hidden-title)) {
+		padding-block: 0;
+	}
+	:global(.content-panel:has(> .sl-container > .bff-hidden-title) + .content-panel) {
+		padding-top: 0;
+		border-top: 0;
+	}
+</style>

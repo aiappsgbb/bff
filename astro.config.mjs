@@ -35,6 +35,7 @@ export default defineConfig({
 				PageTitle: './src/components/overrides/PageTitle.astro',
 				Footer: './src/components/overrides/Footer.astro',
 				SiteTitle: './src/components/overrides/SiteTitle.astro',
+				Header: './src/components/overrides/Header.astro',
 			},
 			head: [
 				{ tag: 'link', attrs: { rel: 'preload', href: withBase('/fonts/MonaSansVF.woff2'), as: 'font', type: 'font/woff2', crossorigin: '' } },

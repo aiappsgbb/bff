@@ -11,12 +11,11 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 		<p class="bff-hero-sub">Microsoft opinionated framework for building agentic software factories.</p>
 		<p class="bff-hero-lede">
 			Ideas come to life. Agents do the heavy lifting. Humans monitor and control, with the lights on where it
-			matters.
+			matters. <a href={withBase('/fundamentals/')}>What is a software factory?</a>
 		</p>
 		<div class="bff-hero-ctas">
 			<a class="bff-btn bff-btn-primary" href={withBase('/get-started/')}>Get started <span aria-hidden="true">→</span></a>
 			<a class="bff-btn" href={withBase('/get-started/find-your-level/')}>Find your level</a>
-			<a class="bff-btn bff-btn-ghost" href={withBase('/fundamentals/')}>What is a software factory?</a>
 		</div>
 	</div>
 
@@ -24,7 +23,7 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 		<fieldset class="bff-dimmer" data-hint>
 			<legend class="sr-only">Autonomy dimmer: choose an autonomy level</legend>
 			<div class="bff-dimmer-head" aria-hidden="true">
-				<span class="bff-mono">autonomy.dimmer</span>
+				<span class="bff-mono bff-dimmer-label">autonomy.dimmer</span>
 				<span class="bff-dimmer-hint">
 					<svg class="bff-dimmer-hint-arrows" viewBox="0 0 24 12" width="22" height="11">
 						<path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" d="M5 2 1 6l4 4M1 6h22M19 2l4 4-4 4"></path>
@@ -42,8 +41,7 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 						LEVEL_ORDER.map((k) => (
 							<label class="bff-dimmer-stop" data-stop={k}>
 								<input type="radio" name="bff-level" value={k} checked={k === 'medium'} />
-								<span class="name">{LEVELS[k].name.replace(' autonomy', '')}</span>
-								<span class="gait">{LEVELS[k].gait}<span class="sep"> · </span><span>{LEVELS[k].floor.toLowerCase()}</span></span>
+								<span class="name">{LEVELS[k].name.replace(' autonomy', '')}<span class="sr-only"> autonomy</span></span>
 							</label>
 						))
 					}
@@ -65,7 +63,6 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 									<div><dt>People</dt><dd>{l.people}</dd></div>
 									<div><dt>Agents</dt><dd>{l.agents}</dd></div>
 									<div><dt>Approvals</dt><dd>{l.approvals}</dd></div>
-									<div><dt>Mode</dt><dd><span class="bff-pill">{l.mode}</span></dd></div>
 								</dl>
 								<p class="bff-readout-links">
 									<a href={withBase(`/levels/${k}/`)}>{l.name} <span aria-hidden="true">→</span></a>
@@ -79,8 +76,8 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 
 			<div class="bff-undo-row">
 				<button type="button" class="bff-btn bff-btn-small bff-undo" data-undo>
-					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 1.5a.75.75 0 0 1 .53.22l3 3a.75.75 0 0 1-1.06 1.06L8.75 4.06v8.19a.75.75 0 0 1-1.5 0V4.06L5.53 5.78a.75.75 0 0 1-1.06-1.06l3-3A.75.75 0 0 1 8 1.5Z"></path></svg>
-					Dim back up
+					<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M1.5 8a.75.75 0 0 1 .22-.53l3-3a.75.75 0 0 1 1.06 1.06L4.06 7.25h8.19a.75.75 0 0 1 0 1.5H4.06l1.72 1.72a.75.75 0 0 1-1.06 1.06l-3-3A.75.75 0 0 1 1.5 8Z"></path></svg>
+					<span>Dim back up<span data-undo-to> to Low</span></span>
 				</button>
 				<p class="bff-undo-note" data-undo-note>Reversible by design: any work type can dim back up to keep the business running.</p>
 			</div>
@@ -103,7 +100,9 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 		const live = hero.querySelector<HTMLElement>('[data-live]')!;
 		const note = hero.querySelector<HTMLElement>('[data-undo-note]')!;
 		const undo = hero.querySelector<HTMLButtonElement>('[data-undo]')!;
+		const undoTo = hero.querySelector<HTMLElement>('[data-undo-to]')!;
 		const defaultNote = note.textContent;
+		const short = (l: Level) => LEVELS[l].name.replace(' autonomy', '');
 
 		try { if (localStorage.getItem(HINT_KEY)) delete dimmer.dataset.hint; } catch {}
 		const dismissHint = () => {
@@ -115,7 +114,10 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 		const apply = (level: Level, { announce = true, persist = true } = {}) => {
 			hero.dataset.level = level;
 			radios.forEach((r) => (r.checked = r.value === level));
-			undo.disabled = level === 'low';
+			const below = ORDER[ORDER.indexOf(level) - 1];
+			// aria-disabled rather than disabled, so keyboard focus stays put after dimming to Low.
+			undo.setAttribute('aria-disabled', String(!below));
+			undoTo.textContent = below ? ` to ${short(below)}` : '';
 			if (persist) {
 				try { localStorage.setItem(KEY, level); } catch {}
 			}
@@ -176,7 +178,7 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 			hero.classList.remove('bff-incident');
 			void hero.offsetWidth;
 			hero.classList.add('bff-incident');
-			const msg = `Dimmed back up to ${LEVELS[next].name.toLowerCase()}. Approvals return to people and work continues from the issues, pull requests and specs in Git.`;
+			const msg = `Dimmed back up to ${LEVELS[next].name}. Approvals return to people and work continues from the issues, pull requests and specs in Git.`;
 			note.textContent = msg;
 			live.textContent = msg;
 		});
@@ -187,8 +189,16 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 	.bff-hero {
 		--knob-x: 50%;
 		display: grid;
-		gap: clamp(2rem, 4vw, 3.5rem);
+		gap: clamp(1.5rem, 4vw, 3.5rem);
 		padding-block: clamp(1rem, 3vw, 2.5rem) clamp(2rem, 5vw, 4rem);
+	}
+	/* Desktop: copy on the left, the dimmer and the factory it controls on the right,
+	   so both sit in the first viewport. */
+	@media (min-width: 64em) {
+		.bff-hero {
+			grid-template-columns: minmax(0, 25rem) minmax(0, 1fr);
+			align-items: center;
+		}
 	}
 	/* Stops are equal columns with a 0.5rem gap, so their centres sit at these offsets. */
 	.bff-hero[data-level='low'] {
@@ -201,10 +211,12 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 	/* Copy */
 	.bff-hero-copy {
 		max-width: 52rem;
+		container-type: inline-size;
 	}
 	.bff-hero-title {
 		margin: 0.75rem 0 0;
-		font-size: var(--bff-text-display);
+		/* Capped by the copy column so "Bright Factory" stays on one line beside the stage. */
+		font-size: min(var(--bff-text-display), 15cqi);
 		line-height: 1.02;
 		font-weight: 500;
 		font-variation-settings: 'wdth' 112;
@@ -229,34 +241,40 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 		font-size: var(--bff-text-lg);
 		color: var(--sl-color-gray-3);
 	}
+	.bff-hero-lede a {
+		color: var(--sl-color-accent-high);
+		font-weight: 600;
+		text-underline-offset: 0.2em;
+	}
+	.bff-hero-lede a:hover {
+		color: var(--sl-color-white);
+	}
 	.bff-hero-ctas {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.75rem;
-		margin-top: 1.75rem;
+		margin-top: 1.5rem;
+	}
+	@media (min-width: 64em) {
+		.bff-hero-sub {
+			font-size: var(--bff-text-xl);
+		}
 	}
 
-	/* Stage */
+	/* Stage. Clipping inline overflow keeps the engineering block's slide-in from
+	   widening the page before the factory assembles. */
 	.bff-stage {
+		container-type: inline-size;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
-		gap: 1.25rem;
-		padding: clamp(0.75rem, 2vw, 1.5rem);
+		gap: 1rem;
+		padding: clamp(0.75rem, 2vw, 1.25rem);
+		overflow-x: clip;
 		border: 1px solid var(--sl-color-hairline);
 		border-radius: var(--bff-radius);
 		background:
 			radial-gradient(120% 90% at 30% 10%, color-mix(in srgb, var(--bff-light-warm) 10%, transparent), transparent 60%),
 			var(--bff-surface);
-	}
-	@media (min-width: 64em) {
-		.bff-stage {
-			grid-template-columns: minmax(0, 1fr) 19rem;
-		}
-		.bff-dimmer-panel {
-			grid-column: 2;
-			grid-row: 1 / span 2;
-			align-self: center;
-		}
 	}
 
 	/* Dimmer: a horizontal slider above the factory it controls. */
@@ -303,6 +321,11 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 	.bff-dimmer:not([data-hint]) .bff-dimmer-hint {
 		opacity: 0;
 		visibility: hidden;
+	}
+	@media (max-width: 40em) {
+		.bff-dimmer-label {
+			display: none;
+		}
 	}
 
 	.bff-dimmer-plate {
@@ -399,6 +422,10 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 			animation: none;
 		}
 	}
+	/* The hint waits while the reader is away from the hero (the factory is idle). */
+	.bff-hero:has(.bff-factory[data-idle]) :is(.bff-dimmer-knob, .bff-dimmer-hint-arrows) {
+		animation-play-state: paused;
+	}
 
 	.bff-dimmer-stops {
 		display: grid;
@@ -410,7 +437,7 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 		display: grid;
 		justify-items: center;
 		align-content: center;
-		min-height: 3rem;
+		min-height: 2.75rem;
 		padding: 0.35rem 0.5rem;
 		border-radius: var(--bff-radius-sm);
 		text-align: center;
@@ -434,19 +461,6 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 	.bff-dimmer-stop .name {
 		font-weight: 600;
 		color: var(--sl-color-white);
-	}
-	.bff-dimmer-stop .gait {
-		font-family: var(--bff-font-mono);
-		font-size: var(--bff-text-2xs);
-		color: var(--sl-color-gray-3);
-	}
-	@media (max-width: 40em) {
-		.bff-dimmer-stop .gait {
-			display: grid;
-		}
-		.bff-dimmer-stop .gait .sep {
-			display: none;
-		}
 	}
 	.bff-dimmer-stop:has(input:checked) {
 		background: var(--sl-color-accent-low);
@@ -522,9 +536,28 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 	.bff-undo {
 		justify-self: start;
 	}
+	.bff-undo[aria-disabled='true'] {
+		opacity: 0.45;
+		cursor: not-allowed;
+		transform: none;
+	}
 	.bff-undo-note {
 		margin: 0;
 		font-size: var(--bff-text-xs);
 		color: var(--sl-color-gray-3);
+	}
+	/* A wide stage puts the readout and the undo control side by side under the factory. */
+	@container (min-width: 36rem) {
+		.bff-dimmer-panel {
+			grid-template-columns: minmax(0, 1fr) minmax(0, 13.5rem);
+			column-gap: 1.25rem;
+			align-items: start;
+		}
+		.bff-undo-row {
+			padding-top: 0;
+			padding-inline-start: 1.25rem;
+			border-top: 0;
+			border-inline-start: 1px solid var(--sl-color-hairline);
+		}
 	}
 </style>

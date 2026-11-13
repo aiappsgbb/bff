@@ -63,7 +63,7 @@ const accents = ['yellow', 'green', 'blue', 'purple'];
 		background: var(--sl-color-black);
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-sm);
-		color: var(--accent);
+		color: var(--accent-ink, var(--accent));
 		transition:
 			background-color 0.25s var(--bff-ease-soft),
 			color 0.25s var(--bff-ease-soft);
@@ -89,7 +89,7 @@ const accents = ['yellow', 'green', 'blue', 'purple'];
 		color: var(--sl-color-gray-3);
 	}
 	.bff-journey-go {
-		color: var(--accent);
+		color: var(--accent-ink, var(--accent));
 		transition: transform 0.3s var(--bff-ease-out);
 	}
 	a:hover .bff-journey-go {

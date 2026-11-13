@@ -10,10 +10,13 @@ import Eyebrow from './Eyebrow.astro';
 	<div class="bff-closing-copy">
 		<Eyebrow text="factory.build()" accent="green" />
 		<h2 id="bff-closing-title">Everything's in the box. The factory is yours to build.</h2>
-		<p>Start with one team and one work type. Bring your own tools, or a partner who builds on the framework.</p>
+		<p>
+			Start with one team and one work type. Bring your own tools, or <a href={withBase('/get-started/partners/')}>a partner who builds on the framework</a>.
+		</p>
 		<div class="bff-closing-ctas">
 			<a class="bff-btn bff-btn-primary" href={withBase('/get-started/')}>Get started <span aria-hidden="true">→</span></a>
 			<a class="bff-btn" href={withBase('/get-started/find-your-level/')}>Find your level</a>
+			<a class="bff-btn bff-btn-ghost" href={withBase('/get-started/demos/')}>See it working</a>
 		</div>
 	</div>
 	<Image src={box} alt={LEGO_ALT.factory_box} widths={[400, 640, 900]} sizes="(min-width: 60em) 28rem, 80vw" loading="lazy" />
@@ -45,6 +48,14 @@ import Eyebrow from './Eyebrow.astro';
 		margin: 0;
 		font-size: var(--bff-text-lg);
 		color: var(--sl-color-gray-3);
+	}
+	p a {
+		color: var(--sl-color-accent-high);
+		font-weight: 600;
+		text-underline-offset: 0.2em;
+	}
+	p a:hover {
+		color: var(--sl-color-white);
 	}
 	.bff-closing-ctas {
 		display: flex;

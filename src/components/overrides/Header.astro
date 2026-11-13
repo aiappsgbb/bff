@@ -1,0 +1,308 @@
+---
+/**
+ * Starlight's header plus a compact primary nav. Wide screens show the nav beside search on
+ * every page. Narrower doc pages keep Starlight's sidebar menu; the splash home, which has no
+ * sidebar, gets a Menu popover that also carries the GitHub link and theme switcher on phones.
+ */
+import LanguageSelect from '@astrojs/starlight/components/LanguageSelect.astro';
+import Search from '@astrojs/starlight/components/Search.astro';
+import SocialIcons from '@astrojs/starlight/components/SocialIcons.astro';
+import ThemeSelect from '@astrojs/starlight/components/ThemeSelect.astro';
+import SiteTitle from './SiteTitle.astro';
+import { withBase } from '../../data/site';
+
+const { id, hasSidebar } = Astro.locals.starlightRoute;
+const slug = id.replace(/\/$/, '');
+
+const LINKS = [
+	{ label: 'Get started', slug: 'get-started', exclude: ['get-started/partners', 'get-started/demos'] },
+	{ label: 'Framework', slug: 'framework' },
+	{ label: 'Autonomy levels', slug: 'levels' },
+	{ label: 'Playbooks', slug: 'playbooks' },
+	{ label: 'Partners', slug: 'get-started/partners' },
+].map((l) => {
+	const inside = (slug === l.slug || slug.startsWith(`${l.slug}/`)) && !l.exclude?.some((x) => slug === x || slug.startsWith(`${x}/`));
+	return { ...l, href: withBase(`/${l.slug}/`), current: slug === l.slug ? 'page' : inside ? 'true' : undefined };
+});
+const showMenu = !hasSidebar;
+---
+
+<div class="header">
+	<div class="title-wrapper sl-flex"><SiteTitle /></div>
+	<div class="bff-header-mid sl-flex print:hidden">
+		<Search />
+		<nav class="bff-nav" aria-label="Primary">
+			<ul>
+				{LINKS.map((l) => <li><a href={l.href} aria-current={l.current}>{l.label}</a></li>)}
+			</ul>
+		</nav>
+	</div>
+	<div class:list={['bff-header-end sl-flex print:hidden', { 'has-menu': showMenu }]}>
+		<div class="sl-hidden md:sl-flex right-group">
+			<div class="sl-flex social-icons"><SocialIcons /></div>
+			<ThemeSelect />
+			<LanguageSelect />
+		</div>
+		{
+			showMenu && (
+				<>
+					<button type="button" class="bff-menu-btn" popovertarget="bff-menu" aria-controls="bff-menu" aria-expanded="false">
+						<svg class="open" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+							<path fill="currentColor" d="M1 3.75A.75.75 0 0 1 1.75 3h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 3.75Zm0 4.25a.75.75 0 0 1 .75-.75h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 8Zm.75 3.5h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z" />
+						</svg>
+						<svg class="close" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+							<path fill="currentColor" d="M3.72 3.72a.75.75 0 0 1 1.06 0L8 6.94l3.22-3.22a.75.75 0 1 1 1.06 1.06L9.06 8l3.22 3.22a.75.75 0 1 1-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 0 1-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 0 1 0-1.06Z" />
+						</svg>
+						Menu
+					</button>
+					<div id="bff-menu" class="bff-menu" popover>
+						<nav aria-label="Primary">
+							<ul>
+								{LINKS.map((l) => <li><a href={l.href} aria-current={l.current}>{l.label}</a></li>)}
+							</ul>
+						</nav>
+						<div class="bff-menu-footer">
+							<div class="sl-flex bff-menu-social"><SocialIcons /></div>
+							<ThemeSelect />
+						</div>
+					</div>
+				</>
+			)
+		}
+	</div>
+</div>
+
+{
+	showMenu && (
+		<script>
+			const btn = document.querySelector<HTMLButtonElement>('.bff-menu-btn');
+			const menu = document.getElementById('bff-menu');
+			menu?.addEventListener('toggle', (e) => {
+				btn?.setAttribute('aria-expanded', String((e as ToggleEvent).newState === 'open'));
+			});
+			// Tabbing out of the menu closes it, so it never covers the content keyboard focus moved to.
+			menu?.addEventListener('focusout', (e) => {
+				const to = (e as FocusEvent).relatedTarget as Node | null;
+				if (to && !menu.contains(to) && to !== btn && menu.matches(':popover-open')) menu.hidePopover();
+			});
+		</script>
+	)
+}
+
+<style>
+	/* Starlight's header layout (Header.astro), with the nav sharing the search column. */
+	.header {
+		/* A container, so the nav collapses by its own rem width and also at larger root text sizes. */
+		container: bff-header / inline-size;
+		display: flex;
+		gap: var(--sl-nav-gap);
+		justify-content: space-between;
+		align-items: center;
+		height: 100%;
+	}
+	.title-wrapper {
+		overflow: clip;
+		padding: 0.25rem;
+		margin: -0.25rem;
+		min-width: 0;
+	}
+	.right-group,
+	.social-icons {
+		gap: 1rem;
+		align-items: center;
+	}
+	.social-icons::after {
+		content: '';
+		height: 2rem;
+		border-inline-end: 1px solid var(--sl-color-gray-5);
+	}
+	.bff-header-mid {
+		align-items: center;
+		gap: var(--sl-nav-gap);
+		min-width: 0;
+		margin-inline-start: auto;
+	}
+	.bff-header-end {
+		align-items: center;
+		gap: 1rem;
+	}
+	@media (max-width: 49.99rem) {
+		.bff-header-end:not(.has-menu) {
+			display: none;
+		}
+	}
+	@media (min-width: 50rem) {
+		:global(:root[data-has-sidebar]) {
+			--__sidebar-pad: calc(2 * var(--sl-nav-pad-x));
+		}
+		:global(:root:not([data-has-toc])) {
+			--__toc-width: 0rem;
+		}
+		.header {
+			--__sidebar-width: max(0rem, var(--sl-content-inline-start, 0rem) - var(--sl-nav-pad-x));
+			--__main-column-fr: calc(
+				(
+						100% + var(--__sidebar-pad, 0rem) - var(--__toc-width, var(--sl-sidebar-width)) -
+							(2 * var(--__toc-width, var(--sl-nav-pad-x))) - var(--sl-content-inline-start, 0rem) -
+							var(--sl-content-width)
+					) / 2
+			);
+			display: grid;
+			grid-template-columns:
+				minmax(calc(var(--__sidebar-width) + max(0rem, var(--__main-column-fr) - var(--sl-nav-gap))), auto)
+				minmax(0, 1fr)
+				auto;
+			align-content: center;
+		}
+		.bff-header-mid {
+			margin-inline-start: 0;
+		}
+		.bff-header-mid :global(button[data-open-modal]) {
+			flex: 0 1 22rem;
+			min-width: 9rem;
+		}
+	}
+
+	/* Primary nav */
+	.bff-nav {
+		display: none;
+		margin-inline-start: auto;
+		flex: none;
+	}
+	ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-nav ul {
+		display: flex;
+		gap: 0.125rem;
+	}
+	.bff-nav a,
+	.bff-menu a {
+		display: flex;
+		align-items: center;
+		min-height: 2.25rem;
+		padding: 0.25rem 0.625rem;
+		border-radius: var(--bff-radius-sm);
+		font-size: var(--sl-text-sm);
+		font-weight: 500;
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+		white-space: nowrap;
+	}
+	.bff-nav a:hover,
+	.bff-menu a:hover {
+		color: var(--sl-color-white);
+		background: var(--sl-color-gray-6);
+	}
+	.bff-nav a[aria-current],
+	.bff-menu a[aria-current] {
+		color: var(--sl-color-accent-high);
+		background: var(--sl-color-accent-low);
+		font-weight: 600;
+	}
+	.bff-nav a:focus-visible,
+	.bff-menu a:focus-visible,
+	.bff-menu-btn:focus-visible {
+		outline: 2px solid var(--sl-color-accent);
+		outline-offset: 2px;
+	}
+
+	/* Splash Menu */
+	.bff-menu-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		min-height: 2.25rem;
+		padding: 0.25rem 0.75rem;
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: var(--bff-radius-sm);
+		background: var(--sl-color-black);
+		color: var(--sl-color-white);
+		font: inherit;
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+		cursor: pointer;
+	}
+	.bff-menu-btn:hover {
+		border-color: var(--sl-color-gray-3);
+	}
+	.bff-menu-btn:not(:has(+ :popover-open)) .close,
+	.bff-menu-btn:has(+ :popover-open) .open {
+		display: none;
+	}
+	.bff-menu {
+		position: fixed;
+		inset: auto;
+		top: calc(var(--sl-nav-height) + 0.5rem);
+		inset-inline-end: var(--sl-nav-pad-x);
+		width: min(18rem, calc(100vw - 2 * var(--sl-nav-pad-x)));
+		max-height: calc(100dvh - var(--sl-nav-height) - 1rem);
+		overflow-y: auto;
+		margin: 0;
+		padding: 0.5rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius);
+		background: var(--sl-color-bg);
+		color: var(--sl-color-white);
+		box-shadow: var(--sl-shadow-lg);
+	}
+	.bff-menu a {
+		min-height: 2.5rem;
+		font-size: var(--sl-text-base);
+	}
+	.bff-menu-footer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: 0.5rem;
+		padding: 0.75rem 0.625rem 0.25rem;
+		border-top: 1px solid var(--sl-color-hairline);
+	}
+	.bff-menu-social {
+		gap: 1rem;
+		align-items: center;
+	}
+	/*
+	 * From 50rem the header's own right group carries the GitHub link and theme switcher. On the
+	 * splash, when large text leaves too little room, they move into the Menu instead.
+	 */
+	@media (min-width: 50rem) {
+		@container bff-header (min-width: 48rem) {
+			.bff-menu-footer {
+				display: none;
+			}
+		}
+	}
+	@container bff-header (max-width: 47.99rem) {
+		.bff-header-end.has-menu .right-group {
+			display: none;
+		}
+	}
+	@media (pointer: coarse) {
+		.bff-nav a,
+		.bff-menu a,
+		.bff-menu-btn,
+		.bff-menu-footer :global(select) {
+			min-height: 2.75rem;
+		}
+		.bff-menu-social :global(a) {
+			min-width: 2.75rem;
+			min-height: 2.75rem;
+			justify-content: center;
+			align-items: center;
+		}
+	}
+	/* Last, so it wins over the Menu's own display. */
+	@container bff-header (min-width: 76rem) {
+		.bff-nav {
+			display: block;
+		}
+		.bff-menu-btn,
+		.bff-menu {
+			display: none;
+		}
+	}
+</style>
