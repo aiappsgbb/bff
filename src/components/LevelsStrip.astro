@@ -3,7 +3,7 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 import FactoryThumb from './FactoryThumb.astro';
 ---
 
-<div class="bff-levels-strip not-content">
+<div class="bff-levels-strip not-content" data-levels-strip>
 	<div class="bff-ls-rail" aria-hidden="true">
 		<span>More human control</span>
 		<i></i>
@@ -12,19 +12,23 @@ import FactoryThumb from './FactoryThumb.astro';
 	<ol class="bff-ls-list">
 		{
 			LEVEL_ORDER.map((k) => (
-				<li data-level-accent={k}>
+				<li data-level-accent={k} data-level={k}>
 					<a class="bff-ls-card" href={withBase(`/levels/${k}/`)}>
 						<FactoryThumb level={k} alt={`The factory with its floor ${LEVELS[k].floor.toLowerCase()}`} sizes="(min-width: 60em) 22rem, 92vw" />
 						<span class="bff-ls-meta">
-							<span class="bff-ls-gait">{LEVELS[k].gait}</span>
+							<span class="bff-ls-name">
+								<span class="bff-ls-short">{LEVELS[k].short}</span> autonomy
+							</span>
+							<span class="bff-ls-mine" hidden>
+								Your level
+							</span>
 							<span class="bff-ls-floor">{LEVELS[k].floor}</span>
 						</span>
-						<strong>{LEVELS[k].name}</strong>
 						<span class="bff-ls-tag">{LEVELS[k].tagline}</span>
 						<span class="bff-ls-mode">{LEVELS[k].mode}</span>
 					</a>
 					<a class="bff-ls-pb" href={withBase(`/playbooks/${k}/`)}>
-						{LEVELS[k].gait} playbook →
+						{LEVELS[k].name} playbook →
 					</a>
 				</li>
 			))
@@ -35,7 +39,28 @@ import FactoryThumb from './FactoryThumb.astro';
 	</p>
 </div>
 
+<script>
+	// Marks the level from the self-assessment (find-your-level) as "Your level".
+	const RESULT = 'bff:assess-level';
+	const mark = () => {
+		let mine: string | null = null;
+		try {
+			mine = localStorage.getItem(RESULT);
+		} catch {}
+		document.querySelectorAll<HTMLElement>('[data-levels-strip] li[data-level]').forEach((li) => {
+			const on = li.dataset.level === mine;
+			li.toggleAttribute('data-mine', on);
+			li.querySelector<HTMLElement>('.bff-ls-mine')!.hidden = !on;
+		});
+	};
+	mark();
+	window.addEventListener('storage', (e) => e.key === RESULT && mark());
+</script>
+
 <style>
+	.bff-levels-strip {
+		container: ls / inline-size;
+	}
 	.bff-ls-rail {
 		display: grid;
 		grid-template-columns: auto 1fr auto;
@@ -68,6 +93,7 @@ import FactoryThumb from './FactoryThumb.astro';
 		container-type: inline-size;
 	}
 	.bff-ls-card {
+		position: relative;
 		display: grid;
 		grid-template-columns: minmax(0, 1fr);
 		align-content: start;
@@ -95,26 +121,59 @@ import FactoryThumb from './FactoryThumb.astro';
 		gap: 0.35rem;
 		padding-inline: 0.25rem;
 	}
-	.bff-ls-gait {
+	.bff-ls-name {
+		display: grid;
+		gap: 0.15rem;
+		font-size: var(--bff-text-lg);
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-ls-short {
 		font-size: var(--bff-text-card-display);
 		font-weight: 500;
 		line-height: 1;
 		letter-spacing: -0.02em;
-		color: var(--accent);
+		color: var(--accent-ink, var(--accent));
+	}
+	/* Sits on the thumbnail so the marked card keeps the same rhythm as the others. */
+	.bff-ls-mine {
+		position: absolute;
+		top: 1.25rem;
+		left: 1.25rem;
+		display: inline-flex;
+		gap: 0.4rem;
+		align-items: center;
+		padding: 0.15rem 0.55rem;
+		border-radius: var(--bff-radius-pill);
+		background: var(--sl-color-white);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		color: var(--sl-color-black);
+	}
+	.bff-ls-mine::before {
+		content: '';
+		inline-size: 0.45rem;
+		block-size: 0.45rem;
+		border-radius: 50%;
+		background: var(--accent);
+	}
+	.bff-ls-mine[hidden] {
+		display: none;
+	}
+	li[data-mine] .bff-ls-card {
+		border-color: var(--accent);
+		box-shadow: inset 0 0 0 1px var(--accent);
 	}
 	.bff-ls-floor {
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);
 		color: var(--sl-color-gray-3);
 	}
-	.bff-ls-card strong,
 	.bff-ls-tag,
 	.bff-ls-mode {
 		padding-inline: 0.25rem;
-	}
-	.bff-ls-card strong {
-		font-size: var(--bff-text-lg);
-		color: var(--sl-color-white);
 	}
 	.bff-ls-tag {
 		font-size: var(--bff-text-md);
@@ -133,6 +192,17 @@ import FactoryThumb from './FactoryThumb.astro';
 		color: var(--sl-color-accent-high);
 		text-decoration: none;
 	}
+	.bff-ls-pb {
+		display: inline-flex;
+		align-items: center;
+		justify-self: start;
+		min-block-size: 1.75rem;
+	}
+	@media (pointer: coarse) {
+		.bff-ls-pb {
+			min-block-size: 2.75rem;
+		}
+	}
 	.bff-ls-pb:hover,
 	.bff-ls-back a:hover {
 		text-decoration: underline;
@@ -142,9 +212,10 @@ import FactoryThumb from './FactoryThumb.astro';
 		font-size: var(--bff-text-sm);
 		color: var(--sl-color-gray-3);
 	}
-	@media (max-width: 56em) {
+	/* A container query in rem also stacks the cards when text is enlarged. */
+	@container ls (max-width: 35rem) {
 		.bff-ls-list {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>

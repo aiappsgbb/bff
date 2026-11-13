@@ -1,7 +1,8 @@
 ---
 title: Playbooks
-description: Step-by-step instructions to set up each autonomy level, with a UI track and a CLI track where both apply. Pick your level and tick off the steps as you go.
+description: The steps to set up each autonomy level, from prerequisites to the evidence you need to move up. Pick your level to see its steps.
 eyebrow: factory.playbooks()
+accent: green
 ---
 import { CardGrid, LinkCard, Aside } from '@astrojs/starlight/components';
 
@@ -12,9 +13,9 @@ The playbooks are being written. Each one already shows its steps, prerequisites
 ## Pick your level
 
 <CardGrid>
-	<LinkCard title="Crawl · Low autonomy" description="Singleplayer. Gates, context and your first agent-built change, from the Copilot app or the Copilot CLI." href="/playbooks/low/" />
-	<LinkCard title="Walk · Medium autonomy" description="Multiplayer. Agent identities, Copilot cloud agent, automations and approvals by risk." href="/playbooks/medium/" />
-	<LinkCard title="Run · High autonomy" description="Multiplayer at scale. Policy as code, fleets, evals, progressive delivery and approval by exception." href="/playbooks/high/" />
+	<LinkCard title="Low autonomy" description="Gates, context and your first agent-built change, from the Copilot app or the Copilot CLI on your laptop." href="/playbooks/low/" />
+	<LinkCard title="Medium autonomy" description="Agent identities, Copilot cloud agent, automations and approvals by risk, in the cloud." href="/playbooks/medium/" />
+	<LinkCard title="High autonomy" description="Policy as code, fleets, evals, progressive delivery and approval by exception, at scale." href="/playbooks/high/" />
 </CardGrid>
 
 Not sure where to start? [Find your level](/get-started/find-your-level/) in eight questions.
@@ -22,6 +23,6 @@ Not sure where to start? [Find your level](/get-started/find-your-level/) in eig
 ## How the playbooks work
 
 - **One playbook per level.** Run it once per work type you want to move.
-- **Two tracks.** The **UI** track uses github.com, the Copilot app and Azure portals. The **CLI** track uses `gh`, the Copilot CLI and `az`. Your choice is remembered across pages.
-- **Track your progress.** Mark steps done as you go. Progress is saved in your browser only.
+- **Prerequisites, steps and exit criteria.** Each playbook lists what you need before you start, the steps in order and the evidence that shows the level holds.
+- **UI and CLI instructions are coming.** Detailed steps for github.com, the Copilot app and Azure portals, and for `gh`, the Copilot CLI and `az`, will follow.
 - **Every playbook ends the same way:** the evidence you need to move up, and how to dim back up.

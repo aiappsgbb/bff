@@ -2,6 +2,7 @@
 title: Find your level
 description: Eight questions, two minutes. Find the autonomy level for one work type, and the next three moves to get to the next one.
 eyebrow: assess.level()
+accent: green
 wide: true
 tableOfContents: false
 ---
@@ -12,11 +13,11 @@ import { Aside } from '@astrojs/starlight/components';
 
 ## How the score works
 
-Each answer scores 0, 1 or 2. Up to 5 points is **Crawl**, 6 to 11 is **Walk** and 12 or more is **Run**. Two rules come first:
+Each answer scores 0, 1 or 2, and the points behind each option show once every question is answered. Up to 5 points is **low autonomy**, 6 to 11 is **medium autonomy** and 12 or more is **high autonomy**. Two rules come first:
 
-- **No shared gates, no automation.** If people and agents don't go through the same gates, the work type stays at Crawl, whatever the score.
-- **No evidence, no lights-off.** Run needs an evidence bundle on every change. Without it, the work type stays at Walk.
+- **No shared gates, no automation.** If people and agents don't go through the same gates, the work type stays at low autonomy, whatever the score.
+- **No evidence, no lights-off.** High autonomy needs an evidence bundle on every change. Without it, the work type stays at medium autonomy.
 
 <Aside type="tip">
-Your answers and level stay in this browser. Level pages, playbooks and diagrams across the site follow the level you get here.
+Your answers and level stay in this browser. Your level is marked on [autonomy levels](/levels/), and the home page dimmer and the level tabs on [singleplayer to multiplayer](/framework/multiplayer/) and [engineering the factory](/framework/engineering/) open at it.
 </Aside>

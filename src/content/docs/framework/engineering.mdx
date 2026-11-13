@@ -2,6 +2,7 @@
 title: Engineering the factory
 description: A platform team builds the factory itself. Three moves, repeated at every level, decide how far the floor can dim.
 eyebrow: framework.engineering()
+accent: purple
 ---
 import EngineeringLoop from '../../../components/EngineeringLoop.astro';
 
@@ -13,11 +14,11 @@ The engineering loop is part of the HQ: it never goes dark. A platform engineeri
 
 ## Three moves
 
-**Tune trust and control.** SLOs, approvals and policies. Decide who or what can approve each kind of change, under which identity, within which budget. At Crawl this means rulesets and CODEOWNERS. At Run it means policy as code and approval by exception.
+**Tune trust and control.** SLOs, approvals and policies. Decide who or what can approve each kind of change, under which identity, within which budget. At low autonomy this means rulesets and CODEOWNERS. At high autonomy it means policy as code and approval by exception.
 
-**Expand automation.** Workflows, triggers and environments. Give agents somewhere safe to work and something to start them. At Crawl this is CI/CD and golden dev environments. At Run it's fleets per work type, end-to-end test environments and progressive delivery.
+**Expand automation.** Workflows, triggers and environments. Give agents somewhere safe to work and something to start them. At low autonomy this is CI/CD and golden dev environments. At high autonomy it's fleets per work type, end-to-end test environments and progressive delivery.
 
-**Strengthen foundations.** Skills, tools and context. Every incident, review and eval is a chance to make the next session better. At Crawl this means starter instructions and approved MCP servers. At Run, agents curate skills and memory, and people review every update.
+**Strengthen foundations.** Skills, tools and context. Every incident, review and eval is a chance to make the next session better. At low autonomy this means starter instructions and approved MCP servers. At high autonomy, agents curate skills and memory, and people review every update.
 
 ## One loop, every level
 

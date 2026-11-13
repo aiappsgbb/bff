@@ -1,130 +1,40 @@
 ---
-title: Playbook · Walk
-description: Give agents identities, move work to Copilot cloud agent, start it from events and approve by risk. Multiplayer, in the cloud.
-eyebrow: playbook.walk()
+title: Medium autonomy playbook
+description: Give agents identities, move work to Copilot cloud agent, start it from events and approve by risk, in the cloud.
+eyebrow: playbook.medium()
 accent: green
 tableOfContents:
   maxHeadingLevel: 2
 ---
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 import LevelIndicator from '../../../components/LevelIndicator.astro';
-import PlaybookProgress from '../../../components/PlaybookProgress.astro';
-import StepDone from '../../../components/StepDone.astro';
 
 <LevelIndicator level="medium" kind="playbooks" />
 
 <Aside type="caution" title="Draft playbook">
-This playbook is a placeholder. The steps and exit criteria are set; detailed UI and CLI instructions are coming. Features marked **preview** may change.
+This playbook is a placeholder. The steps and exit criteria are set. Features marked **preview** may change.
 </Aside>
 
-**Time:** A few days for one work type, after Crawl.
+**Time:** A few days for one work type, after low autonomy.
 
 ## Before you start
 
-- The Crawl playbook done for the repositories in scope.
+- The low autonomy playbook done for the repositories in scope.
 - Copilot cloud agent enabled for the organisation and repositories.
 - A named owner for each agent and each work type.
 - An Azure subscription if you plan to use Azure SRE Agent or Foundry.
 
-<PlaybookProgress level="medium" />
+## Steps
 
-## 1. Give agents identities
+*Coming soon:* detailed UI and CLI instructions for each step.
 
-Every agent acts under its own identity, with least privilege and an accountable owner.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Register agent identities in Microsoft Entra and scope their repository access.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Create and scope identities with `az` and `gh api`.
-	</TabItem>
-</Tabs>
-
-<StepDone level="medium" n={1} />
-
-## 2. Hand work to Copilot cloud agent
-
-Assign well-specified issues to Copilot cloud agent and let it build in a cloud sandbox.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Assign the issue to Copilot on github.com or from the Copilot app.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Assign with `gh issue edit` or start a task from the Copilot CLI.
-	</TabItem>
-</Tabs>
-
-<StepDone level="medium" n={2} />
-
-## 3. Configure the agent environment
-
-Give the cloud agent the tools, MCP servers, secrets and firewall rules it needs, and nothing more.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Repository **Settings → Copilot → Coding agent**, and a `copilot-setup-steps.yml`.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Commit `copilot-setup-steps.yml` and the MCP configuration.
-	</TabItem>
-</Tabs>
-
-<StepDone level="medium" n={3} />
-
-## 4. Start work from events
-
-Add automations that start agent work from issues, schedules and signals.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Create automations in the Copilot app.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Define agentic workflows in the repository.
-	</TabItem>
-</Tabs>
-
-<StepDone level="medium" n={4} />
-
-## 5. Steer from mission control
-
-Watch, steer and continue sessions as a team, from any device.
-
-*Coming soon.*
-
-<StepDone level="medium" n={5} />
-
-## 6. Connect production signals
-
-Route incidents and alerts from production into new, well-described issues.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Connect Azure SRE Agent, or your incident tools, to the repository.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Configure the connection with `az`.
-	</TabItem>
-</Tabs>
-
-<StepDone level="medium" n={6} />
-
-## 7. Approve by risk, within budget
-
-Decide which changes need which approvers, and set budgets per agent and per team.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Update rulesets and Copilot policies and budgets.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Update rulesets with `gh api`.
-	</TabItem>
-</Tabs>
-
-<StepDone level="medium" n={7} />
+1. **Give agents identities.** Every agent acts under its own identity, with least privilege and an accountable owner.
+2. **Hand work to Copilot cloud agent.** Assign well-specified issues to Copilot cloud agent and let it build in a cloud sandbox.
+3. **Configure the agent environment.** Give the cloud agent the tools, MCP servers, secrets and firewall rules it needs, and nothing more.
+4. **Start work from events.** Add automations that start agent work from issues, schedules and signals.
+5. **Steer from mission control.** Watch, steer and continue sessions as a team, from any device.
+6. **Connect production signals.** Route incidents and alerts from production into new, well-described issues.
+7. **Approve by risk, within budget.** Decide which changes need which approvers, and set budgets per agent and per team.
 
 ## Evidence to move up
 
@@ -133,7 +43,7 @@ Decide which changes need which approvers, and set budgets per agent and per tea
 - Low-risk changes merge on evidence, without waiting for a full review.
 - The team has rehearsed dimming this work type back up.
 
-When the evidence holds, move this work type to [Run](/levels/high/) and open the [Run playbook](/playbooks/high/).
+When the evidence holds, move this work type to [high autonomy](/levels/high/) and open the [high autonomy playbook](/playbooks/high/).
 
 ## If you need to dim back up
 

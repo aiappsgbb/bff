@@ -4,6 +4,7 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 const QUESTIONS = [
 	{
 		key: 'gates',
+		area: 'Shared gates',
 		q: 'Do people and agents go through the same gates?',
 		hint: 'Rulesets, required reviews, CI and code scanning.',
 		a: ['No, or only in some places', 'In most repositories', 'Everywhere, enforced by policy'],
@@ -12,6 +13,7 @@ const QUESTIONS = [
 	},
 	{
 		key: 'context',
+		area: 'Written context',
 		q: 'Is your context written down for agents?',
 		hint: 'Custom instructions, agent skills, specs, business context.',
 		a: ['Not yet', 'In a few repositories', 'Versioned, reviewed and shared across teams'],
@@ -20,14 +22,16 @@ const QUESTIONS = [
 	},
 	{
 		key: 'where',
+		area: 'Where agents work',
 		q: 'Where do agents work today?',
-		hint: 'Singleplayer on a laptop, or multiplayer in the cloud.',
+		hint: "On one developer's laptop, or in the cloud where the whole team can see them.",
 		a: ['Mostly code completion and chat', 'On developer laptops (Copilot app, CLI, IDE)', 'In the cloud, in parallel, visible to the team'],
 		next: 'Move one work type to Copilot cloud agent sessions the whole team can see and steer.',
 		href: '/framework/multiplayer/',
 	},
 	{
 		key: 'triggers',
+		area: 'What starts the work',
 		q: 'What starts agent work?',
 		hint: 'People, events, schedules or production signals.',
 		a: ['A person, every time', 'Some automations on events or schedules', 'Events, schedules and production signals'],
@@ -36,6 +40,7 @@ const QUESTIONS = [
 	},
 	{
 		key: 'identity',
+		area: 'Agent identity',
 		q: 'Do agents have their own identity, permissions and budget?',
 		hint: 'Scoped access, audit trail and cost per agent.',
 		a: ['No, they act as the user', 'Partly', 'Yes, scoped and budgeted per agent'],
@@ -44,6 +49,7 @@ const QUESTIONS = [
 	},
 	{
 		key: 'evidence',
+		area: 'Evidence on every change',
 		q: 'Does every agent change carry evidence?',
 		hint: 'Tests, scans, evals, previews and a summary a reviewer can trust.',
 		a: ['No', 'For some work types', 'Yes, an evidence bundle on every pull request'],
@@ -52,6 +58,7 @@ const QUESTIONS = [
 	},
 	{
 		key: 'observe',
+		area: 'Visibility and cost',
 		q: 'Can you see what agents did, and what it cost?',
 		hint: 'Sessions, tool calls, decisions and spend.',
 		a: ['Not really', 'Per session, when someone looks', 'Across the organisation, with traces and cost'],
@@ -60,6 +67,7 @@ const QUESTIONS = [
 	},
 	{
 		key: 'reverse',
+		area: 'Dimming back up',
 		q: 'Can you move a work type back to human approvals in minutes?',
 		hint: 'Dim back up without stopping the business.',
 		a: ['No', 'Yes, by hand', 'Yes, one switch, and rehearsed'],
@@ -70,75 +78,92 @@ const QUESTIONS = [
 ---
 
 <div class="bff-assess not-content" data-assess>
-	<form class="bff-assess-form" novalidate>
-		<p class="bff-assess-intro">
-			Answer for <strong>one work type</strong>, for example dependency upgrades or feature work. Different work types can sit at
-			different levels. Nothing leaves your browser.
-		</p>
-		<ol class="bff-assess-qs">
-			{
-				QUESTIONS.map((item, i) => (
-					<li>
-						<fieldset data-key={item.key}>
-							<legend>
-								<span class="bff-assess-n">{String(i + 1).padStart(2, '0')}</span>
-								<span>{item.q}</span>
-							</legend>
-							<p class="bff-assess-hint">{item.hint}</p>
-							<div class="bff-assess-options">
-								{item.a.map((label, v) => (
-									<label>
-										<input type="radio" name={item.key} value={v} />
-										<span class="bff-assess-score" aria-hidden="true">
-											{v}
-										</span>
-										<span>{label}</span>
-									</label>
-								))}
-							</div>
-						</fieldset>
-					</li>
-				))
-			}
-		</ol>
-	</form>
+	<div class="bff-assess-grid">
+		<form class="bff-assess-form" novalidate>
+			<p class="bff-assess-intro">
+				Answer for <strong>one work type</strong>, for example dependency upgrades or feature work. Different work types can sit at
+				different levels. Nothing leaves your browser.
+			</p>
+			<ol class="bff-assess-qs">
+				{
+					QUESTIONS.map((item, i) => (
+						<li>
+							<fieldset data-key={item.key}>
+								<legend>
+									<span class="bff-assess-n">{String(i + 1).padStart(2, '0')}</span>
+									<span>{item.q}</span>
+								</legend>
+								<p class="bff-assess-hint">{item.hint}</p>
+								<div class="bff-assess-options">
+									{item.a.map((label, v) => (
+										<label>
+											<input type="radio" name={item.key} value={v} />
+											<span class="bff-assess-score" aria-hidden="true">
+												<span>{v}</span>
+											</span>
+											<span>{label}</span>
+										</label>
+									))}
+								</div>
+							</fieldset>
+						</li>
+					))
+				}
+			</ol>
+			<a class="bff-assess-jump" href="#bff-assess-result">
+				<span><span data-answered>0</span>/{QUESTIONS.length} answered</span>
+				<span aria-hidden="true">·</span>
+				<strong>See result ↓</strong>
+			</a>
+		</form>
 
-	<aside class="bff-assess-result" aria-labelledby="bff-assess-title">
-		<div class="bff-assess-sticky">
-			<p class="bff-eyebrow"><span class="bff-eyebrow-square"></span>Your level</p>
-			<div class="bff-assess-meter" aria-hidden="true"><i></i></div>
-			<p class="bff-assess-progress" aria-live="polite"><span data-answered>0</span> of {QUESTIONS.length} answered</p>
-			<div class="bff-assess-empty" data-empty>
-				<h3 id="bff-assess-title">Answer the questions to see where you are.</h3>
-				<p>You'll get a level, the reason, and the next three moves.</p>
+		<aside class="bff-assess-result" id="bff-assess-result" aria-labelledby="bff-assess-title" tabindex="-1">
+			<div class="bff-assess-sticky">
+				<p class="bff-eyebrow" id="bff-assess-title"><span class="bff-eyebrow-square"></span>Your level</p>
+				<div class="bff-assess-meter" aria-hidden="true"><i></i></div>
+				<p class="bff-assess-progress" aria-live="polite"><span data-answered>0</span> of {QUESTIONS.length} answered</p>
+				<div class="bff-assess-empty" data-empty>
+					<h2>Answer the questions to see where you are.</h2>
+					<p>You'll get a level, the reason, and the next three moves.</p>
+				</div>
+				{
+					LEVEL_ORDER.map((k) => (
+						<div class="bff-assess-level" data-result={k} data-level-accent={k} hidden>
+							<h2>{LEVELS[k].name}</h2>
+							<p class="bff-assess-tag">{LEVELS[k].tagline}</p>
+						</div>
+					))
+				}
+				<div class="bff-assess-why" data-why hidden>
+					<p data-why-text></p>
+					<dl class="bff-assess-reason">
+						<div data-strong>
+							<dt>Strongest</dt>
+							<dd></dd>
+						</div>
+						<div data-weak>
+							<dt>Holding it back</dt>
+							<dd></dd>
+						</div>
+					</dl>
+				</div>
+				<div data-next hidden>
+					<h3>Next moves</h3>
+					<ol class="bff-assess-next"></ol>
+				</div>
+				<div class="bff-assess-actions" data-actions hidden>
+					<a class="bff-btn bff-btn-primary bff-btn-small" data-go="level" href={withBase('/levels/')}>
+						Explore your level
+					</a>
+					<a class="bff-btn bff-btn-small" data-go="playbook" href={withBase('/playbooks/')}>
+						Open the playbook
+					</a>
+				</div>
+				<button type="button" class="bff-btn bff-btn-ghost bff-btn-small" data-reset hidden>Start over</button>
 			</div>
-			{
-				LEVEL_ORDER.map((k) => (
-					<div class="bff-assess-level" data-result={k} data-level-accent={k} hidden>
-						<h3>
-							{LEVELS[k].name} · <span>{LEVELS[k].gait}</span>
-						</h3>
-						<p class="bff-assess-tag">{LEVELS[k].tagline}</p>
-					</div>
-				))
-			}
-			<p class="bff-assess-why" data-why hidden></p>
-			<div data-next hidden>
-				<h4>Next moves</h4>
-				<ol class="bff-assess-next"></ol>
-			</div>
-			<div class="bff-assess-actions" data-actions hidden>
-				<a class="bff-btn bff-btn-primary bff-btn-small" data-go="level" href={withBase('/levels/')}>
-					Explore your level
-				</a>
-				<a class="bff-btn bff-btn-small" data-go="playbook" href={withBase('/playbooks/')}>
-					Open the playbook
-				</a>
-			</div>
-			<button type="button" class="bff-btn bff-btn-ghost bff-btn-small" data-reset>Start over</button>
-		</div>
-	</aside>
-	<script type="application/json" is:inline data-questions set:html={JSON.stringify(QUESTIONS.map(({ key, next, href }) => ({ key, next, href: withBase(href) })))} />
+		</aside>
+	</div>
+	<script type="application/json" is:inline data-questions set:html={JSON.stringify(QUESTIONS.map(({ key, area, next, href }) => ({ key, area, next, href: withBase(href) })))} />
 	<script type="application/json" is:inline data-base set:html={JSON.stringify({ levels: withBase('/levels/'), playbooks: withBase('/playbooks/') })} />
 </div>
 
@@ -147,13 +172,18 @@ const QUESTIONS = [
 
 	type Level = 'low' | 'medium' | 'high';
 	const STORE = 'bff:assess';
+	/** The quiz result, read by LevelsStrip to mark "Your level". */
+	const RESULT = 'bff:assess-level';
+	const NAME: Record<Level, string> = { low: 'low autonomy', medium: 'medium autonomy', high: 'high autonomy' };
+	const RANGE: Record<Level, string> = { low: 'up to 5', medium: '6 to 11', high: '12 or more' };
 
 	document.querySelectorAll<HTMLElement>('[data-assess]').forEach((root) => {
 		const form = root.querySelector('form')!;
-		const qs: { key: string; next: string; href: string }[] = JSON.parse(root.querySelector('[data-questions]')!.textContent!);
+		const qs: { key: string; area: string; next: string; href: string }[] = JSON.parse(root.querySelector('[data-questions]')!.textContent!);
 		const base: { levels: string; playbooks: string } = JSON.parse(root.querySelector('[data-base]')!.textContent!);
 		const $ = <T extends HTMLElement>(s: string) => root.querySelector<T>(s)!;
 		const meter = $('.bff-assess-meter i');
+		const max = qs.length * 2;
 
 		const read = () => {
 			const scores: Record<string, number> = {};
@@ -164,41 +194,64 @@ const QUESTIONS = [
 			return scores;
 		};
 
+		const store = (key: string, value: string | null) => {
+			try {
+				if (value === null) localStorage.removeItem(key);
+				else localStorage.setItem(key, value);
+			} catch {}
+		};
+
 		const render = () => {
 			const s = read();
 			const answered = Object.keys(s).length;
 			const total = Object.values(s).reduce((a, b) => a + b, 0);
-			$('[data-answered]').textContent = String(answered);
-			meter.style.inlineSize = `${(total / (qs.length * 2)) * 100}%`;
-			try {
-				localStorage.setItem(STORE, JSON.stringify(s));
-			} catch {}
 			const done = answered === qs.length;
+			root.querySelectorAll('[data-answered]').forEach((el) => (el.textContent = String(answered)));
+			meter.style.inlineSize = `${((answered / qs.length) * 100).toFixed(1)}%`;
+			store(STORE, JSON.stringify(s));
+			$('[data-reset]').hidden = answered === 0;
 			$('[data-empty]').hidden = done;
 			['[data-why]', '[data-next]', '[data-actions]'].forEach((sel) => ($(sel).hidden = !done));
 			root.querySelectorAll<HTMLElement>('[data-result]').forEach((el) => (el.hidden = true));
 			if (!done) {
 				delete root.dataset.level;
+				store(RESULT, null);
 				return;
 			}
 
-			let level: Level = total <= 5 ? 'low' : total <= 11 ? 'medium' : 'high';
-			let why = `You scored ${total} of ${qs.length * 2}.`;
+			const byScore: Level = total <= 5 ? 'low' : total <= 11 ? 'medium' : 'high';
+			let level = byScore;
+			let why = `You scored ${total} of ${max}: ${RANGE[byScore]} is ${NAME[byScore]}.`;
 			if (s.gates === 0) {
 				level = 'low';
-				why += ' Shared gates come first: without them, agents should stay in the Crawl lane.';
+				if (byScore !== 'low') why += ` Shared gates come first: without them, this work type stays at ${NAME.low}, whatever the score.`;
 			} else if (s.evidence < 2 && level === 'high') {
 				level = 'medium';
-				why += ' Lights-off needs evidence on every change, so this work type stays at Walk for now.';
+				why += ` Lights-off needs evidence on every change, so this work type stays at ${NAME.medium} for now.`;
 			}
 			root.dataset.level = level;
 			$(`[data-result="${level}"]`).hidden = false;
-			$('[data-why]').textContent = why;
+			$('[data-why-text]').textContent = why;
+
+			const scored = qs.map((q, i) => ({ ...q, v: s[q.key], i }));
+			const hi = Math.max(...scored.map((q) => q.v));
+			const lo = Math.min(...scored.map((q) => q.v));
+			const areas = (v: number) =>
+				`${hi === lo ? 'Every area' : scored
+					.filter((q) => q.v === v)
+					.map((q) => q.area)
+					.join(', ')} (${v}\u00a0of\u00a02)`;
+			const strong = $('[data-strong]');
+			const weak = $('[data-weak]');
+			strong.hidden = hi === lo && hi < 2;
+			weak.hidden = hi === lo && lo === 2;
+			strong.querySelector('dd')!.textContent = areas(hi);
+			weak.querySelector('dd')!.textContent = areas(lo);
+
 			$<HTMLAnchorElement>('[data-go="level"]').href = `${base.levels}${level}/`;
 			$<HTMLAnchorElement>('[data-go="playbook"]').href = `${base.playbooks}${level}/`;
 
-			const weakest = qs
-				.map((q, i) => ({ ...q, v: s[q.key], i }))
+			const weakest = scored
 				.filter((q) => q.v < 2)
 				.sort((a, b) => a.v - b.v || a.i - b.i)
 				.slice(0, 3);
@@ -215,6 +268,7 @@ const QUESTIONS = [
 						})
 					: [Object.assign(document.createElement('li'), { textContent: 'Rehearse dimming back up, then pick the next work type.' })]),
 			);
+			store(RESULT, level);
 			shareLevel(level, root);
 		};
 
@@ -237,11 +291,14 @@ const QUESTIONS = [
 
 <style>
 	.bff-assess {
+		container: assess / inline-size;
+		margin-block: 2rem;
+	}
+	.bff-assess-grid {
 		display: grid;
 		grid-template-columns: minmax(0, 1fr) 20rem;
 		gap: clamp(1.5rem, 3vw, 2.5rem);
 		align-items: start;
-		margin-block: 2rem;
 	}
 	.bff-assess-intro {
 		margin: 0 0 1.25rem;
@@ -281,7 +338,7 @@ const QUESTIONS = [
 		padding-top: 0.2rem;
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);
-		color: var(--sl-color-gray-4);
+		color: var(--sl-color-gray-3);
 	}
 	.bff-assess-hint {
 		margin: 0.2rem 0 0.75rem 1.6rem;
@@ -317,17 +374,34 @@ const QUESTIONS = [
 		opacity: 0;
 		pointer-events: none;
 	}
+	/* A radio mark while answering; the points behind each option only show once the result is in. */
 	.bff-assess-score {
 		display: grid;
 		place-items: center;
 		flex: none;
 		inline-size: 1.3rem;
 		block-size: 1.3rem;
-		border: 1px solid var(--sl-color-gray-5);
+		border: 1px solid var(--sl-color-gray-4);
 		border-radius: var(--bff-radius-pill);
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);
 		color: var(--sl-color-gray-3);
+	}
+	.bff-assess-score > span {
+		display: none;
+	}
+	label:has(input:checked) .bff-assess-score::after {
+		content: '';
+		inline-size: 0.45rem;
+		block-size: 0.45rem;
+		border-radius: 50%;
+		background: var(--bff-on-accent);
+	}
+	.bff-assess[data-level] .bff-assess-score > span {
+		display: inline;
+	}
+	.bff-assess[data-level] label:has(input:checked) .bff-assess-score::after {
+		content: none;
 	}
 	label:has(input:checked) {
 		border-color: var(--sl-color-accent);
@@ -344,19 +418,65 @@ const QUESTIONS = [
 		outline-offset: 2px;
 	}
 
+	/* Compact progress bar for one-column layouts, where the result sits below all eight questions. */
+	.bff-assess-jump {
+		position: sticky;
+		bottom: 0.75rem;
+		z-index: 2;
+		display: none;
+		flex-wrap: wrap;
+		gap: 0.25rem 0.5rem;
+		align-items: center;
+		justify-content: center;
+		min-block-size: 2.75rem;
+		margin-top: 1rem;
+		padding: 0.5rem 1rem;
+		border: 1px solid var(--sl-color-hairline);
+		border-radius: var(--bff-radius-pill);
+		background: var(--bff-surface);
+		box-shadow: var(--bff-shadow-sm);
+		font-family: var(--bff-font-mono);
+		font-size: var(--bff-text-2xs);
+		color: var(--sl-color-gray-2);
+		text-decoration: none;
+	}
+	.bff-assess-jump strong {
+		font-family: var(--sl-font);
+		font-size: var(--bff-text-sm);
+		font-weight: 600;
+		color: var(--sl-color-accent-high);
+	}
+	.bff-assess-jump:hover strong {
+		text-decoration: underline;
+	}
+	.bff-assess-jump:focus-visible {
+		outline: 2px solid var(--sl-color-accent-high);
+		outline-offset: 2px;
+	}
+	:global(html:has(.bff-assess-jump)) {
+		scroll-padding-bottom: 5rem;
+	}
+
 	.bff-assess-result {
 		position: sticky;
 		top: calc(var(--sl-nav-height) + 1.5rem);
+		min-inline-size: 0;
+		scroll-margin-top: calc(var(--sl-nav-height) + 1rem);
+	}
+	.bff-assess-result:focus {
+		outline: none;
 	}
 	.bff-assess-sticky {
 		display: grid;
+		grid-template-columns: minmax(0, 1fr);
 		gap: 0.75rem;
 		padding: 1.25rem;
 		border: 1px solid var(--sl-color-hairline);
 		border-radius: var(--bff-radius);
 		background: var(--bff-surface);
+		overflow-wrap: break-word;
 	}
-	.bff-assess-sticky :is(h3, h4, p) {
+	.bff-assess-sticky :is(h2, h3, p, dl, dd) {
 		margin: 0;
 	}
 	.bff-assess-meter {
@@ -378,15 +498,31 @@ const QUESTIONS = [
 		font-size: var(--bff-text-2xs);
 		color: var(--sl-color-gray-3);
 	}
-	.bff-assess-empty h3 {
+	.bff-assess-empty h2 {
 		font-size: var(--bff-text-lg);
 		font-weight: 600;
+		line-height: 1.3;
 		color: var(--sl-color-white);
 	}
 	.bff-assess-empty p,
 	.bff-assess-why {
 		font-size: var(--bff-text-sm);
 		color: var(--sl-color-gray-3);
+	}
+	.bff-assess-why {
+		display: grid;
+		gap: 0.6rem;
+	}
+	.bff-assess-reason {
+		display: grid;
+		gap: 0.4rem;
+	}
+	.bff-assess-reason dt {
+		font-weight: 600;
+		color: var(--sl-color-white);
+	}
+	.bff-assess-reason dd {
+		color: var(--sl-color-gray-2);
 	}
 	.bff-assess-level {
 		display: grid;
@@ -396,19 +532,17 @@ const QUESTIONS = [
 		border-radius: var(--bff-radius-md);
 		background: color-mix(in oklab, var(--accent) 12%, transparent);
 	}
-	.bff-assess-level h3 {
+	.bff-assess-level h2 {
 		font-size: var(--bff-text-xl);
 		font-weight: 600;
+		line-height: 1.2;
 		color: var(--sl-color-white);
-	}
-	.bff-assess-level h3 span {
-		color: var(--accent);
 	}
 	.bff-assess-tag {
 		font-size: var(--bff-text-sm);
 		color: var(--sl-color-gray-2);
 	}
-	.bff-assess-sticky h4 {
+	.bff-assess-sticky h3 {
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);
 		font-weight: 500;
@@ -434,26 +568,38 @@ const QUESTIONS = [
 		flex-wrap: wrap;
 		gap: 0.5rem;
 	}
+	.bff-assess-actions .bff-btn {
+		max-inline-size: 100%;
+		white-space: normal;
+		text-align: center;
+	}
 	.bff-assess-actions[hidden],
 	.bff-assess-level[hidden],
-	[data-next][hidden] {
+	.bff-assess-why[hidden],
+	.bff-assess-reason > [hidden],
+	[data-next][hidden],
+	[data-reset][hidden] {
 		display: none;
 	}
 	[data-reset] {
 		justify-self: start;
 	}
 
-	@media (max-width: 62em) {
-		.bff-assess {
-			grid-template-columns: 1fr;
+	/* Container units follow text size, so 200% text also drops to one column. */
+	@container assess (max-width: 40rem) {
+		.bff-assess-grid {
+			grid-template-columns: minmax(0, 1fr);
 		}
 		.bff-assess-result {
 			position: static;
 		}
+		.bff-assess-jump {
+			display: flex;
+		}
 	}
-	@media (max-width: 40em) {
+	@container assess (max-width: 36rem) {
 		.bff-assess-options {
-			grid-template-columns: 1fr;
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>

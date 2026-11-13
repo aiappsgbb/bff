@@ -1,20 +1,18 @@
 ---
-title: Playbook · Crawl
-description: Set up gates and context, then take one issue from spec to merge with Copilot as your assistant. Singleplayer, on your laptop.
-eyebrow: playbook.crawl()
+title: Low autonomy playbook
+description: Set up gates and context, then take one issue from spec to merge with Copilot as your assistant, on your laptop.
+eyebrow: playbook.low()
 accent: yellow
 tableOfContents:
   maxHeadingLevel: 2
 ---
-import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
+import { Aside } from '@astrojs/starlight/components';
 import LevelIndicator from '../../../components/LevelIndicator.astro';
-import PlaybookProgress from '../../../components/PlaybookProgress.astro';
-import StepDone from '../../../components/StepDone.astro';
 
 <LevelIndicator level="low" kind="playbooks" />
 
 <Aside type="caution" title="Draft playbook">
-This playbook is a placeholder. The steps and exit criteria are set; detailed UI and CLI instructions are coming. Features marked **preview** may change.
+This playbook is a placeholder. The steps and exit criteria are set. Features marked **preview** may change.
 </Aside>
 
 **Time:** About half a day for one repository.
@@ -26,120 +24,18 @@ This playbook is a placeholder. The steps and exit criteria are set; detailed UI
 - GitHub Advanced Security, or the security tools you already use, connected to the repository.
 - The Copilot app, the Copilot CLI or an IDE with Copilot, on your laptop.
 
-<PlaybookProgress level="low" />
+## Steps
 
-## 1. Protect the main branch
+*Coming soon:* detailed UI and CLI instructions for each step.
 
-Turn on a ruleset for the default branch: pull requests required, status checks required, and code owners for the paths that matter.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Repository **Settings → Rules → Rulesets**, and a `CODEOWNERS` file.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Create the ruleset with `gh api` and commit `CODEOWNERS`.
-	</TabItem>
-</Tabs>
-
-<StepDone level="low" n={1} />
-
-## 2. Make CI the first gate
-
-Every pull request runs build, tests and scans before anyone reviews it.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Add or update a GitHub Actions workflow and mark its checks as required.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Scaffold the workflow, push it and check runs with `gh run list`.
-	</TabItem>
-</Tabs>
-
-<StepDone level="low" n={2} />
-
-## 3. Write down your context
-
-Add repository custom instructions, an `AGENTS.md` and a first agent skill, and review them like code.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Create `.github/copilot-instructions.md` and `.github/skills/` in a pull request.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Ask the Copilot CLI to draft them from the codebase, then review the diff.
-	</TabItem>
-</Tabs>
-
-<StepDone level="low" n={3} />
-
-## 4. Start from an issue
-
-Pick a small, well-scoped change and capture the intent in an issue.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Create the issue on github.com with an issue form.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* `gh issue create`
-	</TabItem>
-</Tabs>
-
-<StepDone level="low" n={4} />
-
-## 5. Turn the issue into a spec
-
-Plan with Copilot: acceptance criteria, approach and test plan, saved in the repository.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Plan in the Copilot app and save the spec.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Plan with the Copilot CLI and save the spec.
-	</TabItem>
-</Tabs>
-
-<StepDone level="low" n={5} />
-
-## 6. Build with Copilot
-
-Let Copilot implement the spec while you watch, steer and accept each edit.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Work in a Copilot app session on a new branch.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* Work in a Copilot CLI session on a new branch.
-	</TabItem>
-</Tabs>
-
-<StepDone level="low" n={6} />
-
-## 7. Review with evidence
-
-Open the pull request. Copilot code review, CI and security scans produce evidence; a person approves.
-
-<Tabs syncKey="track">
-	<TabItem label="UI" icon="laptop">
-		*Coming soon.* Request a Copilot code review on the pull request and read the checks.
-	</TabItem>
-	<TabItem label="CLI" icon="seti:shell">
-		*Coming soon.* `gh pr create`, then follow checks with `gh pr checks`.
-	</TabItem>
-</Tabs>
-
-<StepDone level="low" n={7} />
-
-## 8. Merge and observe
-
-Merge, release as usual and watch the signals. Note what to improve in your instructions and skills.
-
-*Coming soon.*
-
-<StepDone level="low" n={8} />
+1. **Protect the main branch.** Turn on a ruleset for the default branch: pull requests required, status checks required, and code owners for the paths that matter.
+2. **Make CI the first gate.** Every pull request runs build, tests and scans before anyone reviews it.
+3. **Write down your context.** Add repository custom instructions, an `AGENTS.md` and a first agent skill, and review them like code.
+4. **Start from an issue.** Pick a small, well-scoped change and capture the intent in an issue.
+5. **Turn the issue into a spec.** Plan with Copilot: acceptance criteria, approach and test plan, saved in the repository.
+6. **Build with Copilot.** Let Copilot implement the spec while you watch, steer and accept each edit.
+7. **Review with evidence.** Open the pull request. Copilot code review, CI and security scans produce evidence; a person approves.
+8. **Merge and observe.** Merge, release as usual and watch the signals. Note what to improve in your instructions and skills.
 
 ## Evidence to move up
 
@@ -147,7 +43,7 @@ Merge, release as usual and watch the signals. Note what to improve in your inst
 - Instructions and skills exist, are reviewed and improve every week.
 - Most agent-assisted pull requests merge with few corrections.
 
-When the evidence holds, move this work type to [Walk](/levels/medium/) and open the [Walk playbook](/playbooks/medium/).
+When the evidence holds, move this work type to [medium autonomy](/levels/medium/) and open the [medium autonomy playbook](/playbooks/medium/).
 
 ## If you need to dim back up
 

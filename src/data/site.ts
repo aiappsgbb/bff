@@ -48,6 +48,9 @@ export const LAYER_META = {
 export const LEVELS: Record<LevelKey, {
 	key: LevelKey;
 	name: string;
+	/** Short display label: Low, Medium or High. */
+	short: string;
+	/** @deprecated Alias of `short`, kept for existing components. Levels are always Low, Medium or High. */
 	gait: string;
 	tagline: string;
 	floor: string;
@@ -62,13 +65,14 @@ export const LEVELS: Record<LevelKey, {
 	low: {
 		key: 'low',
 		name: 'Low autonomy',
-		gait: 'Crawl',
+		short: 'Low',
+		gait: 'Low',
 		tagline: 'Humans drive every step, agents assist.',
 		floor: 'Lights on',
 		people: 'Drive every step and accept each edit',
 		agents: 'Assist in the IDE, CLI and Copilot app',
 		approvals: 'Every change, by a person',
-		mode: 'Singleplayer',
+		mode: 'One developer, local',
 		modeDetail: 'One developer and their agents, on a laptop.',
 		readyWhen: "Gates run on every change and teams trust the agents' suggestions.",
 		demo: 'A developer-driven session: Copilot projects, the Copilot app, Copilot Fusion and Copilot code review.',
@@ -76,13 +80,14 @@ export const LEVELS: Record<LevelKey, {
 	medium: {
 		key: 'medium',
 		name: 'Medium autonomy',
-		gait: 'Walk',
+		short: 'Medium',
+		gait: 'Medium',
 		tagline: 'Agents do the work, people approve.',
 		floor: 'Dimmed',
 		people: 'Set priorities, steer sessions, approve merges',
 		agents: 'Draft specs, build in parallel, review and fix',
 		approvals: 'By risk: people approve the merge',
-		mode: 'Multiplayer',
+		mode: 'Team, in the cloud',
 		modeDetail: 'Shared cloud sessions and automations the whole team can see and steer.',
 		readyWhen: 'Evidence on each change is enough to approve without reading every diff.',
 		demo: 'Copilot automations, mission control with Copilot cloud agent, agentic workflows and the Azure SRE Agent.',
@@ -90,13 +95,14 @@ export const LEVELS: Record<LevelKey, {
 	high: {
 		key: 'high',
 		name: 'High autonomy',
-		gait: 'Run',
+		short: 'High',
+		gait: 'High',
 		tagline: 'The floor runs lights-off, the HQ stays bright.',
 		floor: 'Lights-off',
 		people: 'Set goals, guardrails and SLOs; decide exceptions',
 		agents: 'Fleets plan, build, verify, release and fix',
 		approvals: 'By exception, backed by evidence',
-		mode: 'Multiplayer at scale',
+		mode: 'Fleets, org-wide',
 		modeDetail: 'Fleets of agents per work type, org-wide, steered from any device.',
 		readyWhen: 'Keep tuning: each work type, measured end to end, with approval by exception.',
 		demo: 'Session continuity from phone to the Copilot app, GHAS with Autofix, Foundry evals and an approval in Microsoft Teams.',

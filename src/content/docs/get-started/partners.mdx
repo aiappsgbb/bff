@@ -2,6 +2,7 @@
 title: For partners
 description: The framework is open for partners to build on. Package your own IP on top of it, and help customers build their factories at scale.
 eyebrow: partners.build()
+accent: green
 ---
 import { Image } from 'astro:assets';
 import partners from '../../../assets/lego/partners.png';
@@ -17,26 +18,38 @@ import { CardGrid, Card } from '@astrojs/starlight/components';
 
 **Customers apply it directly.** Use the levels, playbooks and big picture to build your own factory, one work type at a time.
 
-**Partners build on it.** The framework is composable by design, so partners can fill its components with their own IP and offer it as a product or a service. Specialised partners are how the bright factory reaches every industry and every team.
+**Partners build on it.** The framework is [composable by design](/framework/principles/#composable-by-design), so partners can fill its components with their own IP and offer it as a product or a service. Specialised partners are how the bright factory reaches every industry and every team.
 
 ## What partners can build
 
 <CardGrid>
-	<Card title="Assessments" icon="magnifier">Factory readiness reviews based on the levels and the self-assessment, with a roadmap per work type.</Card>
-	<Card title="Skills and context packs" icon="open-book">Agent skills, instructions and specs for a stack, a domain or an industry, versioned and reviewed like code.</Card>
-	<Card title="Agents and tools" icon="puzzle">Custom agents and MCP servers that plug into the factory floor and the foundations.</Card>
-	<Card title="Factory accelerators" icon="rocket">Templates for gates, automations, environments and policies that stand up a level in days.</Card>
-	<Card title="Industry factories" icon="seti:config">Opinionated factories for regulated or specialised industries, with their own controls and evidence.</Card>
-	<Card title="Managed operations" icon="setting">Run and tune the factory for a customer: the engineering loop as a service.</Card>
+	<Card title="Assessments" icon="magnifier">Factory readiness reviews based on the [levels](/levels/) and the [self-assessment](/get-started/find-your-level/), with a roadmap per work type.</Card>
+	<Card title="Skills and context packs" icon="open-book">Agent skills, instructions and specs for a stack, a domain or an industry, versioned and reviewed like code. See [context-centric](/framework/principles/#context-centric).</Card>
+	<Card title="Agents and tools" icon="puzzle">Custom agents and MCP servers that plug into the [factory floor and the foundations](/#what), next to the [products](/reference/products/) that fill them today.</Card>
+	<Card title="Factory accelerators" icon="rocket">Templates for the gates, automations, environments and policies in the [playbooks](/playbooks/), to stand up a level in days.</Card>
+	<Card title="Industry factories" icon="seti:config">Opinionated factories for regulated or specialised industries, with their own controls and [evidence](/reference/glossary/#evidence-bundle).</Card>
+	<Card title="Managed operations" icon="setting">Run and tune the factory for a customer: the [engineering loop](/framework/engineering/) as a service.</Card>
 </CardGrid>
 
-## How a partner engagement can run
+## The partner engagement model
+
+The [customer journey](/get-started/) runs explore, assess, pilot and scale. A partner engagement picks it up at assess and adds a step to prove each level before it scales:
 
 1. **Assess.** Map the customer's work types to levels, and find the weakest foundations.
 2. **Pilot.** Take one work type up one level, with the playbook and the customer's own tools.
 3. **Prove.** Measure it end to end against the same SLOs, and rehearse dimming back up.
 4. **Scale.** Repeat per work type and per team, and hand over the engineering loop or run it as a service.
 
+## Build on BFF
+
+The Bright Factory Framework is open source under the [MIT License](https://github.com/aiappsgbb/bff/blob/main/LICENSE).
+
+- **Fork it and extend it.** The licence lets partners and customers use, copy, modify, merge, publish, distribute, sublicense and sell copies of the framework, so you can build your own IP on it.
+- **Keep the notice.** Include the copyright notice and the permission notice in all copies or substantial portions of the framework.
+- **No warranty.** The framework is provided "as is", without warranty of any kind.
+- **Who maintains it.** The Microsoft Global Black Belt team created the framework and maintains it in the [aiappsgbb/bff repository](https://github.com/aiappsgbb/bff).
+
 ## Get involved
 
-Talk to your Microsoft or partner contact about partner programmes, enablement and co-selling for the Bright Factory Framework.
+- **Questions, feedback and contributions:** open an issue in [GitHub issues](https://github.com/aiappsgbb/bff/issues).
+- **Partner programmes, enablement and co-selling:** talk to your Microsoft or partner contact.

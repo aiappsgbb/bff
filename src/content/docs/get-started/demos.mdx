@@ -2,6 +2,7 @@
 title: See it working
 description: One demo, one continuous session, the whole factory line. Built and run with the GitHub Copilot app and Copilot automations.
 eyebrow: factory.demo()
+accent: green
 ---
 import DemoActs from '../../../components/DemoActs.astro';
 import { LEVELS } from '../../../data/site';
@@ -30,9 +31,9 @@ One continuous session follows **FieldAssist**, a synthetic service-triage assis
 
 Each level has a smaller demo that shows its own dimmer position.
 
-- **Crawl:** {LEVELS.low.demo}
-- **Walk:** {LEVELS.medium.demo}
-- **Run:** {LEVELS.high.demo}
+- **Low autonomy:** {LEVELS.low.demo}
+- **Medium autonomy:** {LEVELS.medium.demo}
+- **High autonomy:** {LEVELS.high.demo}
 
 ## Build the demo with the factory
 
