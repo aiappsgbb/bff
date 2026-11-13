@@ -74,8 +74,7 @@ const rows = [
 	.bff-bvd [data-col] {
 		transition:
 			background-color 0.3s var(--bff-ease-soft),
-			color 0.3s var(--bff-ease-soft),
-			opacity 0.3s var(--bff-ease-soft);
+			color 0.3s var(--bff-ease-soft);
 	}
 	.bff-bvd[data-mode='bright'] [data-col='bright'] {
 		background: color-mix(in oklab, var(--bff-green) 14%, transparent);
@@ -85,8 +84,9 @@ const rows = [
 		background: color-mix(in oklab, var(--bff-alert) 12%, transparent);
 		color: var(--sl-color-white);
 	}
+	/* The column not in focus recedes by colour (gray-3 keeps >= 4.5:1), not opacity. */
 	.bff-bvd[data-mode='bright'] td[data-col='dark'],
 	.bff-bvd[data-mode='dark'] td[data-col='bright'] {
-		opacity: 0.6;
+		color: var(--sl-color-gray-3);
 	}
 </style>

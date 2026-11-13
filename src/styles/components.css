@@ -3,17 +3,22 @@
  * Tokens come from theme.css; see DESIGN.md.
  */
 
-/* ---------- Accent mapping (eyebrow squares, title bars, cards) ---------- */
-[data-accent='green'] { --accent: var(--bff-green); }
-[data-accent='blue'] { --accent: var(--bff-blue); }
-[data-accent='purple'] { --accent: var(--bff-purple); }
-[data-accent='pink'] { --accent: var(--bff-pink); }
-[data-accent='orange'] { --accent: var(--bff-orange); }
-[data-accent='yellow'] { --accent: var(--bff-yellow); }
-[data-layer='hq'] { --accent: var(--bff-hq); }
-[data-layer='floor'] { --accent: var(--bff-floor); }
-[data-layer='foundations'] { --accent: var(--bff-found); }
-[data-layer='engineering'] { --accent: var(--bff-eng); }
+/*
+ * ---------- Accent mapping (eyebrow squares, title bars, cards) ----------
+ * --accent is for fills, bars, borders and icons. --accent-ink is the text-safe variant
+ * (>= 4.5:1 on canvas, surfaces and light accent tints): use it whenever text is set in the
+ * accent colour, as `color: var(--accent-ink, var(--accent))`.
+ */
+[data-accent='green'] { --accent: var(--bff-green); --accent-ink: var(--bff-green-ink); }
+[data-accent='blue'] { --accent: var(--bff-blue); --accent-ink: var(--bff-blue-ink); }
+[data-accent='purple'] { --accent: var(--bff-purple); --accent-ink: var(--bff-purple-ink); }
+[data-accent='pink'] { --accent: var(--bff-pink); --accent-ink: var(--bff-pink-ink); }
+[data-accent='orange'] { --accent: var(--bff-orange); --accent-ink: var(--bff-orange-ink); }
+[data-accent='yellow'] { --accent: var(--bff-yellow); --accent-ink: var(--bff-yellow-ink); }
+[data-layer='hq'] { --accent: var(--bff-hq); --accent-ink: var(--bff-hq-ink); }
+[data-layer='floor'] { --accent: var(--bff-floor); --accent-ink: var(--bff-floor-ink); }
+[data-layer='foundations'] { --accent: var(--bff-found); --accent-ink: var(--bff-found-ink); }
+[data-layer='engineering'] { --accent: var(--bff-eng); --accent-ink: var(--bff-eng-ink); }
 
 .bff-mono {
 	font-family: var(--bff-font-mono);
@@ -161,7 +166,7 @@
 	padding: 0.35rem 0.85rem;
 	font-size: var(--bff-text-sm);
 }
-.bff-btn:disabled {
+.bff-btn:is(:disabled, [aria-disabled='true']) {
 	opacity: 0.45;
 	cursor: not-allowed;
 	transform: none;
@@ -371,6 +376,10 @@ a.bff-card:hover {
 	font-size: var(--bff-text-sm);
 	color: var(--sl-color-gray-3);
 }
+.bff-footer-meta a {
+	align-items: center;
+	min-block-size: 1.5rem;
+}
 .bff-site-footer {
 	display: grid;
 	gap: 0.75rem;
@@ -395,6 +404,9 @@ a.bff-card:hover {
 	gap: 0.5rem 1.25rem;
 }
 .bff-site-footer nav a {
+	display: inline-flex;
+	align-items: center;
+	min-block-size: 1.5rem;
 	color: var(--sl-color-gray-2);
 	text-decoration: none;
 }
@@ -403,6 +415,7 @@ a.bff-card:hover {
 	text-decoration: underline;
 }
 .bff-site-footer-note {
+	max-inline-size: 75ch;
 	font-size: var(--bff-text-xs);
 }
 .bff-site-footer-note + .bff-site-footer-note {
@@ -544,10 +557,18 @@ a.bff-card:hover {
 }
 
 /* ---------- Data tables ---------- */
+/* Scrolls on narrow screens; edge shadows show only while columns are hidden off one side. */
 .bff-table-wrap {
 	overflow-x: auto;
+	overscroll-behavior-inline: contain;
 	border: 1px solid var(--sl-color-hairline);
 	border-radius: var(--bff-radius-md);
+	background:
+		linear-gradient(to right, var(--sl-color-black) 30%, transparent) left / 2rem 100% no-repeat local,
+		linear-gradient(to left, var(--sl-color-black) 30%, transparent) right / 2rem 100% no-repeat local,
+		radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--bff-shadow-ink) 18%, transparent), transparent) left / 0.75rem 100% no-repeat scroll,
+		radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--bff-shadow-ink) 18%, transparent), transparent) right / 0.75rem 100% no-repeat scroll,
+		var(--sl-color-black);
 }
 .bff-table {
 	inline-size: 100%;
@@ -597,9 +618,9 @@ a.bff-card:hover {
 }
 
 /* ---------- Level accents (low → medium → high) ---------- */
-[data-level-accent='low'] { --accent: var(--bff-yellow); }
-[data-level-accent='medium'] { --accent: var(--bff-green); }
-[data-level-accent='high'] { --accent: var(--bff-blue); }
+[data-level-accent='low'] { --accent: var(--bff-yellow); --accent-ink: var(--bff-yellow-ink); }
+[data-level-accent='medium'] { --accent: var(--bff-green); --accent-ink: var(--bff-green-ink); }
+[data-level-accent='high'] { --accent: var(--bff-blue); --accent-ink: var(--bff-blue-ink); }
 
 /* ---------- Section footer link ---------- */
 .bff-section-more {
@@ -625,4 +646,39 @@ a.bff-card:hover {
 	border: 1px solid var(--accent, var(--sl-color-gray-5));
 	border-radius: var(--bff-radius-md);
 	background: color-mix(in oklab, var(--accent, transparent) 8%, transparent);
+}
+
+/*
+ * ---------- Touch targets ----------
+ * Fine pointers keep the compact sizes above (all >= 24px). Coarse pointers get 44px rows
+ * for every control and stand-alone link, including Starlight's sidebar and page footer.
+ */
+@media (pointer: coarse) {
+	.bff-action,
+	.bff-tab,
+	.bff-pause,
+	.bff-btn-small,
+	a.bff-chip,
+	.bff-chips .bff-chip,
+	.bff-site-footer nav a,
+	.bff-section-more a,
+	a.bff-card-more {
+		min-block-size: 2.75rem;
+	}
+	.bff-section-more a,
+	a.bff-card-more {
+		display: inline-flex;
+		align-items: center;
+	}
+	.sidebar-content a,
+	.sidebar-content summary {
+		display: flex;
+		align-items: center;
+		min-block-size: 2.75rem;
+	}
+	.bff-footer-meta a {
+		display: inline-flex;
+		align-items: center;
+		min-block-size: 2.75rem;
+	}
 }

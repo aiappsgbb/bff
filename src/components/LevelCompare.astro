@@ -15,9 +15,9 @@ const rows = [
 ] as const;
 ---
 
-<div class="bff-table-wrap not-content">
+<div class="bff-table-wrap not-content" role="region" aria-labelledby="bff-lc-caption" tabindex="0">
 	<table class="bff-table bff-lc">
-		<caption class="sr-only">Autonomy levels compared</caption>
+		<caption id="bff-lc-caption" class="sr-only">Autonomy levels compared</caption>
 		<thead>
 			<tr>
 				<td></td>
@@ -26,7 +26,7 @@ const rows = [
 						<th scope="col" data-current={k === current ? '' : undefined} data-level-accent={k}>
 							<a href={withBase(`/levels/${k}/`)}>
 								<span class="bff-dot" aria-hidden="true" />
-								{LEVELS[k].gait} · {LEVELS[k].name}
+								{LEVELS[k].name}
 							</a>
 						</th>
 					))
@@ -54,13 +54,26 @@ const rows = [
 
 <style>
 	.bff-lc thead a {
+		display: inline-flex;
+		align-items: center;
+		min-block-size: 1.5rem;
 		color: inherit;
 		text-decoration: none;
+	}
+	@media (pointer: coarse) {
+		.bff-lc thead a {
+			min-block-size: 2.75rem;
+		}
 	}
 	.bff-lc thead a:hover {
 		color: var(--sl-color-white);
 	}
+	/* Fits the 46rem content column at desktop; narrower screens scroll inside .bff-table-wrap. */
 	.bff-lc td {
-		min-inline-size: 12rem;
+		min-inline-size: 10rem;
+	}
+	.bff-lc tbody th {
+		min-inline-size: 7rem;
+		white-space: normal;
 	}
 </style>

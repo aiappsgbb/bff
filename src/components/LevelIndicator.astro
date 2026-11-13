@@ -18,7 +18,7 @@ const other = kind === 'levels' ? 'playbooks' : 'levels';
 				LEVEL_ORDER.map((k) => (
 					<li>
 						<a href={withBase(`/${kind}/${k}/`)} aria-current={k === level ? 'page' : undefined} data-level-accent={k}>
-							<span class="bff-li-gait">{LEVELS[k].gait}</span>
+							<span class="bff-li-word">{LEVELS[k].short}</span>
 							<span class="bff-li-floor">{LEVELS[k].floor}</span>
 						</a>
 					</li>
@@ -29,7 +29,7 @@ const other = kind === 'levels' ? 'playbooks' : 'levels';
 	<p class="bff-li-meta">
 		<span><strong>{LEVELS[level].mode}</strong> · {LEVELS[level].approvals.toLowerCase()}</span>
 		<a href={withBase(`/${other}/${level}/`)}>
-			{kind === 'levels' ? `Open the ${LEVELS[level].gait.toLowerCase()} playbook →` : `About ${LEVELS[level].name.toLowerCase()} →`}
+			{kind === 'levels' ? `Open the ${LEVELS[level].name.toLowerCase()} playbook →` : `About ${LEVELS[level].name.toLowerCase()} →`}
 		</a>
 	</p>
 </nav>
@@ -119,7 +119,7 @@ const other = kind === 'levels' ? 'playbooks' : 'levels';
 	.bff-li-track a[data-level-accent='high']::before {
 		background: transparent;
 	}
-	.bff-li-gait {
+	.bff-li-word {
 		font-size: var(--bff-text-sm);
 		font-weight: 700;
 	}
@@ -141,9 +141,18 @@ const other = kind === 'levels' ? 'playbooks' : 'levels';
 		color: var(--sl-color-white);
 	}
 	.bff-li-meta a {
+		display: inline-flex;
+		align-items: center;
+		min-block-size: 1.5rem;
 		font-weight: 600;
 		color: var(--sl-color-accent-high);
 		text-decoration: none;
+	}
+	@media (pointer: coarse) {
+		.bff-li-meta a,
+		.bff-li-track a {
+			min-block-size: 2.75rem;
+		}
 	}
 	@media (max-width: 36em) {
 		.bff-li-label {

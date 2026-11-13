@@ -2,9 +2,10 @@
 import { data, LAYER_META, VENDOR_LABEL, type Vendor } from '../data/site';
 import ProductChip from './ProductChip.astro';
 
+// framework.json carries its own short keys (sup/found); the site key must win so data-layer matches the CSS.
 const bands = (['hq', 'floor', 'foundations'] as const).map((k) => ({
-	key: k,
 	...data.layers[k],
+	key: k,
 	meta: LAYER_META[k],
 	anchor: k === 'hq' ? 'factory-hq' : k === 'floor' ? 'factory-floor' : 'factory-foundations',
 }));
@@ -15,6 +16,7 @@ const uid = 'bff-bp';
 ---
 
 <div class="bff-bp not-content" data-view="capabilities" id={uid}>
+	<a class="bff-bp-skip" href={`#${uid}-end`}>Skip the big picture</a>
 	<div class="bff-bp-toolbar">
 		<div class="bff-bp-view">
 			<span class="bff-bp-label" id={`${uid}-view`}>View</span>
@@ -36,8 +38,15 @@ const uid = 'bff-bp';
 					</label>
 				))
 			}
+			<span class="bff-bp-hint" data-show="capabilities">
+				Switch to Products to filter by vendor.
+			</span>
 		</fieldset>
 	</div>
+	<p class="bff-bp-empty" data-empty-all hidden>
+		No vendors selected, so no products are shown.
+		<button class="bff-action" type="button" data-reset>Show all vendors</button>
+	</p>
 
 	<div class="bff-bp-grid" id={`${uid}-grid`}>
 		<div class="bff-bp-bands">
@@ -65,10 +74,10 @@ const uid = 'bff-bp';
 									<li class="bff-bp-card">
 										<details>
 											<summary>
-												<h4>
+												<span class="bff-bp-card-title">
 													{c.name}
 													{c.stages && <span class="bff-bp-stages">{c.stages}</span>}
-												</h4>
+												</span>
 												<span class="bff-bp-count" data-show="capabilities">
 													{c.items.length}
 													<span class="sr-only"> capabilities</span>
@@ -90,6 +99,9 @@ const uid = 'bff-bp';
 													</li>
 												))}
 											</ul>
+											<p class="bff-bp-none" data-show="products">
+												No products from the selected vendors.
+											</p>
 										</details>
 									</li>
 								))}
@@ -140,6 +152,7 @@ const uid = 'bff-bp';
 		</aside>
 	</div>
 	<p class="bff-bp-status" aria-live="polite" data-status></p>
+	<span class="bff-bp-end" id={`${uid}-end`} tabindex="-1"></span>
 </div>
 
 <script>
@@ -149,6 +162,12 @@ const uid = 'bff-bp';
 		const vendors = root.querySelector<HTMLFieldSetElement>('.bff-bp-vendors')!;
 		const boxes = [...vendors.querySelectorAll<HTMLInputElement>('input')];
 		const cards = [...root.querySelectorAll<HTMLDetailsElement>('.bff-bp-card details')];
+		const emptyAll = root.querySelector<HTMLElement>('[data-empty-all]')!;
+		root.querySelector('[data-reset]')!.addEventListener('click', () => {
+			boxes.forEach((b) => (b.checked = true));
+			update();
+			boxes[0]?.focus();
+		});
 		const expand = root.querySelector<HTMLButtonElement>('[data-expand]')!;
 		const expandLabel = expand.querySelector<HTMLElement>('[data-expand-label]')!;
 		const syncExpand = () => {
@@ -175,9 +194,15 @@ const uid = 'bff-bp';
 					visible += chips.length;
 					shown += n;
 					d.querySelector<HTMLElement>('[data-count]')!.textContent = String(n);
+					d.toggleAttribute('data-empty', n === 0);
 				});
-				status.textContent = `Showing ${shown} of ${visible} product placements.`;
-			} else status.textContent = '';
+				// A product can sit in several components, so this counts mappings, not distinct products.
+				status.textContent = `Showing ${shown} of ${visible} product mappings.`;
+				emptyAll.hidden = on.length > 0;
+			} else {
+				status.textContent = '';
+				emptyAll.hidden = true;
+			}
 		};
 		viewBtns.forEach((btn) =>
 			btn.addEventListener('click', () => {
@@ -329,11 +354,68 @@ const uid = 'bff-bp';
 		color: var(--sl-color-gray-2);
 		transition: opacity 0.2s var(--bff-ease-soft);
 	}
-	.bff-bp-vendors:disabled {
-		opacity: 0.4;
-	}
 	.bff-bp-vendors:disabled .bff-bp-vendor {
+		opacity: 0.45;
 		cursor: default;
+	}
+	.bff-bp-vendors:not(:disabled) .bff-bp-hint {
+		display: none;
+	}
+	.bff-bp-hint {
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-bp-empty {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 1rem;
+		margin: 0 0 1rem;
+		padding: 0.75rem 1rem;
+		border: 1px dashed var(--sl-color-gray-5);
+		border-radius: var(--bff-radius-md);
+		font-size: var(--bff-text-sm);
+		color: var(--sl-color-gray-2);
+	}
+	.bff-bp-empty[hidden] {
+		display: none;
+	}
+	.bff-bp-none {
+		display: none;
+		margin: 0;
+		padding: 0 0.75rem 0.75rem;
+		font-size: var(--bff-text-xs);
+		color: var(--sl-color-gray-3);
+	}
+	.bff-bp[data-view='products'] details[data-empty] .bff-bp-none {
+		display: block;
+	}
+	.bff-bp details[data-empty] .bff-chips {
+		display: none;
+	}
+	.bff-bp-skip {
+		position: absolute;
+		inline-size: 1px;
+		block-size: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+	.bff-bp-skip:focus-visible {
+		position: static;
+		display: inline-flex;
+		inline-size: auto;
+		block-size: auto;
+		min-block-size: 1.5rem;
+		margin-bottom: 0.75rem;
+		overflow: visible;
+		clip-path: none;
+		color: var(--sl-color-accent-high);
+		font-size: var(--bff-text-sm);
+		font-weight: 600;
+	}
+	.bff-bp-end:focus {
+		outline: none;
 	}
 	.bff-bp-view {
 		display: flex;
@@ -387,6 +469,7 @@ const uid = 'bff-bp';
 		display: inline-flex;
 		align-items: center;
 		gap: 0.35rem;
+		min-block-size: 1.5rem;
 		cursor: pointer;
 	}
 	.bff-bp-vendor input {
@@ -457,7 +540,7 @@ const uid = 'bff-bp';
 		font-size: var(--bff-text-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.08em;
-		color: var(--accent);
+		color: var(--accent-ink, var(--accent));
 	}
 	.bff-bp h3 {
 		margin: 0;
@@ -522,7 +605,7 @@ const uid = 'bff-bp';
 		margin-block: 0.2rem 0;
 		transform: rotate(-135deg);
 	}
-	.bff-bp-card h4 {
+	.bff-bp-card-title {
 		display: flex;
 		flex: 1;
 		flex-wrap: wrap;
@@ -600,7 +683,7 @@ const uid = 'bff-bp';
 		color: var(--sl-color-gray-3);
 	}
 	.bff-bp-flow span span {
-		color: var(--bff-floor);
+		color: var(--bff-floor-ink);
 		font-weight: 700;
 	}
 	.bff-bp-eng {
@@ -657,12 +740,12 @@ const uid = 'bff-bp';
 	}
 	.bff-bp-loop-label text {
 		font-family: var(--bff-font-mono);
-		font-size: 0.625rem;
-		letter-spacing: 0.12em;
+		font-size: var(--bff-text-2xs);
+		letter-spacing: 0.1em;
 		text-transform: uppercase;
 		text-anchor: middle;
 		dominant-baseline: central;
-		fill: var(--accent);
+		fill: var(--accent-ink, var(--accent));
 	}
 	.bff-bp-eng header {
 		display: flex;
@@ -674,17 +757,15 @@ const uid = 'bff-bp';
 		gap: 0.15rem;
 		margin-block: auto;
 		padding: 0.75rem;
-		border: 1px solid var(--sl-color-hairline);
-		border-left: 3px solid var(--accent);
+		border: 1px solid color-mix(in oklab, var(--accent) 35%, var(--sl-color-hairline));
 		border-radius: var(--bff-radius-md);
-		background: var(--sl-color-black);
+		background: color-mix(in oklab, var(--accent) 6%, var(--sl-color-black));
 		transition:
 			border-color 0.6s var(--bff-ease-soft),
 			box-shadow 0.6s var(--bff-ease-soft);
 	}
 	.bff-bp-step[data-active] {
-		border-color: color-mix(in oklab, var(--accent) 55%, var(--sl-color-hairline));
-		border-left-color: var(--accent);
+		border-color: color-mix(in oklab, var(--accent) 75%, var(--sl-color-hairline));
 		box-shadow: 0 0 1.25rem -0.4rem color-mix(in oklab, var(--accent) 70%, transparent);
 	}
 	/* Connector from the step to its layer band, across the rail padding and the column gap. */
@@ -696,12 +777,12 @@ const uid = 'bff-bp';
 		pointer-events: none;
 	}
 	.bff-bp-step::before {
-		inset-inline-end: calc(100% + 3px);
+		inset-inline-end: calc(100% + 1px);
 		inline-size: calc(var(--bp-pad) + var(--bp-col-gap) + 1px);
 		border-top: 1px dashed color-mix(in oklab, var(--accent) 70%, transparent);
 	}
 	.bff-bp-step::after {
-		inset-inline-end: calc(100% + 4px + var(--bp-pad) + var(--bp-col-gap) - 0.2rem);
+		inset-inline-end: calc(100% + 2px + var(--bp-pad) + var(--bp-col-gap) - 0.2rem);
 		inline-size: 0.4rem;
 		block-size: 0.4rem;
 		margin-top: -0.2rem;
@@ -725,7 +806,7 @@ const uid = 'bff-bp';
 	}
 	.bff-bp-step-n {
 		font-family: var(--bff-font-mono);
-		color: var(--accent);
+		color: var(--accent-ink, var(--accent));
 	}
 	.bff-bp-step p {
 		margin: 0;
@@ -741,6 +822,13 @@ const uid = 'bff-bp';
 		margin: 0.5rem 0 0;
 		font-size: var(--bff-text-xs);
 		color: var(--sl-color-gray-3);
+	}
+	@media (pointer: coarse) {
+		.bff-bp-card summary,
+		.bff-bp-expand,
+		.bff-bp-vendor {
+			min-block-size: 2.75rem;
+		}
 	}
 	@media (max-width: 62em) {
 		.bff-bp-grid {

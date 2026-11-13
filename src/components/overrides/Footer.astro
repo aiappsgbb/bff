@@ -62,3 +62,27 @@ const isHome = entry.id === 'index' || entry.id === '';
 		</p>
 	</div>
 </footer>
+
+<script>
+	// Tables that scroll sideways need a keyboard stop (WCAG 2.1.1). Only scrollable ones get one, so wide screens keep a short tab order.
+	const sync = (el: HTMLElement) => {
+		const scrolls = el.scrollWidth > el.clientWidth + 1;
+		el.toggleAttribute('tabindex', scrolls);
+		if (scrolls) el.tabIndex = 0;
+		if (el.tagName === 'TABLE') return;
+		const label = el.querySelector('caption')?.textContent?.trim();
+		if (scrolls && label) {
+			el.setAttribute('role', 'region');
+			el.setAttribute('aria-label', label);
+		} else {
+			el.removeAttribute('role');
+			el.removeAttribute('aria-label');
+		}
+	};
+	const els = document.querySelectorAll<HTMLElement>(
+		'.sl-markdown-content table:not(:where(.not-content *)), .bff-table-wrap:not([tabindex])',
+	);
+	const ro = new ResizeObserver((entries) => entries.forEach((e) => sync(e.target as HTMLElement)));
+	els.forEach((el) => ro.observe(el));
+	document.fonts?.ready.then(() => els.forEach(sync));
+</script>

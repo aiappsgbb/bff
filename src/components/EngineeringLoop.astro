@@ -63,7 +63,7 @@ const uid = 'bff-loop';
 							tabindex={k === 'medium' ? 0 : -1}
 							data-level={k}
 						>
-							{LEVELS[k].gait} <span class="bff-tab-sub">{LEVELS[k].name}</span>
+							{LEVELS[k].name}
 						</button>
 					))
 				}
@@ -71,19 +71,22 @@ const uid = 'bff-loop';
 			{
 				LEVEL_ORDER.map((k) => (
 					<div class="bff-loop-tasks" role="tabpanel" id={`${uid}-panel-${k}`} aria-labelledby={`${uid}-tab-${k}`} hidden={k !== 'medium'} tabindex="0">
-						{data.levels[k].engineering.map((e, i) => (
-							<section data-layer={layers[i]}>
-								<h4>
-									<span class="bff-loop-badge" aria-hidden="true">{i + 1}</span>
-									{e.step}
-								</h4>
-								<ul>
-									{e.tasks.map((t) => (
-										<li>{t}</li>
-									))}
-								</ul>
-							</section>
-						))}
+						{/* Card titles, not document headings: the panel sits directly under the page h1. */}
+						<ol class="bff-loop-steps" role="list">
+							{data.levels[k].engineering.map((e, i) => (
+								<li data-layer={layers[i]}>
+									<p class="bff-loop-step-title">
+										<span class="bff-loop-badge" aria-hidden="true">{i + 1}</span>
+										{e.step}
+									</p>
+									<ul>
+										{e.tasks.map((t) => (
+											<li>{t}</li>
+										))}
+									</ul>
+								</li>
+							))}
+						</ol>
 					</div>
 				))
 			}
@@ -160,17 +163,23 @@ const uid = 'bff-loop';
 		to { transform: rotate(360deg); }
 	}
 	.bff-loop-tasks {
-		display: grid;
-		gap: 1rem;
 		margin-top: 1rem;
 	}
-	.bff-loop-tasks section {
+	.bff-loop-steps {
+		display: grid;
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.bff-loop-steps > li {
+		margin: 0;
 		padding: 0.85rem 1rem;
 		border: 1px solid var(--sl-color-hairline);
 		border-radius: var(--bff-radius-md);
 		background: var(--sl-color-black);
 	}
-	.bff-loop-tasks h4 {
+	.bff-loop-step-title {
 		display: flex;
 		align-items: center;
 		gap: 0.5rem;

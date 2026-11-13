@@ -16,16 +16,37 @@ const { frame } = Astro.props;
 	.bff-scrolly-step + .bff-scrolly-step {
 		border-top: 1px solid var(--sl-color-hairline);
 	}
+	/*
+	 * Inactive steps recede by colour, not opacity, so their text keeps >= 4.5:1 (gray-3).
+	 * The active step gets full-strength text and a filled accent square before its heading.
+	 */
 	:global(.bff-scrolly[data-js]) .bff-scrolly-step {
 		min-block-size: 70vh;
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
-		opacity: 0.4;
-		transition: opacity 0.4s var(--bff-ease-soft);
 	}
-	:global(.bff-scrolly[data-js]) .bff-scrolly-step[data-active] {
-		opacity: 1;
+	:global(.bff-scrolly[data-js]) .bff-scrolly-step :global(h2)::before {
+		content: '';
+		display: inline-block;
+		inline-size: 0.45em;
+		block-size: 0.45em;
+		margin-inline-end: 0.45em;
+		vertical-align: 0.12em;
+		border-radius: 2px;
+		background-color: var(--sl-color-gray-5);
+		transition: background-color 0.4s var(--bff-ease-soft);
+	}
+	:global(.bff-scrolly[data-js]) .bff-scrolly-step[data-active] :global(h2)::before {
+		background-color: var(--sl-color-accent);
+	}
+	:global(.bff-scrolly[data-js]) .bff-scrolly-step:not([data-active]),
+	:global(.bff-scrolly[data-js]) .bff-scrolly-step:not([data-active]) :global(:is(h2, h3, p, li, strong, em)) {
+		color: var(--sl-color-gray-3);
+		transition: color 0.4s var(--bff-ease-soft);
+	}
+	:global(.bff-scrolly[data-js]) .bff-scrolly-step :global(:is(h2, h3, p, li, strong, em)) {
+		transition: color 0.4s var(--bff-ease-soft);
 	}
 	:global(.bff-scrolly[data-js]) .bff-scrolly-step:first-child {
 		justify-content: flex-start;

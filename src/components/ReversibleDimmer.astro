@@ -26,7 +26,7 @@ const uid = 'bff-rd';
 				{
 					LEVEL_ORDER.map((k) => (
 						<span data-k={k}>
-							{LEVELS[k].gait}
+							{LEVELS[k].short}
 						</span>
 					))
 				}
@@ -42,9 +42,11 @@ const uid = 'bff-rd';
 								{i + 1}
 							</span>
 							<span class="bff-rd-title">{s.title}</span>
-							<span class="bff-rd-lvl">{LEVELS[stepLevel[i]].gait}</span>
+							<span class="bff-rd-lvl">{LEVELS[stepLevel[i]].short}</span>
 						</button>
-						<p>{s.text}</p>
+						<div class="bff-rd-body">
+							<p>{s.text}</p>
+						</div>
 					</li>
 				))
 			}
@@ -118,6 +120,10 @@ const uid = 'bff-rd';
 </script>
 
 <style>
+	/* The stage stacks on the figure's own width, so it also stacks when text is enlarged. */
+	.bff-rd {
+		container-type: inline-size;
+	}
 	.bff-rd-controls {
 		display: flex;
 		gap: 0.4rem;
@@ -138,7 +144,11 @@ const uid = 'bff-rd';
 		inset: 0.75rem auto auto 0.75rem;
 		padding: 0.2rem 0.6rem;
 		border-radius: var(--bff-radius-pill);
-		background: var(--bff-alert);
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		/* Dark --bff-alert is too light for brick-white text (3.1:1); darkened it reaches 5.6:1. */
+		background: color-mix(in oklab, var(--bff-alert) 78%, var(--bff-shadow-ink));
 		color: var(--bff-brick-white);
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);
@@ -149,13 +159,26 @@ const uid = 'bff-rd';
 			opacity 0.3s var(--bff-ease-soft),
 			transform 0.3s var(--bff-ease-out);
 	}
+	:global(:root[data-theme='light']) .bff-rd-alert {
+		background: var(--bff-alert);
+	}
+	/* Only the beacon blinks; the label stays at full contrast. */
+	.bff-rd-alert::before {
+		content: '';
+		inline-size: 0.45rem;
+		block-size: 0.45rem;
+		border-radius: 50%;
+		background: var(--bff-brick-white);
+	}
 	.bff-rd[data-step='0'] .bff-rd-alert {
 		opacity: 1;
 		transform: none;
+	}
+	.bff-rd[data-step='0'] .bff-rd-alert::before {
 		animation: bff-rd-blink 1.2s steps(2, jump-none) infinite;
 	}
 	@keyframes bff-rd-blink {
-		50% { opacity: 0.4; }
+		50% { opacity: 0.2; }
 	}
 	.bff-rd-dimmer {
 		position: relative;
@@ -181,12 +204,13 @@ const uid = 'bff-rd';
 		inset: 0.25rem auto 0.25rem 0.25rem;
 		inline-size: calc((100% - 0.5rem) / 3);
 		border-radius: var(--bff-radius-pill);
-		background: var(--accent);
+		/* The knob carries the label text, so it uses the text-safe ink as its fill. */
+		background: var(--accent-ink, var(--accent));
 		transition: transform 0.6s var(--bff-ease-out);
 	}
-	.bff-rd[data-level='low'] { --accent: var(--bff-yellow); }
-	.bff-rd[data-level='medium'] { --accent: var(--bff-green); }
-	.bff-rd[data-level='high'] { --accent: var(--bff-blue); }
+	.bff-rd[data-level='low'] { --accent: var(--bff-yellow); --accent-ink: var(--bff-yellow-ink); }
+	.bff-rd[data-level='medium'] { --accent: var(--bff-green); --accent-ink: var(--bff-green-ink); }
+	.bff-rd[data-level='high'] { --accent: var(--bff-blue); --accent-ink: var(--bff-blue-ink); }
 	.bff-rd[data-level='medium'] .bff-rd-knob { transform: translateX(100%); }
 	.bff-rd[data-level='high'] .bff-rd-knob { transform: translateX(200%); }
 	.bff-rd[data-level='low'] [data-k='low'],
@@ -203,8 +227,19 @@ const uid = 'bff-rd';
 		padding: 0;
 		list-style: none;
 	}
+	/* Each step's text opens to its own height (0fr → 1fr), so larger text never clips. */
 	.bff-rd-steps li {
+		display: grid;
+		grid-template-rows: auto 0fr;
 		margin: 0;
+		transition: grid-template-rows 0.4s var(--bff-ease-out);
+	}
+	.bff-rd-steps li:has([aria-current='step']) {
+		grid-template-rows: auto 1fr;
+	}
+	.bff-rd-body {
+		min-block-size: 0;
+		overflow: hidden;
 	}
 	.bff-rd-steps button {
 		display: grid;
@@ -220,6 +255,11 @@ const uid = 'bff-rd';
 		font: inherit;
 		text-align: left;
 		cursor: pointer;
+	}
+	@media (pointer: coarse) {
+		.bff-rd-steps button {
+			min-block-size: 2.75rem;
+		}
 	}
 	.bff-rd-steps button:hover {
 		background: var(--sl-color-black);
@@ -241,8 +281,8 @@ const uid = 'bff-rd';
 	}
 	.bff-rd-steps [aria-current='step'] .bff-rd-num,
 	.bff-rd-steps [data-done] .bff-rd-num {
-		border-color: var(--bff-pink);
-		background: var(--bff-pink);
+		border-color: var(--bff-pink-ink);
+		background: var(--bff-pink-ink);
 		color: var(--bff-on-accent);
 	}
 	.bff-rd-title {
@@ -254,21 +294,14 @@ const uid = 'bff-rd';
 		color: var(--sl-color-gray-3);
 	}
 	.bff-rd-steps p {
-		display: grid;
 		margin: 0;
-		padding-inline: 2.8rem 0.6rem;
+		padding: 0.25rem 0.6rem 0.5rem 2.8rem;
 		font-size: var(--bff-text-sm);
 		color: var(--sl-color-gray-2);
-		overflow: hidden;
-		max-block-size: 0;
 		opacity: 0;
-		transition:
-			max-block-size 0.4s var(--bff-ease-out),
-			opacity 0.3s var(--bff-ease-soft);
+		transition: opacity 0.3s var(--bff-ease-soft);
 	}
 	.bff-rd-steps li:has([aria-current='step']) p {
-		max-block-size: 10rem;
-		padding-block: 0.25rem 0.5rem;
 		opacity: 1;
 	}
 
@@ -309,14 +342,14 @@ const uid = 'bff-rd';
 	.bff-rd-triggers span {
 		color: var(--sl-color-gray-3);
 	}
-	@media (max-width: 50em) {
+	@container (max-width: 34rem) {
 		.bff-rd-stage {
 			grid-template-columns: 1fr;
 		}
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.bff-rd *,
-		.bff-rd-alert {
+		.bff-rd-alert::before {
 			transition: none !important;
 			animation: none !important;
 		}

@@ -17,6 +17,7 @@ const { level, n } = Astro.props;
 		display: inline-flex;
 		align-items: center;
 		gap: 0.5rem;
+		min-block-size: 1.5rem;
 		margin-block: 1rem 0.5rem;
 		padding: 0.35rem 0.8rem 0.35rem 0.45rem;
 		border: 1px solid var(--sl-color-gray-5);
@@ -30,6 +31,11 @@ const { level, n } = Astro.props;
 		transition:
 			border-color 0.2s var(--bff-ease-soft),
 			background-color 0.2s var(--bff-ease-soft);
+	}
+	@media (pointer: coarse) {
+		.bff-step-done {
+			min-block-size: 2.75rem;
+		}
 	}
 	.bff-step-done:hover {
 		border-color: var(--sl-color-gray-4);

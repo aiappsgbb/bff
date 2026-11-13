@@ -9,10 +9,12 @@ const { level } = Astro.props;
 const stages = data.levels[level].stages;
 ---
 
-<div class="bff-ls not-content" role="list" aria-label={`${LEVELS[level].name}: the workflow, stage by stage`}>
+<!-- role="list" keeps list semantics in Safari, which drops them when list-style is none. -->
+<ol class="bff-ls not-content" role="list" aria-label={`${LEVELS[level].name}: the workflow, stage by stage`}>
 	{
 		stages.map((s, i) => (
-			<article class="bff-ls-stage" role="listitem" aria-labelledby={`bff-ls-${level}-${i}`}>
+			<li class="bff-ls-item">
+			<article class="bff-ls-stage" aria-labelledby={`bff-ls-${level}-${i}`}>
 				<h3 id={`bff-ls-${level}-${i}`}>
 					<span class="bff-ls-num" aria-hidden="true">
 						{String(i + 1).padStart(2, '0')}
@@ -49,9 +51,10 @@ const stages = data.levels[level].stages;
 					</p>
 				</section>
 			</article>
+			</li>
 		))
 	}
-</div>
+</ol>
 
 <style>
 	.bff-ls {
@@ -60,12 +63,16 @@ const stages = data.levels[level].stages;
 		grid-template-rows: auto auto auto auto;
 		gap: 0.6rem;
 		margin-block: 1.5rem;
+		padding: 0;
+		list-style: none;
 	}
+	.bff-ls-item,
 	.bff-ls-stage {
 		display: grid;
 		grid-row: span 4;
 		grid-template-rows: subgrid;
 		gap: 0.6rem;
+		margin: 0;
 	}
 	.bff-ls-stage h3 {
 		display: flex;
@@ -100,7 +107,7 @@ const stages = data.levels[level].stages;
 		font-size: var(--bff-text-2xs);
 		text-transform: uppercase;
 		letter-spacing: 0.06em;
-		color: var(--accent);
+		color: var(--accent-ink, var(--accent));
 	}
 	.bff-ls-k {
 		display: inline-block;
@@ -121,6 +128,7 @@ const stages = data.levels[level].stages;
 			grid-template-columns: repeat(2, minmax(0, 1fr));
 			grid-template-rows: none;
 		}
+		.bff-ls-item,
 		.bff-ls-stage {
 			grid-row: auto;
 			grid-template-rows: none;

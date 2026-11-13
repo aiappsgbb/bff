@@ -5,6 +5,9 @@ const items = productIndex();
 const vendors = Object.keys(VENDOR_LABEL) as Vendor[];
 const count = (v: Vendor) => items.filter((i) => i.vendor === v).length;
 const layers = ['hq', 'floor', 'foundations'] as const;
+const levelWord = (k: (typeof LEVEL_ORDER)[number]) => LEVELS[k].short;
+const levelList = (ks: readonly (typeof LEVEL_ORDER)[number][]) =>
+	LEVEL_ORDER.filter((k) => ks.includes(k)).map(levelWord).join(', ');
 ---
 
 <div class="bff-cat not-content" data-catalogue>
@@ -38,7 +41,7 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 			<span>Level</span>
 			<select data-level-filter>
 				<option value="">All levels</option>
-				{LEVEL_ORDER.map((k) => <option value={k}>{`${LEVELS[k].name} · ${LEVELS[k].gait}`}</option>)}
+				{LEVEL_ORDER.map((k) => <option value={k}>{LEVELS[k].name}</option>)}
 			</select>
 		</label>
 	</div>
@@ -73,13 +76,22 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 								{LAYER_META[l].short}
 							</span>
 						))}
-						<span class="bff-cat-levels" title={`Used at: ${p.levels.map((k) => LEVELS[k].gait).join(', ') || 'framework'}`}>
-							{LEVEL_ORDER.map((k) => (
-								<span data-k={k} data-on={p.levels.includes(k) ? '' : undefined}>
-									{LEVELS[k].gait[0]}
+						{p.levels.length > 0 && (
+							<span class="bff-cat-levels">
+								<span class="sr-only">Levels: {levelList(p.levels)}</span>
+								<span class="bff-cat-pips" aria-hidden="true" title={`Featured at ${levelList(p.levels)} autonomy`}>
+									{LEVEL_ORDER.map((k) =>
+										p.levels.includes(k) ? (
+											<span data-level-accent={k} data-on>
+												{levelWord(k)[0]}
+											</span>
+										) : (
+											<span data-k={k} />
+										),
+									)}
 								</span>
-							))}
-						</span>
+							</span>
+						)}
 					</div>
 				</li>
 			))
@@ -90,7 +102,16 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 		<span class="bff-chip" data-vendor="github">GitHub</span>
 		<span class="bff-chip" data-vendor="microsoft">Microsoft</span>
 		<span class="bff-chip" data-vendor="third-party">Third-party</span>
-		<span>C · W · R: used at Crawl, Walk or Run.</span>
+		<span class="bff-cat-legend-levels">
+			<span class="bff-cat-pips" aria-hidden="true">
+				{LEVEL_ORDER.map((k) => (
+					<span data-level-accent={k} data-on>
+						{levelWord(k)[0]}
+					</span>
+				))}
+			</span>
+			{LEVEL_ORDER.map(levelWord).join(' · ')}: autonomy levels whose walkthrough features the product.
+		</span>
 	</p>
 </div>
 
@@ -250,7 +271,8 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 	.bff-cat-select {
 		display: grid;
 		gap: 0.2rem;
-		flex: 0 1 11rem;
+		flex: 1 1 10rem;
+		max-inline-size: 15rem;
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);
 		text-transform: uppercase;
@@ -276,7 +298,7 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 	}
 	.bff-cat-list > li {
 		display: grid;
-		grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr) auto;
+		grid-template-columns: minmax(min(12rem, 100%), 16rem) minmax(0, 1fr) auto;
 		gap: 0.4rem 1.25rem;
 		align-items: center;
 		margin: 0;
@@ -303,9 +325,11 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 	}
 	.bff-cat-where {
 		display: flex;
+		flex-wrap: wrap;
 		gap: 0.35rem;
 		align-items: center;
 		justify-content: end;
+		min-inline-size: 0;
 	}
 	.bff-cat-layer {
 		padding: 0.05rem 0.45rem;
@@ -316,28 +340,44 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 		color: var(--sl-color-gray-2);
 	}
 	.bff-cat-levels {
-		display: inline-flex;
-		gap: 0.15rem;
 		margin-left: 0.25rem;
 	}
-	.bff-cat-levels span {
+	/*
+	 * Three fixed slots (Low, Medium, High) so letters line up down the list. A level that
+	 * applies shows its letter in an outlined, tinted pip; one that doesn't is a faint dot.
+	 */
+	.bff-cat-pips {
+		display: inline-grid;
+		grid-template-columns: repeat(3, 1.375rem);
+		gap: 0.2rem;
+	}
+	.bff-cat-pips > span {
 		display: grid;
 		place-items: center;
-		inline-size: 1.25rem;
-		block-size: 1.25rem;
+		block-size: 1.375rem;
 		border-radius: var(--bff-radius-sm);
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);
-		color: var(--sl-color-gray-5);
-		background: var(--sl-color-gray-6);
-	}
-	.bff-cat-levels [data-on] {
-		color: var(--bff-on-accent);
 		font-weight: 700;
 	}
-	.bff-cat-levels [data-k='low'][data-on] { background: var(--bff-yellow); }
-	.bff-cat-levels [data-k='medium'][data-on] { background: var(--bff-green); }
-	.bff-cat-levels [data-k='high'][data-on] { background: var(--bff-blue); }
+	.bff-cat-pips > [data-on] {
+		border: 1.5px solid var(--accent);
+		background: color-mix(in oklab, var(--accent) 14%, var(--sl-color-black));
+		color: var(--accent-ink, var(--accent));
+	}
+	.bff-cat-pips > :not([data-on])::before {
+		content: '';
+		inline-size: 0.25rem;
+		block-size: 0.25rem;
+		border-radius: 50%;
+		background: var(--sl-color-gray-5);
+	}
+	.bff-cat-legend-levels {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+	}
 	.bff-cat-empty {
 		padding: 2rem 0;
 		color: var(--sl-color-gray-3);
@@ -353,7 +393,7 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 	}
 	@media (max-width: 50em) {
 		.bff-cat-list > li {
-			grid-template-columns: 1fr auto;
+			grid-template-columns: minmax(0, 1fr) auto;
 		}
 		.bff-cat-role {
 			grid-column: 1 / -1;
@@ -362,6 +402,35 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 		.bff-cat-where {
 			grid-row: 1;
 			grid-column: 2;
+		}
+		.bff-cat-tools {
+			gap: 0.5rem;
+			padding: 0.6rem;
+		}
+	}
+	/* Narrow phones: layer tags and pips drop to their own line under the role. */
+	@media (max-width: 36em) {
+		.bff-cat-list > li {
+			grid-template-columns: minmax(0, 1fr);
+		}
+		.bff-cat-where {
+			grid-row: 3;
+			grid-column: 1;
+			justify-content: start;
+		}
+		.bff-cat-levels {
+			margin-left: auto;
+		}
+		.bff-cat-select {
+			max-inline-size: none;
+		}
+	}
+	@media (pointer: coarse) {
+		input[type='search'],
+		select,
+		.bff-cat-toggle,
+		.bff-cat-name a.bff-chip {
+			min-block-size: 2.75rem;
 		}
 	}
 </style>

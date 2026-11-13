@@ -15,7 +15,7 @@
 	--bff-radius-md: 12px;
 	--bff-radius-sm: 6px;
 	--bff-radius-pill: 999px;
-	--bff-max: 80rem;
+	--bff-max: 67.5rem;
 
 	/* Type ramp. Starlight's --sl-text-h1..h4 cover headings. */
 	--bff-text-2xs: 0.75rem;
@@ -62,6 +62,22 @@
 	--bff-yellow: #e3c72a;
 	--bff-purple: #ae85ff;
 	--bff-orange: #f0883e;
+
+	/*
+	 * Text-safe "ink" variants of every accent and layer colour. Use the plain accent for
+	 * fills, bars, borders and icons; use the ink for any text set in an accent colour.
+	 * Each ink reaches >= 4.5:1 on the canvas, both surfaces and 6-14% accent tints of them.
+	 */
+	--bff-green-ink: #0fbf3e;
+	--bff-pink-ink: #ff5c93;
+	--bff-blue-ink: #3fa4ff;
+	--bff-yellow-ink: #e3c72a;
+	--bff-purple-ink: #ae85ff;
+	--bff-orange-ink: #f0883e;
+	--bff-hq-ink: #f0883e;
+	--bff-floor-ink: #5fed83;
+	--bff-found-ink: #58a6ff;
+	--bff-eng-ink: #b18cff;
 
 	/* Dark (default Starlight mode) */
 	--sl-color-white: #ffffff;
@@ -144,6 +160,17 @@
 	--bff-yellow: #bba00a;
 	--bff-purple: #8a63d2;
 	--bff-orange: #d4650f;
+
+	--bff-green-ink: #0d6731;
+	--bff-pink-ink: #c2185b;
+	--bff-blue-ink: #0062c4;
+	--bff-yellow-ink: #7a6000;
+	--bff-purple-ink: #6e47bd;
+	--bff-orange-ink: #a84300;
+	--bff-hq-ink: #a33f00;
+	--bff-floor-ink: #0d6731;
+	--bff-found-ink: #0757c2;
+	--bff-eng-ink: #7041cc;
 }
 
 /* ---------- Base ---------- */
@@ -179,8 +206,8 @@ main {
 
 /* Header */
 header.header {
+	/* Unprefixed only: the minifier collapses a prefixed duplicate and drops the standard one. */
 	backdrop-filter: saturate(1.4) blur(12px);
-	-webkit-backdrop-filter: saturate(1.4) blur(12px);
 	border-bottom: 1px solid var(--sl-color-hairline);
 }
 
@@ -190,7 +217,7 @@ nav.sidebar .sidebar-pane {
 }
 .sidebar-content .large {
 	font-family: var(--bff-font-mono);
-	font-size: 0.75rem;
+	font-size: var(--bff-text-2xs);
 	font-weight: 500;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
@@ -241,15 +268,29 @@ nav.sidebar .sidebar-pane {
 }
 
 /* Tables */
+/*
+ * Block-level so a wide table scrolls inside its own hairline frame instead of overflowing
+ * the page. fit-content keeps the frame hugging the table; tables with prose cells still
+ * fill the measure because their max-content is wider than it.
+ */
 .sl-markdown-content table:not(:where(.not-content *)) {
-	display: table;
-	width: 100%;
+	display: block;
+	inline-size: fit-content;
+	max-inline-size: 100%;
+	overflow-x: auto;
+	overscroll-behavior-inline: contain;
 	border-collapse: separate;
 	border-spacing: 0;
 	border: 1px solid var(--sl-color-hairline);
 	border-radius: var(--bff-radius-md);
-	overflow: hidden;
 	font-size: 0.9375rem;
+	/* Edge shadows hint at more columns when the table scrolls (local bg covers them at the ends). */
+	background:
+		linear-gradient(to right, var(--sl-color-black) 30%, transparent) left / 2rem 100% no-repeat local,
+		linear-gradient(to left, var(--sl-color-black) 30%, transparent) right / 2rem 100% no-repeat local,
+		radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--bff-shadow-ink) 18%, transparent), transparent) left / 0.75rem 100% no-repeat scroll,
+		radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--bff-shadow-ink) 18%, transparent), transparent) right / 0.75rem 100% no-repeat scroll,
+		var(--sl-color-black);
 }
 .sl-markdown-content :is(th, td):not(:where(.not-content *)) {
 	border: 0;
@@ -263,12 +304,30 @@ nav.sidebar .sidebar-pane {
 .sl-markdown-content th:not(:where(.not-content *)) {
 	background: var(--bff-surface);
 	font-family: var(--bff-font-mono);
-	font-size: 0.75rem;
+	font-size: var(--bff-text-2xs);
 	font-weight: 500;
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
 	color: var(--sl-color-gray-3);
 	text-align: start;
+}
+
+/*
+ * CardGrid: Starlight switches to two columns at a 50rem viewport, which overflows when text is enlarged.
+ * Columns now follow the container (at most two, each >= 18rem), so enlarged text drops to one column.
+ */
+.card-grid {
+	--bff-card-gap: 1rem;
+	gap: var(--bff-card-gap);
+	grid-template-columns: repeat(
+		auto-fit,
+		minmax(max(min(100%, 18rem), calc((100% - var(--bff-card-gap)) / 2)), 1fr)
+	);
+}
+@media (min-width: 50rem) {
+	.card-grid {
+		--bff-card-gap: 1.5rem;
+	}
 }
 
 /* Starlight cards and link cards */
@@ -299,7 +358,7 @@ starlight-tabs [role='tablist'] {
 }
 starlight-tabs [role='tab'] {
 	font-family: var(--bff-font-mono);
-	font-size: 0.8125rem;
+	font-size: var(--bff-text-xs);
 	letter-spacing: 0.04em;
 }
 
@@ -307,8 +366,8 @@ starlight-tabs [role='tab'] {
 html:has(.bff-wide-page) {
 	--sl-content-width: 72rem;
 }
-/* Splash pages (home) */
-html:not([data-has-sidebar]) {
+/* Splash pages (home). :root outranks Starlight's equal-weight splash rule, so the result doesn't depend on stylesheet order. */
+:root:not([data-has-sidebar]) {
 	--sl-content-width: var(--bff-max);
 }
 

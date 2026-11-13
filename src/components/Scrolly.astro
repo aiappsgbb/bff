@@ -25,19 +25,37 @@ import FundamentalsVisual from './FundamentalsVisual.astro';
 			root.dataset.frame = frame;
 			root.dispatchEvent(new CustomEvent('bff:frame', { detail: frame }));
 		};
-		let io: IntersectionObserver | undefined;
-		const observe = () => {
-			io?.disconnect();
-			const mobile = matchMedia('(max-width: 62em)').matches;
-			io = new IntersectionObserver(
-				(entries) => entries.forEach((e) => e.isIntersecting && activate(e.target as HTMLElement)),
-				{ rootMargin: mobile ? '-62% 0px -30% 0px' : '-45% 0px -45% 0px' },
-			);
-			steps.forEach((s) => io!.observe(s));
+		// The active step is the last one whose top has passed the probe line, so jumps, reloads and
+		// the very bottom of the page (where no step reaches mid-viewport) still pick the right frame.
+		const mobile = matchMedia('(max-width: 62em)');
+		let queued = false;
+		const update = () => {
+			queued = false;
+			const probe = innerHeight * (mobile.matches ? 0.62 : 0.45);
+			let current = steps[0];
+			for (const s of steps) if (s.getBoundingClientRect().top <= probe) current = s;
+			activate(current);
 		};
-		observe();
-		matchMedia('(max-width: 62em)').addEventListener('change', observe);
-		activate(steps[0]);
+		const schedule = () => {
+			if (queued) return;
+			queued = true;
+			requestAnimationFrame(update);
+		};
+		new IntersectionObserver(
+			([e]) => {
+				if (e.isIntersecting) {
+					addEventListener('scroll', schedule, { passive: true });
+					addEventListener('resize', schedule);
+					schedule();
+				} else {
+					removeEventListener('scroll', schedule);
+					removeEventListener('resize', schedule);
+				}
+			},
+			{ rootMargin: '100% 0px' },
+		).observe(root);
+		mobile.addEventListener('change', schedule);
+		update();
 	});
 </script>
 
