@@ -50,6 +50,8 @@ Scene tokens are drawn on top of the LEGO renders, so they don't change with the
 | `--bff-light-cool` / `--bff-light-core` | `#7cc4ff` / `#e8f6ff` | Agent eye LEDs |
 | `--bff-light-violet` | `#8f7bff` | Glowing code blocks on the floor |
 | `--bff-light-night` | `#0b1a3a` | "Lights-off" end of the dimmer |
+| `--bff-light-go` / `--bff-light-stop` | `#6dff8f` / `#ff5a4f` | Status lights, gauges, scope trace and alarms in the animated factory |
+| `--bff-light-pink` | `#ff8fc8` | Sticky notes and context orbs in the animated factory |
 | `--bff-brick-white` / `--bff-brick-shade` | `#f4f7f5` / `#c9d2cc` | LEGO plastic (dimmer knob, studs) |
 | `--bff-step-paper` | `#e7eff8` | Page colour of the LEGO instruction-step SVGs (principles); frames behind them match it |
 | `--bff-shadow-sm` / `--bff-shadow-lg` | ink at 35% / 40% | Floating labels and tooltips over imagery |
