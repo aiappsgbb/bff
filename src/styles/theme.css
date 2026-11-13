@@ -235,6 +235,70 @@ nav.sidebar .sidebar-pane {
 	font-weight: 600;
 }
 
+/*
+ * Collapsible side panels (PanelToggle.astro). A collapsed panel folds to a rail that keeps its
+ * toggle; the content column takes the freed space, but prose keeps its usual line length so only
+ * figures, tables and components get wider.
+ */
+:root {
+	--bff-rail: 3rem;
+	--bff-measure: 45rem;
+	--bff-content-open: 80rem;
+}
+html:has(.bff-wide-page) {
+	--bff-measure: 72rem;
+}
+@media (min-width: 50rem) {
+	:root[data-has-sidebar][data-bff-nav='collapsed'] {
+		--sl-content-inline-start: var(--bff-rail);
+		--sl-content-width: var(--bff-content-open);
+	}
+	:root[data-bff-nav='collapsed'] .sidebar-pane {
+		width: var(--bff-rail);
+		overflow: hidden;
+		scrollbar-gutter: auto;
+	}
+	:root[data-bff-nav='collapsed'] .sidebar-content {
+		align-items: center;
+		padding-inline: 0;
+	}
+	:root[data-bff-nav='collapsed'] .sidebar-content > .bff-panel-toggle {
+		margin-inline-start: 0;
+	}
+	:root[data-bff-nav='collapsed'] #bff-nav-body {
+		display: none;
+	}
+	:root[data-has-sidebar]:is([data-bff-nav='collapsed'], [data-bff-toc='collapsed'])
+		:is(
+			.sl-markdown-content > :is(p, ul, ol, dl, blockquote, .sl-heading-wrapper, .starlight-aside, .sl-link-card):not(.not-content),
+			.bff-title > :is(h1, .bff-lede)
+		) {
+		max-width: var(--bff-measure);
+	}
+}
+@media (min-width: 72rem) {
+	:root[data-has-toc][data-bff-toc='collapsed'] {
+		--sl-content-width: var(--bff-content-open);
+	}
+	:root[data-bff-toc='collapsed'] :is(.right-sidebar-container, .right-sidebar) {
+		width: var(--bff-rail);
+	}
+	:root[data-bff-toc='collapsed'] .main-pane {
+		--sl-content-margin-inline: auto;
+		width: calc(100% - var(--bff-rail));
+	}
+	:root[data-bff-toc='collapsed'] .right-sidebar-panel {
+		padding-inline: 0;
+	}
+	:root[data-bff-toc='collapsed'] .right-sidebar-panel .sl-container {
+		width: auto;
+		max-width: none;
+	}
+	:root[data-bff-toc='collapsed'] #bff-toc-body {
+		display: none;
+	}
+}
+
 /* Headings, Universe-style: light weights, balanced wrapping */
 .sl-markdown-content :is(h1, h2, h3, h4) {
 	text-wrap: balance;

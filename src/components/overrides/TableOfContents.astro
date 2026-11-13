@@ -1,0 +1,32 @@
+---
+// Starlight's "On this page" outline with a collapse toggle on its heading row (PanelToggle.astro).
+import Default from '@astrojs/starlight/components/TableOfContents.astro';
+import PanelToggle from '../PanelToggle.astro';
+---
+
+{
+	Astro.locals.starlightRoute.toc && (
+		<div class="bff-toc">
+			<PanelToggle panel="toc" />
+			<div id="bff-toc-body">
+				<Default />
+			</div>
+		</div>
+	)
+}
+
+<style>
+	.bff-toc {
+		position: relative;
+	}
+	/* Centred on the "On this page" heading, glyph aligned to the outline's end edge. */
+	.bff-toc > :global(.bff-panel-toggle) {
+		position: absolute;
+		inset-block-start: -0.5rem;
+		inset-inline-end: -0.625rem;
+	}
+	:global(:root[data-bff-toc='collapsed']) .bff-toc > :global(.bff-panel-toggle) {
+		position: static;
+		margin-inline: auto;
+	}
+</style>

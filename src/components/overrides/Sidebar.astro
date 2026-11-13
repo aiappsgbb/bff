@@ -1,0 +1,19 @@
+---
+// Starlight's sidebar with a collapse toggle above it (PanelToggle.astro).
+import Default from '@astrojs/starlight/components/Sidebar.astro';
+import PanelToggle from '../PanelToggle.astro';
+---
+
+<PanelToggle panel="nav" />
+<div id="bff-nav-body" class="bff-panel-body"><Default /></div>
+
+<style>
+	/* Transparent to the sidebar's flex layout, so Starlight's spacing is unchanged. */
+	.bff-panel-body {
+		display: contents;
+	}
+	:global(.sidebar-content) > :global(.bff-panel-toggle) {
+		margin-block-end: -0.5rem;
+		margin-inline-start: -0.5rem;
+	}
+</style>

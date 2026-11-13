@@ -1,0 +1,112 @@
+---
+/**
+ * Collapses a docs side panel to a slim rail that keeps this button. State lives on <html> as
+ * data-bff-nav / data-bff-toc="collapsed" (set before paint by the head script in astro.config.mjs)
+ * and persists in localStorage. Layout rules are in theme.css under "Collapsible side panels".
+ */
+interface Props {
+	panel: 'nav' | 'toc';
+}
+const { panel } = Astro.props;
+const name = panel === 'nav' ? 'navigation' : 'page outline';
+---
+
+<button
+	type="button"
+	class="bff-panel-toggle"
+	data-panel={panel}
+	data-name={name}
+	aria-label={panel === 'nav' ? 'Navigation' : 'Page outline'}
+	aria-controls={`bff-${panel}-body`}
+	aria-expanded="true"
+	title={`Hide ${name}`}
+>
+	<svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true">
+		<g transform={panel === 'toc' ? 'matrix(-1 0 0 1 16 0)' : undefined}>
+			<rect x="1.75" y="2.25" width="12.5" height="11.5" rx="2" />
+			<path d="M5.75 2.25v11.5" />
+			<path class="hide" d="M11 6 9 8l2 2" />
+			<path class="show" d="m9 6 2 2-2 2" />
+		</g>
+	</svg>
+</button>
+
+<script>
+	const KEY = 'bff:';
+	const root = document.documentElement;
+	document.querySelectorAll<HTMLButtonElement>('.bff-panel-toggle').forEach((btn) => {
+		const panel = btn.dataset.panel!;
+		const attr = `data-bff-${panel}`;
+		const sync = () => {
+			const open = root.getAttribute(attr) !== 'collapsed';
+			btn.setAttribute('aria-expanded', String(open));
+			btn.title = `${open ? 'Hide' : 'Show'} ${btn.dataset.name}`;
+		};
+		sync();
+		btn.addEventListener('click', () => {
+			const collapse = root.getAttribute(attr) !== 'collapsed';
+			if (collapse) root.setAttribute(attr, 'collapsed');
+			else root.removeAttribute(attr);
+			try {
+				if (collapse) localStorage.setItem(KEY + panel, 'collapsed');
+				else localStorage.removeItem(KEY + panel);
+			} catch {}
+			sync();
+		});
+	});
+</script>
+
+<style>
+	.bff-panel-toggle {
+		display: none;
+		flex: none;
+		place-items: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		padding: 0;
+		border: 0;
+		border-radius: var(--bff-radius-sm);
+		background: transparent;
+		color: var(--sl-color-gray-3);
+		cursor: pointer;
+		transition:
+			background-color 0.2s var(--bff-ease-soft),
+			color 0.2s var(--bff-ease-soft);
+	}
+	.bff-panel-toggle:hover {
+		background: var(--sl-color-gray-6);
+		color: var(--sl-color-white);
+	}
+	svg {
+		fill: none;
+		stroke: currentColor;
+		stroke-width: 1.5;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+	}
+	[aria-expanded='true'] .show,
+	[aria-expanded='false'] .hide {
+		display: none;
+	}
+	@media (min-width: 50rem) {
+		.bff-panel-toggle[data-panel='nav'] {
+			display: grid;
+		}
+	}
+	@media (min-width: 72rem) {
+		.bff-panel-toggle[data-panel='toc'] {
+			display: grid;
+		}
+	}
+	@media (pointer: coarse) {
+		.bff-panel-toggle {
+			width: 2.75rem;
+			height: 2.75rem;
+		}
+	}
+	@media print {
+		.bff-panel-toggle {
+			display: none !important;
+		}
+	}
+</style>

@@ -38,12 +38,20 @@ export default defineConfig({
 			tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 3 },
 			components: {
 				PageTitle: './src/components/overrides/PageTitle.astro',
+				Sidebar: './src/components/overrides/Sidebar.astro',
+				TableOfContents: './src/components/overrides/TableOfContents.astro',
 				Footer: './src/components/overrides/Footer.astro',
 				SiteTitle: './src/components/overrides/SiteTitle.astro',
 				Header: './src/components/overrides/Header.astro',
 			},
 			head: [
 				{ tag: 'link', attrs: { rel: 'preload', href: withBase('/fonts/MonaSansVF.woff2'), as: 'font', type: 'font/woff2', crossorigin: '' } },
+				// Restores collapsed side panels (PanelToggle.astro) before first paint, so the layout never jumps.
+				{
+					tag: 'script',
+					content:
+						"try{for(const p of['nav','toc'])if(localStorage.getItem('bff:'+p)==='collapsed')document.documentElement.setAttribute('data-bff-'+p,'collapsed')}catch{}",
+				},
 				{ tag: 'meta', attrs: { property: 'og:image', content: ogImage } },
 				{ tag: 'meta', attrs: { property: 'og:image:width', content: '1200' } },
 				{ tag: 'meta', attrs: { property: 'og:image:height', content: '630' } },
