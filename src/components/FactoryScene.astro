@@ -86,11 +86,31 @@ const RACKS = [
 	[225, 777], [225, 802], [225, 832], [225, 852], [975, 776], [975, 801], [975, 830], [975, 855],
 ];
 const TUBES = [1331, 1353, 1375];
-const PIPES = [
-	'M1114 596 V632 Q1114 654 1092 654 H1056',
-	'M1138 572 V668 Q1138 691 1115 691 H1056',
-	'M1148 655 V728 Q1148 750 1126 750 H1056',
+// Light drops run along the pipes: three from the quality lab into the foundations, one
+// across the basement. Each pipe is a polyline (its bend sampled at the midpoint) and the
+// drop steps through it at constant speed using only transforms, so the compositor animates
+// it without main-thread work. Waypoints are offsets in units of the drop size.
+const DROP = 9;
+const FLOWS: { sec: Sec; pts: [number, number][] }[] = [
+	{ sec: 'eng', pts: [[1114, 596], [1114, 632], [1108.5, 648.5], [1092, 654], [1056, 654]] },
+	{ sec: 'eng', pts: [[1138, 572], [1138, 668], [1132.25, 685.25], [1115, 691], [1056, 691]] },
+	{ sec: 'eng', pts: [[1148, 655], [1148, 728], [1142.5, 744.5], [1126, 750], [1056, 750]] },
+	{ sec: 'found', pts: [[590, 869], [333, 869]] },
 ];
+const flowKeyframes = FLOWS.map(({ pts }, i) => {
+	const [x0, y0] = pts[0];
+	let run = 0;
+	const total = pts.slice(1).reduce((s, [x, y], j) => s + Math.hypot(x - pts[j][0], y - pts[j][1]), 0);
+	const steps = pts.map(([x, y], j) => {
+		if (j) run += Math.hypot(x - pts[j - 1][0], y - pts[j - 1][1]);
+		const at = +((run / total) * 100).toFixed(2);
+		const d = (v: number) => `${+((v / DROP) * 100).toFixed(1)}%`;
+		return `${at}%{transform:translate(${d(x - x0)},${d(y - y0)})}`;
+	});
+	return `@keyframes bff-w-flow-${i}{${steps.join('')}}`;
+}).join('');
+const flowsIn = (sec: Sec) =>
+	FLOWS.map((f, i) => ({ ...f, i })).filter((f) => f.sec === sec);
 
 const HOTSPOTS: { key: Sec; x: number; y: number; label: string; text: string; href: string }[] = [
 	{ key: 'hq', x: 7, y: 17, label: 'Factory HQ', text: 'People bring intent, creativity, steering and judgment. Always bright.', href: '/#factory-hq' },
@@ -117,9 +137,7 @@ const spritesIn = (sec: Sec) => sprites.filter((s) => s.sec === sec);
 			{TANKS.map((x, i) => <span class="bff-p bff-c bff-gauge" style={`${p(x, 811, 24, 20)};--i:${i}`}><span /></span>)}
 			{ORBS.map(([x, y, c], i) => <span class="bff-p bff-c bff-glow bff-orb" data-c={c} style={`${p(x, y, 66)};--i:${i}`} />)}
 			{RACKS.map(([x, y], i) => <span class="bff-p bff-c bff-rack" style={`${p(x, y, 13, 5)};--i:${i}`} />)}
-			<svg class="bff-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
-				<path class="bff-flow" d="M590 869 H333" pathLength="1" />
-			</svg>
+			{flowsIn('found').map((f) => <span class="bff-p bff-c bff-drop" style={`${p(...f.pts[0], DROP)};--i:${f.i};animation-name:bff-w-flow-${f.i},bff-w-drop`} />)}
 			<span class="bff-p bff-c bff-glow bff-alarm" data-c="stop" style={p(83, 698, 44)}></span>
 		</div>
 	</div>
@@ -207,11 +225,10 @@ const spritesIn = (sec: Sec) => sprites.filter((s) => s.sec === sec);
 				<span class="bff-p bff-c bff-glow bff-alt" data-c="stop" style={`${p(1253, 591, 20)};--i:1`}></span>
 			</span>
 			<img class="bff-p bff-packet" src={cubeImg.src} width="18" height="17" alt="" style={p(1028, 333, 18)} />
-			<svg class="bff-svg" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none">
-				{PIPES.map((d, i) => <path class="bff-flow" d={d} pathLength="1" style={`--i:${i}`} />)}
-			</svg>
+			{flowsIn('eng').map((f) => <span class="bff-p bff-c bff-drop" style={`${p(...f.pts[0], DROP)};--i:${f.i};animation-name:bff-w-flow-${f.i},bff-w-drop`} />)}
 		</div>
 	</div>
+	<style is:inline set:html={flowKeyframes}></style>
 
 	<svg class="bff-seams" viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true">
 		{SEAMS.map((pts, i) => <polyline points={pts} pathLength="1" style={`--i:${i}`} />)}
@@ -260,25 +277,44 @@ const spritesIn = (sec: Sec) => sprites.filter((s) => s.sec === sec);
 			fig.getAnimations({ subtree: true }).filter((a) => (a as CSSAnimation).animationName?.startsWith('bff-w-'));
 		let rate = 1;
 		let raf = 0;
-		const setRate = (r: number) => {
+		const setRate = (r: number, list = work()) => {
 			rate = r;
-			work().forEach((a) => (a.playbackRate = r));
+			list.forEach((a) => (a.playbackRate = r));
 		};
+		// Each rate change resyncs every animation with the compositor, so the ramp
+		// steps about every 80 ms over one cached list rather than on every frame.
 		const ramp = (target: number) => {
 			cancelAnimationFrame(raf);
 			const from = rate;
+			const list = work();
 			const t0 = performance.now();
+			let last = 0;
 			const step = (t: number) => {
 				const k = Math.min(1, (t - t0) / 700);
-				setRate(from + (target - from) * (1 - (1 - k) ** 3));
-				if (k < 1) raf = requestAnimationFrame(step);
+				if (k === 1) return setRate(target);
+				if (t - last >= 80) {
+					last = t;
+					setRate(from + (target - from) * (1 - (1 - k) ** 3), list);
+				}
+				raf = requestAnimationFrame(step);
 			};
 			raf = requestAnimationFrame(step);
 		};
 		const target = () => RATE[host?.dataset.level ?? 'medium'] ?? 1;
 		setRate(target());
 		if (host) new MutationObserver(() => ramp(target())).observe(host, { attributes: true, attributeFilter: ['data-level'] });
-		new IntersectionObserver(([e]) => fig.toggleAttribute('data-idle', !e.isIntersecting)).observe(fig);
+		// Idle skips rendering, so the margin lets the factory wake before it scrolls in;
+		// skipped animations may be rebuilt, so the level's rate is reapplied on wake.
+		let idle = false;
+		new IntersectionObserver(
+			([e]) => {
+				if (idle === !e.isIntersecting) return;
+				idle = !idle;
+				fig.toggleAttribute('data-idle', idle);
+				if (!idle) setRate(target());
+			},
+			{ rootMargin: '200px 0px' }
+		).observe(fig);
 	});
 </script>
 
@@ -304,7 +340,6 @@ const spritesIn = (sec: Sec) => sprites.filter((s) => s.sec === sec);
 	.bff-floor-fx,
 	.bff-power,
 	.bff-leds,
-	.bff-svg,
 	.bff-seams {
 		position: absolute;
 		inset: 0;
@@ -582,23 +617,23 @@ const spritesIn = (sec: Sec) => sprites.filter((s) => s.sec === sec);
 		from { opacity: 0.1; }
 		to { opacity: 1; }
 	}
-	.bff-svg {
-		overflow: visible;
-	}
-	.bff-flow {
-		fill: none;
-		stroke: var(--bff-light-core);
-		stroke-width: 7;
-		stroke-linecap: round;
-		stroke-dasharray: 0.07 0.93;
-		opacity: 0.7;
-		filter: drop-shadow(0 0 3px var(--bff-light-cool));
+	.bff-drop {
+		border-radius: 50%;
+		background: var(--bff-light-core);
+		box-shadow:
+			0 0 3px 1px var(--bff-light-cool),
+			0 0 8px 2px color-mix(in srgb, var(--bff-light-cool) 45%, transparent);
 		mix-blend-mode: screen;
-		animation: bff-w-flow 2.4s calc(var(--i, 0) * -0.8s) linear infinite;
+		opacity: 0;
+		animation-duration: 2.4s;
+		animation-timing-function: linear;
+		animation-delay: calc(var(--i, 0) * -0.8s);
+		animation-iteration-count: infinite;
 	}
-	@keyframes bff-w-flow {
-		from { stroke-dashoffset: 0.07; }
-		to { stroke-dashoffset: -0.93; }
+	/* Paired with a bff-w-flow-N path (keyframes generated in the frontmatter). */
+	@keyframes bff-w-drop {
+		0%, 100% { opacity: 0; }
+		8%, 92% { opacity: 0.8; }
 	}
 
 	/* Engineering: tests run. */
@@ -721,7 +756,11 @@ const spritesIn = (sec: Sec) => sprites.filter((s) => s.sec === sec);
 		100% { stroke-dashoffset: 0; opacity: 0; }
 	}
 
-	/* Off-screen, the factory rests. */
+	/* Off-screen, the factory rests and skips rendering, so its many layers cost
+	   nothing while other visuals animate. */
+	.bff-factory[data-idle] {
+		content-visibility: hidden;
+	}
 	.bff-factory[data-idle] *,
 	.bff-factory[data-idle] *::after {
 		animation-play-state: paused !important;

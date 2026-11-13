@@ -462,7 +462,8 @@ a.bff-card:hover {
 	color: var(--sl-color-white);
 	border-color: var(--sl-color-gray-4);
 }
-[data-paused] * {
+[data-paused] *,
+[data-offscreen] * {
 	animation-play-state: paused !important;
 }
 @media (prefers-reduced-motion: reduce) {

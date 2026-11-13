@@ -109,25 +109,38 @@ const layers = ['hq', 'floor', 'foundations'] as const;
 		if (params.get('layer')) layer.value = params.get('layer')!;
 		if (params.get('level')) level.value = params.get('level')!;
 
+		const items = rows.map((r) => ({
+			el: r,
+			vendor: r.dataset.vendor!,
+			layers: r.dataset.layers!.split(' '),
+			levels: r.dataset.levels!.split(' '),
+			text: r.dataset.text!,
+		}));
+		let urlTimer: number | undefined;
+
 		const apply = () => {
 			const terms = q.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
 			const vendors = vendorBoxes.filter((b) => b.checked).map((b) => b.value);
 			let shown = 0;
-			rows.forEach((r) => {
+			items.forEach((r) => {
 				const ok =
-					vendors.includes(r.dataset.vendor!) &&
-					(!layer.value || r.dataset.layers!.split(' ').includes(layer.value)) &&
-					(!level.value || r.dataset.levels!.split(' ').includes(level.value)) &&
-					terms.every((t) => r.dataset.text!.includes(t));
-				r.hidden = !ok;
+					vendors.includes(r.vendor) &&
+					(!layer.value || r.layers.includes(layer.value)) &&
+					(!level.value || r.levels.includes(level.value)) &&
+					terms.every((t) => r.text.includes(t));
+				if (r.el.hidden === ok) r.el.hidden = !ok;
 				if (ok) shown++;
 			});
 			status.textContent = `Showing ${shown} of ${rows.length} products.`;
 			empty.hidden = shown > 0;
-			const url = new URL(location.href);
-			for (const [k, v] of [['q', q.value.trim()], ['layer', layer.value], ['level', level.value]] as const)
-				v ? url.searchParams.set(k, v) : url.searchParams.delete(k);
-			history.replaceState(null, '', url);
+			// Browsers rate-limit history updates, so the shareable URL follows once typing pauses.
+			window.clearTimeout(urlTimer);
+			urlTimer = window.setTimeout(() => {
+				const url = new URL(location.href);
+				for (const [k, v] of [['q', q.value.trim()], ['layer', layer.value], ['level', level.value]] as const)
+					v ? url.searchParams.set(k, v) : url.searchParams.delete(k);
+				if (url.href !== location.href) history.replaceState(null, '', url);
+			}, 300);
 		};
 		root.addEventListener('input', apply);
 		root.addEventListener('change', apply);

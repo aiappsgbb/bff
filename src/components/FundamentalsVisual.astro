@@ -22,7 +22,7 @@ const captions: Record<string, string> = {
 };
 ---
 
-<div class="bff-fv">
+<div class="bff-fv" data-pausable>
 	<div class="bff-fv-stage">
 		<div class="bff-fv-layer" data-frames="line agents">
 			<svg viewBox="0 0 600 450" class="bff-fv-line">
@@ -116,6 +116,8 @@ const captions: Record<string, string> = {
 </div>
 
 <script>
+	import '../lib/offscreen';
+
 	document.querySelectorAll<HTMLElement>('.bff-scrolly').forEach((root) => {
 		const thumb = root.querySelector<HTMLElement>('.bff-fv .bff-thumb');
 		const fv = root.querySelector<HTMLElement>('.bff-fv');
@@ -137,6 +139,7 @@ const captions: Record<string, string> = {
 				setLevel(order[i]);
 				if (!reduce)
 					timer = window.setInterval(() => {
+						if (fv.hasAttribute('data-offscreen')) return;
 						i = (i + 1) % order.length;
 						setLevel(order[i]);
 					}, 1800);
@@ -214,12 +217,17 @@ const captions: Record<string, string> = {
 		stroke-width: 6;
 		stroke-linecap: round;
 	}
+	/* SVG animations run on the main thread, so the bricks move only while their lane shows. */
 	.bff-fv-brick {
 		transform: translate(20px, var(--y));
-		animation: bff-fv-move var(--dur) linear var(--delay) infinite;
+		animation: bff-fv-move var(--dur) linear var(--delay) infinite paused;
 	}
 	.bff-fv-brick rect {
-		animation: bff-fv-paint var(--dur) linear var(--delay) infinite;
+		animation: bff-fv-paint var(--dur) linear var(--delay) infinite paused;
+	}
+	:global(.bff-scrolly[data-frame='line']) .bff-fv-lane:not(.bff-fv-extra) :is(.bff-fv-brick, .bff-fv-brick rect),
+	:global(.bff-scrolly[data-frame='agents']) :is(.bff-fv-brick, .bff-fv-brick rect) {
+		animation-play-state: running;
 	}
 	.bff-fv-stud {
 		filter: brightness(1.15);

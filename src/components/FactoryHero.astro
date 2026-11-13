@@ -380,9 +380,10 @@ import { LEVELS, LEVEL_ORDER, withBase } from '../data/site';
 		30% { translate: -0.6rem 0; }
 	}
 	@keyframes bff-hint-arrows {
-		0%, 50%, 100% { translate: 0 0; }
-		14% { translate: 3px 0; }
-		30% { translate: -2px 0; }
+		/* transform, not translate: the compositor only animates an <svg>'s transform. */
+		0%, 50%, 100% { transform: none; }
+		14% { transform: translateX(3px); }
+		30% { transform: translateX(-2px); }
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.bff-dimmer-knob,

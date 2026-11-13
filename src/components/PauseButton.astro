@@ -1,5 +1,6 @@
 ---
-// Pause/play for looping visuals (WCAG 2.2.2). Pauses every animation inside the closest [data-pausable].
+// Pause/play for looping visuals (WCAG 2.2.2). Pauses every animation inside the closest [data-pausable];
+// those hosts also rest automatically while off-screen (lib/offscreen).
 ---
 
 <button class="bff-pause" type="button" aria-pressed="false" data-pause>
@@ -7,6 +8,8 @@
 </button>
 
 <script>
+	import '../lib/offscreen';
+
 	document.querySelectorAll<HTMLButtonElement>('[data-pause]').forEach((btn) => {
 		const host = btn.closest<HTMLElement>('[data-pausable]');
 		if (!host) return;

@@ -170,6 +170,7 @@ const uid = 'bff-bp';
 		const TRAIL = 36;
 		let len = 0;
 		let pos = 0;
+		let pts = new Float32Array(0);
 		let rects: { l: number; r: number; t: number; b: number }[] = [];
 
 		const layout = () => {
@@ -208,27 +209,36 @@ const uid = 'bff-bp';
 			const next = track.getTotalLength();
 			pos = len ? (pos / len) * next : 0;
 			len = next;
+			// Sample the path once per layout so frames never call getPointAtLength,
+			// which would force a synchronous layout on every frame.
+			pts = new Float32Array((Math.ceil(len) + 1) * 2);
+			for (let i = 0, n = pts.length / 2; i < n; i++) {
+				const q = track.getPointAtLength(Math.min(i, len));
+				pts[i * 2] = q.x;
+				pts[i * 2 + 1] = q.y;
+			}
 			trail.style.strokeDasharray = `${TRAIL} ${len}`;
 		};
 
 		let raf = 0;
 		let then = 0;
-		let inside = false;
+		let active = -1;
 		const frame = (t: number) => {
-			const speed = inside ? SPEED * 0.4 : SPEED;
+			const speed = active >= 0 ? SPEED * 0.4 : SPEED;
 			pos = (pos + (speed * Math.min(t - (then || t), 100)) / 1000) % len;
 			then = t;
-			const p = track.getPointAtLength(pos);
-			dot.setAttribute('cx', String(p.x));
-			dot.setAttribute('cy', String(p.y));
+			const j = Math.round(pos) * 2;
+			const x = pts[j];
+			const y = pts[j + 1];
+			dot.setAttribute('cx', x.toFixed(1));
+			dot.setAttribute('cy', y.toFixed(1));
 			trail.style.strokeDashoffset = String(TRAIL - pos);
-			inside = false;
-			steps.forEach((s, i) => {
-				const r = rects[i];
-				const hit = p.x >= r.l && p.x <= r.r && p.y >= r.t && p.y <= r.b;
-				inside ||= hit;
-				s.toggleAttribute('data-active', hit);
-			});
+			const hit = rects.findIndex((r) => x >= r.l && x <= r.r && y >= r.t && y <= r.b);
+			if (hit !== active) {
+				steps[active]?.removeAttribute('data-active');
+				steps[hit]?.setAttribute('data-active', '');
+				active = hit;
+			}
 			raf = requestAnimationFrame(frame);
 		};
 		const reduce = matchMedia('(prefers-reduced-motion: reduce)');
@@ -242,7 +252,8 @@ const uid = 'bff-bp';
 			} else if (!run && raf) {
 				cancelAnimationFrame(raf);
 				raf = 0;
-				steps.forEach((s) => s.removeAttribute('data-active'));
+				steps[active]?.removeAttribute('data-active');
+				active = -1;
 			}
 		};
 
