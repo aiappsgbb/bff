@@ -105,7 +105,7 @@ export const LEVELS: Record<LevelKey, {
 		mode: 'Fleets, org-wide',
 		modeDetail: 'Fleets of agents per work type, org-wide, steered from any device.',
 		readyWhen: 'Keep tuning: each work type, measured end to end, with approval by exception.',
-		demo: 'Session continuity from phone to the Copilot app, GHAS with Autofix, Foundry evals and an approval in Microsoft Teams.',
+		demo: 'Session continuity from phone to the Copilot app, GHAS with Autofix and an approval in Microsoft Teams.',
 	},
 };
 

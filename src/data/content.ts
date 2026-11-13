@@ -361,7 +361,7 @@ export const DEMO_ACTS = [
 	{ stage: 'Plan', title: 'An idea on the commute', text: 'The product owner starts a Copilot project on GitHub Mobile. Skills ground it in business context and draft a cited spec.' },
 	{ stage: 'Build', title: 'Agents build in the cloud', text: 'Parallel cloud sessions across three repositories, checked and steered from the phone.' },
 	{ stage: 'Build', title: 'Same session, at the desk', text: 'The developer resumes the same session in the Copilot app, history intact, and guides the key design decision.' },
-	{ stage: 'Verify', title: 'Cloud review, full evidence', text: 'Code review flags the risky diff, push protection stops a planted secret, Autofix and Foundry evals complete the evidence.' },
+	{ stage: 'Verify', title: 'Cloud review, full evidence', text: 'Code review flags the risky diff, push protection stops a planted secret, Autofix completes the evidence.' },
 	{ stage: 'Verify', title: 'Approved in chat, shipped keyless', text: 'The service owner reviews the evidence and approves the deployment in Microsoft Teams or Slack. Actions deploys to Azure, canary first.' },
 	{ stage: 'Observe', title: 'Production feeds the next idea', text: 'The Azure SRE Agent turns an injected fault into an issue and a fix PR. A Copilot automation proposes a skill update for a person to approve.' },
 ] as const;

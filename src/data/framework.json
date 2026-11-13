@@ -1035,14 +1035,6 @@
           "parts": [
             "Azure SRE Agent"
           ]
-        },
-        {
-          "name": "Foundry evals",
-          "vendor": "microsoft",
-          "new": false,
-          "parts": [
-            "Foundry evals"
-          ]
         }
       ]
     }
@@ -2497,14 +2489,6 @@
               ]
             },
             {
-              "name": "Foundry evals",
-              "vendor": "microsoft",
-              "new": false,
-              "parts": [
-                "Foundry evals"
-              ]
-            },
-            {
               "name": "Container Apps",
               "vendor": "microsoft",
               "new": false,
@@ -2688,14 +2672,6 @@
             "card": "Security",
             "stages": "Verify",
             "role": "Security evidence and fixes on every change."
-          },
-          {
-            "name": "Foundry evals",
-            "vendor": "microsoft",
-            "new": false,
-            "card": "Agents",
-            "stages": "Observe",
-            "role": "Continuous evaluation of agent quality and safety."
           }
         ],
         "found": [
@@ -3055,10 +3031,6 @@
     "Azure SRE Agent": {
       "url": "https://learn.microsoft.com/en-us/azure/sre-agent/overview",
       "role": "Watches production, investigates incidents and files issues back into the loop."
-    },
-    "Foundry evals": {
-      "url": "https://learn.microsoft.com/en-us/azure/foundry/concepts/observability",
-      "role": "Continuous evaluation of agent quality and safety, feeding the next plan."
     },
     "GitHub repos": {
       "url": "https://docs.github.com/en/repositories/creating-and-managing-repositories/about-repositories",
