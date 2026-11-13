@@ -20,7 +20,6 @@ export const NAV = [
 		items: [
 			{ slug: 'framework' },
 			{ slug: 'framework/principles' },
-			{ slug: 'framework/big-picture' },
 			{ slug: 'framework/multiplayer' },
 			{ slug: 'framework/engineering' },
 		],

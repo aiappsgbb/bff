@@ -15,6 +15,7 @@ export default defineConfig({
 	site,
 	base,
 	trailingSlash: 'always',
+	redirects: { '/framework/big-picture/': withBase('/#what') },
 	markdown: { processor: unified({ rehypePlugins: [[rehypeBaseLinks, { base }]] }) },
 	integrations: [
 		starlight({

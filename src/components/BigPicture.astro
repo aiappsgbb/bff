@@ -14,12 +14,15 @@ const uid = 'bff-bp';
 
 <div class="bff-bp not-content" data-view="capabilities" id={uid}>
 	<div class="bff-bp-toolbar">
-		<div class="bff-tabs" role="group" aria-label="Show">
-			<button class="bff-tab" type="button" aria-pressed="true" data-view-btn="capabilities">Capabilities</button>
-			<button class="bff-tab" type="button" aria-pressed="false" data-view-btn="products">Products</button>
+		<div class="bff-bp-view">
+			<span class="bff-bp-label" id={`${uid}-view`}>View</span>
+			<div class="bff-tabs" role="group" aria-labelledby={`${uid}-view`}>
+				<button class="bff-tab" type="button" aria-pressed="true" data-view-btn="capabilities">Capabilities</button>
+				<button class="bff-tab" type="button" aria-pressed="false" data-view-btn="products">Products</button>
+			</div>
 		</div>
-		<fieldset class="bff-bp-vendors">
-			<legend>Vendors</legend>
+		<fieldset class="bff-bp-vendors" disabled>
+			<legend class="bff-bp-label">Vendors</legend>
 			{
 				vendors.map((v) => (
 					<label class="bff-bp-vendor" data-vendor={v}>
@@ -103,7 +106,8 @@ const uid = 'bff-bp';
 	document.querySelectorAll<HTMLElement>('.bff-bp').forEach((root) => {
 		const viewBtns = [...root.querySelectorAll<HTMLButtonElement>('[data-view-btn]')];
 		const status = root.querySelector<HTMLElement>('[data-status]')!;
-		const boxes = [...root.querySelectorAll<HTMLInputElement>('.bff-bp-vendors input')];
+		const vendors = root.querySelector<HTMLFieldSetElement>('.bff-bp-vendors')!;
+		const boxes = [...vendors.querySelectorAll<HTMLInputElement>('input')];
 		const update = () => {
 			const on = boxes.filter((b) => b.checked).map((b) => b.value);
 			boxes.forEach((b) => root.toggleAttribute(`data-hide-${b.value}`, !b.checked));
@@ -118,6 +122,7 @@ const uid = 'bff-bp';
 		viewBtns.forEach((btn) =>
 			btn.addEventListener('click', () => {
 				root.dataset.view = btn.dataset.viewBtn;
+				vendors.disabled = btn.dataset.viewBtn !== 'products';
 				viewBtns.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
 				update();
 			}),
@@ -147,12 +152,21 @@ const uid = 'bff-bp';
 		color: var(--sl-color-gray-2);
 		transition: opacity 0.2s var(--bff-ease-soft);
 	}
-	.bff-bp[data-view='capabilities'] .bff-bp-vendors {
+	.bff-bp-vendors:disabled {
 		opacity: 0.4;
-		pointer-events: none;
+	}
+	.bff-bp-vendors:disabled .bff-bp-vendor {
+		cursor: default;
+	}
+	.bff-bp-view {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
 	}
 	.bff-bp-vendors legend {
 		float: left;
+	}
+	.bff-bp-label {
 		margin-right: 0.25rem;
 		font-family: var(--bff-font-mono);
 		font-size: var(--bff-text-2xs);

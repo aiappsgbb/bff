@@ -10,6 +10,7 @@ head:
 import FactoryHero from '../../components/FactoryHero.astro';
 import Section from '../../components/Section.astro';
 import FeatureCard from '../../components/FeatureCard.astro';
+import BigPicture from '../../components/BigPicture.astro';
 import BrightVsDark from '../../components/BrightVsDark.astro';
 import WorkflowLine from '../../components/WorkflowLine.astro';
 import LevelsStrip from '../../components/LevelsStrip.astro';
@@ -26,6 +27,11 @@ import { withBase } from '../../data/site';
 			<FeatureCard title={p.title} kicker={p.kicker} accent={p.accent}>{p.text}</FeatureCard>
 		))}
 	</div>
+</Section>
+
+<Section id="what" eyebrow="what.bff()" accent="purple" title="The big picture." lede="People in the HQ, agents on the floor, foundations underneath and engineering on the side. Every component is a capability; switch to products to see the GitHub, Microsoft and third-party tools that fill it.">
+	<BigPicture />
+	<p class="bff-section-more"><a href={withBase('/reference/products/')}>Every product, with its role and docs →</a></p>
 </Section>
 
 <Section id="bright" eyebrow="bright.vs(dark)" accent="yellow" title="Not a dark factory. A bright one." lede="A dark factory runs with the lights off and nobody watching. In a bright factory the floor can dim, but the HQ, where people set intent and take decisions, never does.">
