@@ -285,16 +285,12 @@
 	display: none;
 }
 /*
- * Vectors (VectorArt.astro): luminous line-art images on a transparent ground, laid over the
- * same 3:2 box as the renders. The glow is tuned for dark pages; on light pages a little
- * extra contrast keeps the pale strokes readable.
+ * Vectors (VectorArt.astro): frosted glass-block images on a transparent ground, laid over the
+ * same 3:2 box as the renders. Solid enough to read on dark and light pages without a filter.
  */
 .pz-imgbox > .pz-vec {
 	position: absolute;
 	inset: 0;
-}
-.pz-root[data-theme='light'] .pz-vec {
-	filter: saturate(1.25) contrast(1.15) brightness(0.9);
 }
 
 /* ---------- Copy ---------- */

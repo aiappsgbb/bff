@@ -1,9 +1,9 @@
 ---
 /**
- * Vectors style: luminous line-art images that stand in for the LEGO renders (the Blocks style).
+ * Vectors style: frosted glass-block images that stand in for the LEGO renders (the Blocks style).
  * Same 3:2 frame as the renders; building and dimmer were redrawn from the renders, so zone,
  * bay and marker overlays line up in both styles. Drawing language, see DESIGN.md
- * "Presentation mode": people are amber discs, agents are green modules, no text.
+ * "Presentation mode": people are amber spheres, agents are green cubes, no text.
  * Lazy, so the Blocks style never downloads them.
  */
 import { Image } from 'astro:assets';
@@ -21,21 +21,21 @@ const art = (key: string) => files[`../../assets/present/vec/${key}.png`]?.defau
 const src = art(k) ?? art('building')!;
 
 const VALT: Record<string, string> = {
-	building: 'A line drawing of the factory in cross-section: a lit Factory HQ on top, a factory floor of agent workstations, foundations of servers below and an engineering wing on the side.',
-	why: 'Three pillars, green, blue and purple, hold up one platform, while people and agents walk in together.',
-	'bright-dark': 'One hall split in two: a dark half where agents work alone, and a lit half where a person steers them.',
-	principles: 'Eight nodes in four coloured pairs, one symbol per principle, joined by one base line.',
-	multiplayer: 'Three steps: one person and one agent at a desk, a shared table of people and agents, then a grid of many agents watched from above.',
-	measure: 'A wall of delivery charts, a stopwatch and a five-point radar chart, reviewed by two people.',
-	line: 'One path through four stations, idea, build, secure and observe, each worked by an agent, with a person overseeing the line.',
-	dimmer: 'A dimmer switch beside three factory bays: lit with people, dimmed, and dark with only agents.',
-	dimback: 'A dimmer pushed back up: lamps come on over the agents, and a signal line with one anomaly carries on to a person.',
-	demos: 'A presenter beside a big screen showing one six-step session, in front of an audience.',
-	platform: 'Foundations under the factory: green racks on one side and blue racks on the other, joined as one, feeding agents on the floor above.',
-	open: 'A rail of interchangeable modules, with one slot empty and a new module lowered into it.',
+	building: 'A glass cross-section of the factory: a lit Factory HQ on top, a dim factory floor where agents work a conveyor, foundations of servers below and an engineering wing on the side.',
+	why: 'Three glass pillars, green, blue and purple, hold up one platform, while people and agents walk in together.',
+	'bright-dark': 'One factory hall split in two: a dark half where agents work alone, and a lit half where a person steers them.',
+	principles: 'Eight glass tiles in four coloured pairs, one symbol per principle, standing on one base.',
+	multiplayer: 'Three steps: one person and one agent at a desk, a shared table of people and agents, then a grid of many agents watched from a balcony.',
+	measure: 'A wall of glass dashboards with delivery charts, a stopwatch and a five-point radar chart, reviewed by two people.',
+	line: 'One line through four stations, idea, build, secure and observe, each worked by an agent, with a person overseeing it from above.',
+	dimmer: 'A dimmer switch beside three factory bays: lit with people, dimmed, and dark with only agents, watched from a raised room.',
+	dimback: 'A dimmer pushed back up: lamps come on over the agents, and a signal line with one spike carries on to a person.',
+	demos: 'A presenter beside a big screen showing one six-step session, in front of an audience, with two agents to the side.',
+	platform: 'Foundations under the factory: green racks on one side and blue racks on the other, bridged as one, feeding agents on the floor above.',
+	open: 'A rail of interchangeable glass modules, with one slot empty and a new pink module lowered into it.',
 	loop: 'An improvement loop of three moves around a bar chart whose shortest bar is highlighted.',
 	journey: 'A staircase of four steps with a building growing on each, from a one-room workshop to a full factory.',
-	partners: 'Two teams adding their own modules to one building under construction, while a crane lifts a new room into place.',
+	partners: 'Two teams adding their own modules to one building under construction, while a crane lowers a new block into place.',
 };
 ---
 
