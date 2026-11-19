@@ -1,6 +1,6 @@
 ---
 title: Low autonomy playbook
-description: Set up gates and context, then take one issue from spec to merge with Copilot as your assistant, on your laptop.
+description: Pick one work type, put gates and context in place, then take a real feature from issue to production with Copilot doing the heavy lifting and a person approving every step.
 eyebrow: playbook.low()
 accent: yellow
 tableOfContents:
@@ -8,43 +8,618 @@ tableOfContents:
 ---
 import { Aside } from '@astrojs/starlight/components';
 import LevelIndicator from '../../../components/LevelIndicator.astro';
+import PlaybookProgress from '../../../components/PlaybookProgress.astro';
+import StepDone from '../../../components/StepDone.astro';
 
 <LevelIndicator level="low" kind="playbooks" />
 
+<PlaybookProgress level="low" />
+
 <Aside type="caution" title="Draft playbook">
-This playbook is a placeholder. The steps and exit criteria are set. Features marked **preview** may change.
+This playbook is a draft and will change as we test it with teams. Product screens move; when a step here and the linked GitHub docs disagree, follow the docs.
 </Aside>
 
-**Time:** About half a day for one repository.
+Low autonomy means people direct the work while agents carry out bounded tasks. A developer agrees the scope, gives the agent relevant context, reviews its implementation and evidence, and decides when the change is ready to move forward. The task can be a small fix or part of a larger feature; autonomy describes the decisions delegated, not the size of the change.
+
+## From individual assistance to a shared way of working
+
+This playbook helps a team make agent-assisted development repeatable. Instead of each developer assembling their own prompts and tools, the team maintains shared instructions, reusable skills, approved connections and automated checks. Each change produces evidence for review, and the team uses the results to improve its approach.
+
+These are foundations for a software factory. They are useful without committing the team to higher autonomy.
+
+**At the end you will have:**
+
+- One repository where no change, from a person or an agent, can reach `main` without passing the same gates.
+- One work type that the team does with Copilot every day, with a baseline to compare against.
+- Instructions, a skill and an eval in `.github/`, which every developer's agent reads. Changes to them go through pull requests and code owners, like code (step 7).
+- A 30-minute weekly review: each review comment that keeps coming up becomes an eval check and a rule in the instructions (step 11).
+- Lead time, review rounds and change fail rate for agent-assisted pull requests, compared with your own numbers from before agents started (step 9).
+
+**Time:** about a day to set up one repository. Agree up front how many changes the work type needs before you judge the results, and set a review date.
+
+## Ground rules
+
+These seven rules apply to everything that follows. They're what the [eight principles](/framework/principles/) mean in daily practice at this level. Write them into your team's working agreement.
+
+1. **The author answers for every line.** Whoever typed it, the person who opens the pull request must be able to explain it.
+   *Red flag:* "the agent wrote that" as an answer in review.
+2. **Gates come before agents.** Ruleset, CI and scans are in place before agents start, not after the first incident.
+   *Red flag:* "we'll add tests once we see how it goes".
+3. **Big work, small pull requests.** Each slice is something a reviewer can read in one sitting.
+   *Red flag:* a pull request that needs a meeting to review.
+4. **Tools are approved once, centrally, not call by call.** Developers only confirm actions that reach outside the sandbox, such as pushing or installing a package.
+   *Red flag:* people clicking yes without reading, or auto-approve for everything.
+5. **Show, don't claim.** Every pull request carries its evidence: tests, CI and scan results.
+   *Red flag:* "tested locally" with nothing attached.
+6. **Correct the agent twice, write it down.** A repeated correction becomes a rule in the instructions or a skill.
+   *Red flag:* the same review comment on three pull requests in a row.
+7. **Measure the work type, not the person.** Compare with the work type's own baseline, not developer against developer.
 
 ## Before you start
 
-- A GitHub repository you can administer, with a test suite that runs.
-- GitHub Copilot Business or Enterprise, with the policies your organisation needs enabled.
-- GitHub Advanced Security, or the security tools you already use, connected to the repository.
-- The Copilot app, the Copilot CLI or an IDE with Copilot, on your laptop.
+**You need:**
 
-## Steps
+- A GitHub repository you can administer, with a build and a test suite that run in CI.
+- GitHub Copilot Business or Enterprise, so the organisation controls policies and data handling.
+- [Copilot code review](https://docs.github.com/en/copilot/concepts/agents/code-review), the first reviewer on every pull request.
+- GitHub Advanced Security (GitHub Code Security and GitHub Secret Protection), or the scanners you already use, connected to the repository.
+- [GitHub Code Quality](https://docs.github.com/en/code-security/code-quality), or the quality tools you already use.
+- Copilot in the IDE, the [Copilot CLI](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/about-copilot-cli) or the Copilot app on each developer's machine.
 
-*Coming soon:* detailed UI and CLI instructions for each step.
+**Name the roles.** At this level they're part-time hats, not new jobs.
 
-1. **Protect the main branch.** Turn on a ruleset for the default branch: pull requests required, status checks required, and code owners for the paths that matter.
-2. **Make CI the first gate.** Every pull request runs build, tests and scans before anyone reviews it.
-3. **Write down your context.** Add repository custom instructions, an `AGENTS.md` and a first agent skill, and review them like code.
-4. **Start from an issue.** Pick a small, well-scoped change and capture the intent in an issue.
-5. **Turn the issue into a spec.** Plan with Copilot: acceptance criteria, approach and test plan, saved in the repository.
-6. **Build with Copilot.** Let Copilot implement the spec while you watch, steer and accept each edit.
-7. **Review with evidence.** Open the pull request. Copilot code review, CI and security scans produce evidence; a person approves.
-8. **Merge and observe.** Merge, release as usual and watch the signals. Note what to improve in your instructions and skills.
+| Role | Who | Owns |
+| --- | --- | --- |
+| Factory owner | Engineering lead for the team | Which work types use agents, and the decision to move up or dim back up. |
+| Maintainers | One or two senior engineers | The ruleset, `CODEOWNERS`, CI and the context files. They review every change to them. |
+| Developers | The team that owns the work type | Doing the work type with Copilot, and logging what went wrong. |
+| Security champion | Someone from the team or the security group | Scanners, push protection and triage of findings on agent-assisted pull requests. |
+
+## Step 1: Pick one repository and one work type
+
+A [work type](/reference/glossary/#work-type) is a kind of change your team makes again and again, with its own risks and its own way of proving it works: new features, bug fixes, framework upgrades, infrastructure changes. Autonomy is set per work type, not per repository, because the evidence is different for each. A test suite proves a bug fix; it tells you little about a database migration. In the same repository, bug fixes can be ready for more autonomy while migrations still need a person at every step.
+
+Start with exactly one work type, in one repository:
+
+- **You can tune it.** Most of the setup in the next steps belongs to the repository and serves every kind of work in it: branch rules, CI, the sandbox and `copilot-instructions.md`. The part specific to the work type is smaller: skills for the tasks this kind of change keeps repeating, the checks that prove it, and the review checklist. Get that part right once before you write a second.
+- **You can measure it.** The baseline (step 9) and the evidence to move up compare like with like. Mix upgrades and features together and you can't tell whether either got better.
+- **You can reuse it.** Once one work type runs well, the second one reuses most of the setup.
+
+Pick it for how well you can check and undo it, not for how small it is. Work that matters to the business keeps the results honest and gets people's attention. A good first work type passes all five of these tests:
+
+- **Clear done.** You can write acceptance criteria a reviewer can check.
+- **Provable.** Tests, a preview or a feature flag can show it works before it reaches every customer.
+- **Easy to undo.** If something slips through, a revert or a flag switch fixes it, with no data migration or customer communication.
+- **Owned.** It sits in code one team owns, so one set of code owners can approve it.
+- **Recurring.** It comes up often enough to learn from, so you're improving a way of working, not a one-off.
+
+These tests aren't about distrusting the agent. With the right context, it writes most of the code, and often good code. What hasn't been proven yet is everything around it: your instructions, gates and reviews haven't yet shown that they catch what they should. Work you can check and undo lets you give the agent real, ambitious work while you find out. It's the bar you'd set for a new team's first month, whoever writes the code.
+
+| Strong first work types | Leave for the second wave |
+| --- | --- |
+| Features behind a feature flag | Authentication, authorisation and payments |
+| Framework and runtime upgrades, such as a major version of Node.js, .NET or Java | Database schema changes that move or delete data |
+| Modernising a module: replacing a legacy client, moving to async, removing dead code | Infrastructure and network changes |
+| Bug fixes that start from a reproducing test | Public API changes other teams depend on |
+| Adding tests to legacy code before refactoring it | Anything regulated, until your auditors have seen the gates |
+
+The second wave isn't off limits for agents. You just can't yet prove or undo those changes cheaply, so start where the line can show it works.
+
+**Example.** A retail team owns `checkout-service`, a TypeScript service that prices carts and applies promotions. Marketing asks for new kinds of promotion every few weeks, each one a few days of work. The team picks **"promotion features in `checkout-service`, shipped behind a feature flag"** as their first work type and keeps `src/payments/` out of scope.
+
+Write the choice down in the repository, for example in `docs/factory.md`: the work type, what's in and out of scope, the team doing it, and the date you'll first review the results.
+
+<StepDone level="low" n={1} />
+
+## Step 2: Set up governance
+
+Decide what Copilot is allowed to do before anyone uses it. Policies are set in the Copilot settings of the enterprise and the organisation; when the enterprise sets a policy, the organisation can't override it. [Managing Copilot policies](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-organization/manage-policies)
+
+| Control | Setting at low autonomy | Why |
+| --- | --- | --- |
+| Licences | Assign them through teams, starting with the team that owns the work type. | You know who has access, and usage data maps to teams. |
+| Copilot CLI and the Copilot app | Turn on the **Copilot CLI** and **GitHub Copilot app** policies, and **Copilot in the cloud** if the team will use cloud sandboxes (step 5). [Administering Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli/administer-copilot-cli-for-your-enterprise), [About the GitHub Copilot app](https://docs.github.com/en/copilot/concepts/copilot-surfaces/github-copilot-app) | This is where agents work at this level, on the developer's machine, with the developer watching. |
+| Copilot code review | On. | Every pull request gets a first review pass; a person still approves. |
+| Models and Copilot Fusion | Enable the models your organisation has approved, and turn on [Copilot Fusion](https://docs.github.com/en/copilot/concepts/models/copilot-fusion). Make Fusion the team's default choice in the model picker. | Using the right model for the right task is essential. |
+| Budgets | Set a user-level budget for every licensed user, and turn on **Stop usage when budget limit is reached** for every spending limit you create. Give each team its own cost centre. | Agents use AI credits at every step. A hard limit means no surprise bills, and spend per work type becomes a number you can track. [Getting started with budget controls](https://docs.github.com/en/copilot/tutorials/budgets/getting-started-with-budget-controls) |
+| Suggestions matching public code | Blocked, unless your legal team has decided otherwise. | Reduces the risk of copying licensed code. |
+| MCP servers | On, but only for approved servers, for example with an [enterprise allowlist](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-mcp-usage/configure-enterprise-allowlist). | Each MCP server gives the agent new reach: data it can read and actions it can take. An allowlist keeps that reach deliberate. |
+| Content exclusion | Exclude files Copilot shouldn't read, such as customer data fixtures. | It's a guardrail for Copilot's tools, not a security boundary, so it doesn't replace keeping secrets out of the repository. [About content exclusion](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/content-exclusion) |
+| Audit and usage | Give the factory owner access to the audit log and [Copilot usage metrics](https://docs.github.com/en/copilot/concepts/billing-and-usage/copilot-usage-metrics/copilot-metrics). | You can see who changed a policy, and step 9 needs the usage data. |
+
+Record the settings in `docs/factory.md`, next to the work type, so any change to them is deliberate and visible.
+
+**Recommendation: Copilot Fusion.**
+
+Picking a model for every task is a decision developers make inconsistently, and it's where both cost and quality drift. Copilot Fusion routes each step of a task to a suitable model at runtime, and only uses models your policies allow. For harder tasks it can have one model draft and others critique or check the draft, a review step you'd otherwise have to ask for. In practice:
+
+- **Fusion Standard** for everyday work. It balances cost, quality and speed.
+- **Fusion High** for a substantial, well-scoped task, such as a feature slice that touches several files.
+- **Fusion Max** only for the hardest reasoning, such as planning a tricky change. It uses the most capable and most expensive models.
+
+Teams then argue about specs and tests, not models, and the budget tells you what each work type costs.
+
+**Check it works:** a developer on the team sees Copilot Fusion and only approved models in the model picker. Someone outside the licensed teams has no Copilot licence. Nobody can assign an issue in `checkout-service` to Copilot. The budget shows up in the billing settings with a hard stop.
+
+<StepDone level="low" n={2} />
+
+## Step 3: Protect integration branches and require human review
+
+Identify the branches where changes are integrated or released: usually the default branch, plus any maintained release branches. Protect them with [rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets) so human-written and agent-assisted changes meet the same requirements. Branch protection controls what merges; deployment approvals and access to external systems need their own controls.
+
+In **Settings → Rules → Rulesets**, inspect the effective rules first, including any inherited from the organisation. Reuse that baseline or add a branch ruleset targeting the relevant branches. Check availability for your plan and repository visibility, and make sure the intended protections are enforced, not merely being evaluated.
+
+**Require reviewed pull requests.** Set **Require a pull request before merging**, with at least one required human approval from someone other than the author. Increase the approval count where the risk warrants it, require code-owner review for owned paths, and require review conversations to be resolved. Prevent branch deletion and force pushes.
+
+**Keep approval relevant to the final change.** GitHub offers two related controls:
+
+- **Dismiss stale pull request approvals when new commits are pushed** invalidates earlier approvals when the reviewed diff changes, requiring renewed review.
+- **Require approval of the most recent reviewable push** requires approval after that push from someone other than its pusher, without necessarily dismissing all earlier approvals.
+
+Choose the combination that matches the team's review policy. Both can be enabled for stricter review, but they aren't identical requirements. Verify that a new reviewable change can't merge using only approval from before that change.
+
+**Require the automated evidence.** Connect the applicable status checks and other merge controls from step 4. A successful automated check doesn't replace human approval.
+
+**Treat bypass as an exception.** Keep bypass permissions empty unless there is a documented emergency need. If a break-glass role is necessary, limit its membership and record who may use it, under what conditions, and who reviews each use. Include administrators, apps and service accounts when checking for bypass routes; retain the reason and audit evidence for every exception.
+
+**Use Copilot code review as additional feedback.** Configure automatic review where supported, but keep human review mandatory. Findings help the author and reviewer; they don't establish human accountability.
+
+<Aside type="caution" title="Keep Copilot approvals off">
+By default, Copilot code review leaves comments and its reviews don't count toward required approvals. Repositories can enable **Copilot approvals** so a Copilot review satisfies the required-approval rule. At low autonomy, leave it off: a person approves every pull request. [About Copilot code review](https://docs.github.com/en/copilot/concepts/agents/code-review)
+</Aside>
+
+Add a `CODEOWNERS` file to route reviews to the people responsible for each area, including context and executable configuration. It requires owner approval only when the corresponding review rule is enabled; it does not prevent an agent from editing those files. Enforce agent access boundaries through the controls in steps 5 and 6.
+
+Adapt this example to the files and teams you actually use:
+
+```text title=".github/CODEOWNERS"
+# Default reviewers
+*                               @contoso/checkout-devs
+
+# Route payment changes to the payments team
+/src/payments/                  @contoso/payments
+
+# Context and gates are reviewed by maintainers, like code
+/.github/copilot-instructions.md @contoso/checkout-maintainers
+/.github/instructions/          @contoso/checkout-maintainers
+/.github/skills/                @contoso/checkout-maintainers
+/.agents/skills/                @contoso/checkout-maintainers
+/.github/hooks/                 @contoso/checkout-maintainers
+/AGENTS.md                      @contoso/checkout-maintainers
+/apm.yml                        @contoso/checkout-maintainers
+/apm.lock.yaml                  @contoso/checkout-maintainers
+/.github/workflows/             @contoso/checkout-maintainers
+/.github/CODEOWNERS             @contoso/checkout-maintainers
+```
+
+The last matching `CODEOWNERS` pattern wins: the default team isn't automatically added to each path-specific owner. Listing several owners on one pattern doesn't require all of them to approve. Verify that the named teams have the required repository access, and protect any other hook scripts, tool configuration or pipeline files used by the team.
+
+**Check it works:** inspect the effective rules on every intended integration and release branch. Use a disposable branch explicitly covered by the same rules, or a test repository with equivalent settings, and a normal contributor account without bypass rights. Confirm a direct push is rejected, a pull request without the required human and owner approvals is blocked, and a new reviewable push requires fresh approval as configured. Step 4 checks the failing-check gate. Don't probe the real default or release branch with a direct push: if protection is wrong, the test itself would change it.
+
+<StepDone level="low" n={3} />
+
+## Step 4: Establish automated checks before merge
+
+Set up the checks before starting implementation in step 10, so the team knows what evidence a change must pass before merge. Apply the same policy to human-written and agent-assisted changes, with checks appropriate to the affected code and risk. Automated checks reduce the burden on reviewers; they don't replace review. People can give early feedback while CI runs.
+
+Use the pipeline you already have, on GitHub Actions, Azure Pipelines, Jenkins or another system that reports status checks to GitHub. Build, lint, tests and documentation checks are common inputs, not a complete prescription. Depending on the change, contract tests, accessibility checks, performance budgets or deployment validation may matter too.
+
+Whatever the pipeline runs, make its results dependable:
+
+- **Every pull request gets the applicable checks.** Give required status checks stable, unambiguous names. If checks are selected by changed paths, verify that relevant changes can't escape them and that required checks don't stay pending for changes they don't apply to.
+- **Local checks where practical, CI results where not.** Document the checks that can run in the developer's environment and link them from the instructions in step 7. Identify checks that need CI infrastructure, credentials or other platforms. Give developers and agents access to the relevant failure logs without exposing secrets.
+- **Fast feedback first.** Run quick checks early and parallelise independent work where practical. Keep necessary slow checks as gates; don't drop them just to shorten the pipeline.
+- **Meaningful tests, not coverage alone.** Agree coverage thresholds appropriate to the code, and make deleted, skipped or weakened tests visible in review. Coverage shows execution, not whether assertions would catch incorrect behaviour.
+- **Least privilege for pull request jobs.** Default tokens to read-only and grant only the permissions each job needs. Don't expose production credentials to unreviewed code. Separate any privileged reporting or deployment work from jobs that execute pull request code.
+
+**Security checks.** Cover vulnerabilities in changed code, exposed secrets and dependency risks with supported tools. Check language support, repository eligibility and licensing before choosing GitHub features or your existing equivalents:
+
+- **Code scanning:** use CodeQL default setup where it fits, advanced setup where needed, or another supported scanner. Agree which findings block merge and how exceptions are reviewed.
+- **Secrets:** enable secret scanning and push protection where available. Push protection can block detected supported secrets before the push is accepted; it doesn't detect every possible credential or replace secret handling.
+- **Dependencies:** use Dependabot alerts for known vulnerabilities in existing dependencies, and [dependency review](https://docs.github.com/en/code-security/supply-chain-security/understanding-your-software-supply-chain/about-dependency-review) or an equivalent pull request check for dependency changes. Configure blocking thresholds for known vulnerabilities and any required licence policy. A clean scan isn't proof that a package is safe.
+- **Suggested fixes:** Copilot Autofix can propose fixes for supported code scanning findings. Review and test them like any other change; a suggestion isn't a gate.
+
+**Quality checks.** Use the team's quality tools to identify maintainability and reliability problems and assess test coverage. GitHub Code Quality is an option where available, not a prerequisite. Agree actionable rules and thresholds, supply coverage reports if needed, and evaluate new gates before enforcing them so existing debt and noisy findings don't make normal work impossible.
+
+**Connect each result to the right control** in the repository baseline from step 3:
+
+- Require pipeline and dependency-review status checks through **Require status checks to pass**.
+- Use **Require code scanning results**, where available, to enforce the configured scanners and alert thresholds. A scan completing successfully doesn't necessarily mean it found no blocking alerts.
+- Configure supported quality and coverage rules separately, or require the equivalent status checks from your existing tools.
+- Configure **push protection** as a push-time control, not a CI status check.
+
+**Handle flaky checks explicitly.** Don't accept repeated reruns until a change happens to pass. Fix the cause, or assign any quarantine an owner, deadline and assessment of the protection lost. Keep replacement checks or additional review where needed; if a critical risk can't be checked reliably, narrow or pause that work rather than silently removing its gate.
+
+**Check it works:** open a disposable pull request against the protected branch with a harmless change that deliberately fails a required check. Using a normal contributor account, confirm that the failed check blocks merging, then correct the failure and confirm the check passes while required reviews still apply. Verify any path-based selection too. Don't merge the test change or use real secrets to test protection.
+
+<StepDone level="low" n={4} />
+
+## Step 5: Run agents in an isolated environment
+
+By default, a command an agent runs on a laptop has the same access as the developer: every file, every network the machine can reach and every credential in the shell. Tool approvals (step 6) then rely on a person reading every command correctly, every time. An isolated environment means a wrong command, a misread approval or a prompt injection hidden in a file or web page can only reach what you put inside it.
+
+**Why it matters:**
+
+- **Smaller blast radius.** The agent can't read SSH keys, cloud credentials or other repositories it was never meant to see.
+- **The same environment for everyone.** Every developer and every agent uses the same toolchain and versions, so "run `npm test`" means the same thing on every machine and results are repeatable.
+- **Easy to throw away.** If something goes wrong, delete the environment and start a clean one.
+- **Approvals that matter.** When routine commands are safe inside the boundary, the remaining prompts are the ones worth reading.
+
+| Option | What it isolates | Good for |
+| --- | --- | --- |
+| [Local sandboxing](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-and-local-sandboxes) in the Copilot CLI and the Copilot app | Limits which files and networks the agent's commands can reach, at operating-system level. It's lightweight: not a separate virtual machine or container. Off by default; turn it on with `/sandbox enable` in the CLI or in the app's project settings. Enterprise managed settings can require it. | Every developer, from day one, at no extra cost. |
+| Agent sandboxing in VS Code | Limits the files and network hosts that agent commands in VS Code can reach. | Teams that work mainly in VS Code. |
+| Dev containers and [GitHub Codespaces](https://docs.github.com/en/codespaces/overview) | A full container defined in the repository, running locally or in the cloud. | A golden environment per repository, with no production credentials in it. |
+| [Cloud sandboxes](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-sandboxes) | The whole session runs in a throwaway Linux environment hosted by GitHub, not on the developer's machine. | Heavier work, sessions in parallel, and machines you don't want agents running on. |
+| [Microsoft Dev Box](https://learn.microsoft.com/en-us/azure/dev-box/overview-what-is-microsoft-dev-box) | A managed cloud workstation, set up and governed by IT. | Regulated teams, heavier toolchains and Windows development. |
+
+**Start here:** make sandboxing the default for everyone, set centrally rather than left to each developer.
+
+- **Local sessions: require local sandboxing.** In [enterprise managed settings](https://docs.github.com/en/copilot/how-tos/administer-copilot/manage-for-enterprise/use-managed-settings/get-started) (`copilot/managed-settings.json` in your `.github-private` repository), turn on the `sandbox` setting. It applies to the Copilot CLI, the Copilot app and Copilot agent sessions in VS Code, and developers can't turn it off. Restrict outbound network access to the hosts the build needs, such as your package registry and GitHub. [Enterprise managed settings reference](https://docs.github.com/en/copilot/reference/enterprise-administrators/enterprise-managed-settings)
+
+  ```json title="copilot/managed-settings.json"
+  {
+    "sandbox": {
+      "enabled": true,
+      "failIfUnavailable": true,
+      "allowBypass": false
+    }
+  }
+  ```
+
+- **Cloud sessions: use cloud sandboxes** for heavier work or several sessions in parallel. A [cloud sandbox](https://docs.github.com/en/copilot/concepts/security-governance-and-network-settings/about-cloud-sandboxes) is a throwaway Linux environment hosted by GitHub, so nothing runs on the developer's machine. The **Copilot in the cloud** policy decides who can use them, and their network access follows the Copilot cloud agent firewall allowlist.
+
+**Secrets.** No production credentials in any environment an agent can use. Use development credentials with short lifetimes, and keep `.env` files out of the repository.
+
+**Check it works:** in a sandboxed session, ask the agent to read a file outside the repository and to call a host that isn't on the allowed list. Both should be blocked.
+
+<StepDone level="low" n={5} />
+
+## Step 6: Set guardrails for what agents do
+
+Step 2 decides which MCP servers and tools are allowed at all, and step 5 limits what an agent can reach. This step decides which of those run without asking, so the developer only sees prompts that matter.
+
+**Tool approvals.** Agents in the IDE, the Copilot CLI and the Copilot app ask before they run commands or change files, unless a tool is pre-approved. Set the defaults once for the team:
+
+- Pre-approve what's routine and safe inside the sandbox, such as reading files, running tests and lint, and read-only MCP tools. Deny what must always be a human act. For example:
+
+```sh
+copilot --allow-tool 'shell(npm test)' --allow-tool 'shell(npm run lint)' \
+        --deny-tool 'shell(git push)' --deny-tool 'shell(rm)'
+```
+
+- Keep asking for anything with consequences outside the sandbox: pushing, installing packages, calling hosts that aren't on the allowed list, and MCP tools that create, change or delete something.
+- Don't turn on auto-approve for everything, and don't use `--allow-all-tools` in the Copilot CLI.
+- Share the settings in the repository, so every developer gets the same defaults, and review changes to them like code.
+
+<StepDone level="low" n={6} />
+
+## Step 7: Bring the right context
+
+Give agents the context needed to work effectively in your project: its purpose, architecture, constraints, conventions and the requirements of the current task. Keep reusable guidance in versioned files, reviewed through pull requests and owned through `CODEOWNERS`, like code. Link to existing documentation rather than duplicating it.
+
+Choose how to supply context based on when it's needed:
+
+| Mechanism | When it's useful | What goes there |
+| --- | --- | --- |
+| [Instructions](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions) | Guidance that applies throughout a repository or to matching files. | Commands, conventions, constraints and pointers to relevant documentation. |
+| [Skills](https://docs.github.com/en/copilot/concepts/customizations/agent-skills) | Specialised guidance loaded when relevant, or when explicitly requested. | Task-specific instructions, with optional scripts, templates, examples and reference material. |
+| Issues, specs and documentation | The agent needs to understand the particular change. | Acceptance criteria, scope, architecture decisions and domain knowledge. Link the relevant sources in the task (step 10). |
+| [Hooks](https://docs.github.com/en/copilot/concepts/customizations/hooks) | Information needs to be gathered automatically at a defined event. | A script can supply current project information at session start, where the client supports context output. |
+| Tools and MCP servers | The agent needs to look up information as it works. | Current issues, API documentation, logs or business context from approved sources (step 8). |
+
+Start with repository instructions and the sources for the current task. Add skills where packaged know-how is useful, and hooks where automatic context collection has a clear benefit. You don't need a new skill for each feature, or every mechanism in every repository.
+
+Keep always-loaded instructions short. Put detailed procedures and reference material where the agent can read them when needed.
+
+**1. Repository instructions.** Use [`.github/copilot-instructions.md`](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-repository-instructions), or `AGENTS.md` where supported. [Support varies by Copilot surface](https://docs.github.com/en/copilot/reference/custom-instructions-support), so check the clients your team uses. Keep one source of truth for each rule rather than conflicting copies. For example:
+
+```md title=".github/copilot-instructions.md"
+# checkout-service
+
+TypeScript (Node 22) service that prices carts and applies promotions.
+
+## Build and test
+- Install with `npm ci`. Test with `npm test` (Vitest). Lint with `npm run lint`.
+- Run tests and lint before saying a change is done, and report the results.
+
+## Rules
+- Money is integer cents. Never use floating point for money; use `src/money.ts`.
+- New behaviour ships behind a feature flag, off by default.
+- Every acceptance criterion gets at least one test. Bug fixes start with a failing test.
+- Don't add dependencies. If one is needed, stop and explain why.
+- Keep changes inside the files the current task needs. No drive-by refactors.
+
+## Out of bounds
+- `src/payments/` belongs to the payments team. Don't edit it; describe the needed change instead.
+- Never edit a migration in `migrations/` that has already shipped.
+```
+
+**2. Path-specific instructions,** for rules that only apply to some files:
+
+```md title=".github/instructions/tests.instructions.md"
+---
+applyTo: "**/*.test.ts"
+---
+- Use Vitest. Arrange, act, assert, with one behaviour per test.
+- Name tests after the behaviour: `gives 10% off when the cart has 10 or more items`.
+- Build carts with the factories in `test/factories.ts`, not object literals.
+- No snapshot tests for pricing; assert the exact amounts in cents.
+```
+
+**3. Package specialised know-how in skills.** Skills combine task-specific instructions with optional scripts, templates and reference material, loaded when relevant. Use them to share a reliable way of performing a task, not only to correct mistakes. They can be project-specific or shared across projects that use the same practices.
+
+For example, the instructions for `checkout-service` say new behaviour goes behind a flag. An `add-feature-flag` skill can package the team's flag API, generator and test template. The following illustrates that package; the script and template would need to be implemented for the project's actual flag system:
+
+```text
+.github/skills/add-feature-flag/
+├── SKILL.md
+├── new-flag.mjs          # adds the flag to src/flags.ts and creates the test file
+└── flag-off.test.ts.tpl  # template for the "nothing changes with the flag off" test
+```
+
+```md title=".github/skills/add-feature-flag/SKILL.md"
+---
+name: add-feature-flag
+description: Add a feature flag to checkout-service and put new behaviour behind it. Use when a change adds or changes behaviour that customers will see.
+---
+1. Name the flag after the behaviour, in kebab case, for example `volume-discounts`.
+2. Run `node .github/skills/add-feature-flag/new-flag.mjs <name>`. It adds the flag
+   to `src/flags.ts`, off by default, and creates a test from `flag-off.test.ts.tpl`.
+   Don't edit `src/flags.ts` by hand.
+3. Read flags with `isEnabled(flags["<name>"], ctx)`. Never read environment variables
+   directly.
+4. Fill in the generated test so it proves that, with the flag off, prices are
+   exactly what they were before the change.
+5. In the pull request description, name the flag and say who will turn it on.
+```
+
+**Manage shared context as dependencies.** Keep reusable skills and instructions in centrally maintained packages. For multiple repositories, use [Agent Package Manager (APM)](https://microsoft.github.io/apm/quickstart/) to declare and pin those dependencies, and review updates through pull requests. For individual skills, `gh skill` is a simpler option.
+
+Keep general team rules in instructions, not hidden inside a skill that may never load. [Organisation custom instructions](https://docs.github.com/en/copilot/how-tos/configure-custom-instructions/add-organization-instructions) apply to supported cloud sessions and Copilot code review, not to local sessions.
+
+**4. Use hooks for changing context when needed.** Hooks execute code at defined points in a session; they aren't another instruction file. For example, a session-start script could identify the packages in a monorepo and return a short map of their locations and test commands, rather than maintaining a second copy by hand. Copilot CLI's [`sessionStart` hook](https://docs.github.com/en/copilot/reference/hooks-reference#sessionstart--sessionstart) supports an `additionalContext` output for this purpose.
+
+Check the events and output format supported by each client; printing text from a hook doesn't necessarily put it into the agent's context. Hooks in VS Code are in public preview. Keep context-gathering hooks fast, read-only and free of secrets, and review their code and configuration like other executable code. Hooks can also validate or block actions, but those are guardrails (step 6), not context.
+
+**5. Check that the context works.** Try a representative task and inspect whether the agent used the relevant instructions, skill and source material. For a skill, [GitHub Copilot Evals](https://github.com/github/evals) (public preview) can check both the result and how the agent got there across repeated runs. As a preview, it needs the assessment in step 2 first.
+
+Install the `eval` plugin, enter `/eval create` in the Copilot CLI or the Copilot app, or open the Evals panel in VS Code, and pick `add-feature-flag`. A good first eval asks for a small change in `checkout-service`, such as "buy two, get one free", and checks that:
+
+- The agent loaded the skill without being told to.
+- It added the flag with the script, off by default, rather than editing `src/flags.ts` by hand.
+- The flag-off test exists and passes.
+- It didn't touch `src/payments/`.
+
+Save a first run now. That's the baseline every later change to the context is compared with in step 11.
+
+**What doesn't belong in context:** secrets, personal data, long copies of documentation the agent can read in the repository, and vague advice such as "write clean code".
+
+<StepDone level="low" n={7} />
+
+## Step 8: Connect tools and business context
+
+Start with what the agent needs to retrieve or verify for the work type: the issue's acceptance criteria, a business rule, a failed check or the behaviour of the running application. Identify the authoritative source and the minimum access needed. Use existing repository access, command-line tools or built-in integrations where they are sufficient. Add an [MCP server](https://docs.github.com/en/copilot/concepts/context/mcp) when it provides a needed connection; MCP isn't a requirement for every source.
+
+These are examples, not a required set of tools.
+
+| Need | Example connection | Access boundary |
+| --- | --- | --- |
+| Read issues, pull requests, code and failed checks. | [GitHub MCP Server](https://github.com/github/github-mcp-server), or an existing GitHub integration or CLI. | Read-only access to the relevant repositories, with only the required tools enabled. |
+| Verify a UI change against its acceptance criteria. | [Playwright MCP](https://github.com/microsoft/playwright-mcp), or existing browser tests. | Local or approved staging environments with test accounts and disposable data. Browser clicks can change data; they aren't necessarily read-only. |
+| Inspect the configuration and logs of a development service. | [Azure MCP Server](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/overview), or existing Azure tooling. | Read-only tools and an identity scoped to the required development or staging resources. |
+| Find the business brief or decision behind a requirement. | [Microsoft IQ](https://learn.microsoft.com/en-us/microsoft-iq/), such as Work IQ for Microsoft 365 context, or an approved document integration. | Only the documents and data needed for the task, within the user's existing permissions. Check the specific capability's availability; some are in preview. |
+
+**Maintain the connections centrally.** Give each shared integration an owner. Version its non-secret configuration, put it under `CODEOWNERS`, and distribute it through the team's approved setup or package-management process (step 7). Pin versions of locally installed servers and review updates instead of fetching `latest` on every start. Keep credentials outside the repository, using the client's authentication flow or an approved secret store.
+
+**Rules for tools at low autonomy:**
+
+- **Approve the tool, limit its access.** Use the central approvals from step 2. Restrict its identity, resources and enabled operations; an approved server doesn't need access to everything the developer can reach. Enforce those limits through permissions and tool configuration, not instructions alone.
+- **Read by default; approve consequential writes.** Reads within the approved scope can be pre-approved. Before an agent creates an issue, posts a message or changes a shared resource, the developer reviews the target and proposed change and explicitly approves it (step 6). If the client can't require that approval, leave the write tool disabled. Approval never overrides an action prohibited by policy.
+- **Say when to use the source and what evidence to return.** For example: "Read the linked business brief before drafting acceptance criteria, and cite the relevant section" or "Verify the UI change on localhost and report the observed result." If a source is unavailable or conflicts with another, report the gap rather than inventing an answer.
+- **Treat retrieved content as data, not authority.** Documents, issue text, web pages and tool results can contain misleading instructions. They don't grant permission to run commands or disclose information. Keep permissions narrow and use the sandbox from step 5; neither makes retrieved content trustworthy.
+
+**Check it works:** give the agent a representative task. Verify that it retrieves an authorised source and cites it, or runs the intended check and returns evidence. With an administrator-approved test account and test resource, confirm that out-of-scope access is denied. If writes are enabled, check on disposable data that the operation waits for approval and does not run when approval is refused.
+
+<StepDone level="low" n={8} />
+
+## Step 9: Record a baseline
+
+Decide how you'll tell whether agents are helping this work type. Start with comparable recent changes from the same repository, with similar scope and risk. If reliable history isn't available, start collecting now and record what's missing; don't block adoption just to reconstruct old data or treat missing data as zero.
+
+Start with three signals. Use the same definitions and collection method before and after:
+
+| Signal | What to record |
+| --- | --- |
+| Pull request turnaround time | Elapsed time from opened to merged, including draft time. Report the median and number of merged pull requests. This isn't the full change lead time; track merge-to-deployment delay separately if useful. |
+| Review effort | Use the reviewer question in the pulse survey below. If the team already records active review time, compare that too. Note substantive corrections, such as a missed requirement or incorrect behaviour, to explain the effort; don't count every push as a review correction. |
+| Post-release problems | Count deployed changes that required a corrective follow-up, hotfix or rollback, or caused an incident, within an agreed observation window. Report affected changes out of all changes observed for that full window, counting each change once. Editing the same lines later isn't, by itself, a defect. |
+
+**Agree the decision before collecting results.** Record the measurement owner, baseline period, definitions, observation window, minimum number of comparable changes and first review date in `docs/factory.md` (step 1). Agree what improvement would be useful and what must not get worse: for example, lower turnaround time without increased review effort or post-release problems. Choose thresholds appropriate to this work type; if there isn't enough evidence at the review date, keep collecting rather than declaring success.
+
+**Pulse survey.** Run it at the start and at each review date, with answers from 1 (strongly disagree) to 5 (strongly agree). Allow "not enough experience to answer", especially before the team has used agents, and report how many people responded:
+
+1. Copilot helps me finish this kind of change.
+2. I trust the code Copilot produces for this kind of change after I've reviewed it.
+3. Reviewing agent-assisted pull requests takes no more effort than reviewing others.
+
+**Tag the work.** Agree what counts as agent-assisted, then add a checkbox to the pull request template (step 10) and a label such as `agent-assisted`. Keep the work type identifiable too, and don't assume unlabelled historical changes were unassisted. Use pull request data and your delivery system's deployment and incident records. [Copilot usage metrics](https://docs.github.com/en/copilot/concepts/billing-and-usage/copilot-usage-metrics/copilot-metrics) can describe adoption, not whether the work improved. [More on measuring →](/framework/measuring/)
+
+**Compare fairly.** Show the dates and sample sizes, and account for differences in scope, risk, staffing or CI. A before-and-after comparison or an `agent-assisted` label doesn't prove agents caused the result. Add other signals only when they help explain a problem.
+
+<StepDone level="low" n={9} />
+
+## Step 10: Take one feature from issue to production
+
+Put the setup into practice through Plan, Build, Verify and Observe. The following is an illustrative feature in `checkout-service`, not a report of a completed implementation. At low autonomy, a developer starts and directs the work, reviews the result and keeps control of consequential actions. The agent can implement and check an approved task without asking about every edit.
+
+### Plan: the issue and the spec
+
+The person responsible for the requirement and a developer agree the outcome, scope and acceptance criteria. Copilot can help draft them from approved sources, surface ambiguities and suggest edge cases; people make the product decisions. If the requirement is still unclear, make investigation the task rather than asking the agent to guess an implementation.
+
+Acceptance criteria connect the requirement, implementation and evidence. Make them specific and testable: concrete examples, boundary cases and what must not change. Tests provide evidence for those criteria, but passing tests alone doesn't establish that the requirement is complete.
+
+```md title="Issue #512: Volume discounts for promotions"
+**Why:** Marketing wants "buy more, save more" campaigns without a code change
+for each one.
+
+**What:** A promotion can define volume tiers. The cart gets the discount of the
+highest tier it reaches, based on the number of eligible items.
+
+**Acceptance criteria**
+- With tiers 3+ items = 5% and 10+ items = 10%, a cart of 2 eligible items gets
+  no discount, 3 gets 5% and 12 gets 10%.
+- Only the highest tier applies; tiers never stack.
+- Ineligible items don't count towards a tier and aren't discounted.
+- Volume discounts don't combine with coupon codes; the customer gets the better of the two.
+- Marketing can create and edit tiers in the admin API, with validation.
+- Behind the `volume-discounts` flag, off by default. With the flag off, prices don't change.
+
+**Out of scope:** per-customer tiers, and showing tiers on product pages (#530).
+```
+
+The developer asks Copilot to read the issue, the campaign brief and the relevant code using the approved connections from step 8. It proposes an approach, likely files to change, a test plan and any unresolved questions. The developer checks the proposal before implementation, including decisions the issue leaves open: discount rounding, invalid tiers and what happens when a coupon and a tier give the same discount.
+
+Keep planning proportional. A small change may need only an issue with acceptance criteria and an agreed approach. A cross-cutting change like this can benefit from a versioned spec, such as `docs/specs/512-volume-discounts.md`, reviewed by the relevant owners. Use a separate planning pull request when the risk or coordination warrants it, not for every change. [Spec Kit](https://github.com/github/spec-kit) is an optional way to structure that work.
+
+For this example, split the approved plan into reviewable pull requests. Record dependencies between slices and keep each one safe to merge with the feature disabled:
+
+```md title="docs/specs/512-volume-discounts.md (excerpt)"
+## Slices
+1. Pricing rule: `VolumeTier` type and `applyVolumeDiscount()` in `src/promotions/`,
+   with unit tests for the pricing criteria covered by this slice. Not wired up yet.
+2. Wiring: call the rule from `priceCart()` behind `volume-discounts`; resolve the
+   conflict with coupons. Tests prove prices are unchanged with the flag off.
+3. Admin API: create and edit tiers, with authorisation, validation and contract
+   tests. Verify the complete flow with the pricing integration before release.
+```
+
+### Build: the developer drives
+
+For each slice, the developer starts a sandboxed session in an approved client, using the model settings from step 2. Choose among approved models based on observed quality and cost for the task, not the number of files involved. Give the agent the task, relevant sources and boundaries:
+
+```text
+Build slice 1 of #512.
+The spec is in docs/specs/512-volume-discounts.md. Don't touch src/payments/.
+Confirm the approach before editing. Implement only this slice, run the applicable
+local checks and report the diff, evidence and anything you couldn't verify.
+Stop before committing or pushing.
+```
+
+Use checkpoints that matter:
+
+- **Check the plan** the agent proposes before it edits anything.
+- **Let it work within scope.** The agent can edit and run approved checks inside the sandbox. If it needs to expand scope, add a dependency or change an agreed design decision, it stops for the developer's decision.
+- **Approve consequential actions** under step 6's rules. Permission to implement isn't permission to push, publish or change shared resources.
+- **Stop unproductive retries.** Inspect the failure: it may be a missing requirement, a broken environment, a failing dependency or the wrong approach. Address the cause instead of repeating the same request or weakening checks.
+- **Ask for evidence.** For slice 2, browser tests or an approved browser tool can compare checkout totals with the flag on and off. The agent reports what it actually ran and observed, including failures and checks it couldn't run.
+- **Review the diff and results** before committing or opening a pull request. Check scope, correctness and unexpected changes, then commit in reviewable units on a branch.
+
+Record new decisions in the issue or spec so the next slice uses the same assumptions. The developer remains responsible for the change, regardless of how much code the agent produced.
+
+### Verify: evidence, then a person
+
+The developer opens a pull request per slice, using a template that asks for evidence:
+
+```md title=".github/pull_request_template.md"
+## What and why
+Issue/spec:
+Scope of this pull request and any dependent slices:
+
+## How I checked it
+- Acceptance criteria covered, with links to tests or other evidence:
+- Applicable local checks and results:
+- Required CI checks and results:
+- Flag-off behaviour, where applicable:
+- Integration, browser or manual checks: what ran and what was observed:
+- Checks not run, failures or limitations:
+
+## Agent assistance
+- [ ] Agent-assisted, using the definition agreed in step 9.
+- [ ] I reviewed the diff and evidence and can explain the change.
+
+## Risk and release
+What could break, and how we'd notice:
+Deployment/rollout plan, owner and stop conditions (or link to the shared plan):
+Rollback or recovery procedure, including data side effects:
+```
+
+All required gates must be satisfied before merge. Run automated checks early so human review isn't spent finding failures the pipeline already reports:
+
+1. **CI, scans and quality checks** run as defined in step 4. The author addresses failures; a local check doesn't replace a required pipeline check.
+2. **Copilot code review** provides another pass. The author evaluates each finding and fixes it or explains why it doesn't apply. An AI review isn't an approval.
+3. **A person reviews.** Use this checklist for agent-assisted pull requests:
+   - Does the change do what this slice of the spec asks, and nothing else?
+   - Do the criteria covered by this slice have meaningful evidence? Would the tests fail if the behaviour were wrong?
+   - Is the new behaviour really behind the flag, with a test for the flag-off path?
+   - Are there changes the spec didn't ask for: new dependencies, edited config, deleted or weakened tests?
+   - Are error handling and edge cases real, or plausible-looking placeholders?
+   - Can the author explain any line you point at?
+4. **The required human reviewers approve**, including code owners where required by the ruleset. The slice merges only when the gates pass. In this example, customer-facing behaviour remains disabled.
+
+### Observe: deploy, enable and verify
+
+Merging isn't deploying. Use the existing release pipeline and approval gates to deploy the required slices with the feature disabled. Verify the deployed version, configuration and flag-off behaviour before enabling it.
+
+Before rollout, name the person responsible, the signals they'll watch, the observation period and the conditions for stopping. For this example, check price correctness and calculation errors, with checkout conversion and support reports as additional signals. Agree thresholds before release, using the service's existing operational limits and baseline.
+
+A person authorises enabling the feature in staging, then for a limited production cohort where supported, then more widely after the agreed checks. If a stop condition is met, halt the rollout and follow the recovery procedure. Disabling a flag may stop new behaviour, but it doesn't undo incorrect charges, stored data or external side effects; those need an explicit recovery plan.
+
+The agent can help gather permitted logs and metrics and suggest explanations. Production access isn't implied by development or staging access: at this level, a person approves any agent-proposed production action through the existing controls.
+
+Link corrective follow-ups, hotfixes, rollbacks and incidents to the relevant changes. Use step 9's observation window and counting rules to record post-release problems, and bring the findings to step 11.
+
+<StepDone level="low" n={10} />
+
+## Step 11: Improve every week
+
+The work type gets better only if the context does. Hold a 30-minute review each week with the developers doing the work type and a maintainer:
+
+1. **Look at the week's agent-assisted pull requests.** Note every review comment that a person had to make about agent-written code.
+2. **Ask of each one:** would a sentence in the instructions, a step in the skill or a better spec have prevented it?
+3. **If yes, add it to the eval, then fix the context.** Use `/eval improve` to turn the comment into a failing check, change the instructions or skill, and run `/eval compare` against the last saved run. Open the pull request only if the new check passes and none of the old ones broke, and attach the comparison to it. Keep each rule specific: "money is integer cents" works; "be careful with money" doesn't.
+4. **Prune.** Remove rules the agent already follows without being told, and rules nobody can explain. Rerun the eval to confirm nothing breaks.
+5. **Log the rest.** Problems context can't fix, such as a flaky test or a missing fixture, go on the team board as normal work.
+
+**Example.** In the first week, two volume-discount pull requests came back from review because the agent read the feature flag in several places instead of once. The team added a check to the eval, "the flag is read once, in `priceCart()`", and it failed. They added "read each flag once, in the entry point, and pass the result down" to the instructions, and the check passed with nothing else broken. The review comment didn't come up again.
+
+<StepDone level="low" n={11} />
 
 ## Evidence to move up
 
-- Required checks run on every pull request, and the team trusts what they report.
-- Instructions and skills exist, are reviewed and improve every week.
-- Most agent-assisted pull requests merge with few corrections.
+Agree the thresholds with the factory owner before agents start on the work type, so nobody moves the goalposts afterwards. Then check each line against your baseline:
 
-When the evidence holds, move this work type to [medium autonomy](/levels/medium/) and open the [medium autonomy playbook](/playbooks/medium/).
+| Area | Ready when |
+| --- | --- |
+| Gates | Every change to `main` went through the ruleset, with no unexplained bypasses. Required checks are trusted: nobody re-runs them to get green. |
+| Quality | The share of agent-assisted changes with post-release problems is no higher than the baseline, using the same observation window and the number of comparable changes agreed in step 9. |
+| Review | Review effort is at or below the baseline using the method agreed in step 9, and reviewers find fewer substantive issues the evidence should have caught. |
+| Context | Instructions and the skill changed through reviewed pull requests most weeks, and repeat review comments are rare. |
+| People | The pulse survey is steady or better than at the start, especially on trust and review effort. |
+| Readiness | Reviewers say that, for this work type, the evidence on a pull request is enough to approve without reading every line. |
+
+The last line is the real test for [medium autonomy](/levels/medium/), where approval moves from every change to by risk. If one line doesn't hold, stay at low, pick the weakest signal and make one [engineering move](/framework/engineering/) to fix it.
+
+When the evidence holds, move this work type, not the whole team, to [medium autonomy](/levels/medium/) and open the [medium autonomy playbook](/playbooks/medium/). Then run this playbook again for the next work type.
+
+## Common mistakes
+
+- **Starting where you can't check or undo.** A team that starts on payments or a data migration learns to distrust agents. Start with real work you can prove with tests and switch off with a flag.
+- **Starting with chores.** Starting with only tests and typo fixes proves nothing anyone cares about, and the team concludes agents are a toy. Pick work the business notices.
+- **Turning on agents before the gates.** Agents increase the number of pull requests; without required checks, review becomes the only gate and it gives way first.
+- **Measuring activity.** Accepted suggestions, lines generated and pull request counts go up whether or not anything improved. Watch turnaround time, review effort, post-release problems and what people say.
+- **Huge pull requests.** If the agent produced a 2,000-line diff, split the issue, not the review.
+- **Context nobody owns.** Instruction files that grow by copy-paste and are never pruned get worse every week. Give them owners in `CODEOWNERS`.
+- **Fixing prompts instead of context.** A clever prompt helps one developer once. A rule in the instructions helps everyone every time.
+- **No review date.** Without a review date and agreed thresholds, the work type is judged on anecdotes, and nobody decides whether to move up.
 
 ## If you need to dim back up
 
-Return approvals for this work type to people and pause its automations. Work continues from Git. [How to dim back up →](/levels/dim-back-up/)
+At low autonomy, people already approve every change, so dimming back up means **pausing agent assistance for the work type**. Do it when a trigger fires: a security finding in agent-written code, a jump in change fail rate or rework, a provider outage, or a simple call from the factory owner.
+
+1. Tell the developers to stop using agents for this work type, and record why in `docs/factory.md`.
+2. Keep every gate on. The ruleset, CI and scans protect manual work too.
+3. Finish open agent-assisted pull requests by hand, or close them. The issues and specs stay.
+4. Find the cause in the weekly review, fix it in the context or the gates, and turn agents back on for the work type.
+
+Work continues from Git. [How to dim back up →](/levels/dim-back-up/)
