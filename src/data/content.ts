@@ -11,7 +11,7 @@ export const PILLARS = [
 	{
 		key: 'microsoft',
 		accent: 'blue',
-		title: 'Better with Microsoft',
+		title: 'Amplified by Microsoft',
 		kicker: 'context, cloud and control',
 		text: 'Agents grounded in real business context, with a cloud that runs, secures and learns from what ships.',
 	},
@@ -249,6 +249,64 @@ export const MEASURE = {
 		},
 	],
 } as const;
+
+/** Why customers build or buy a software factory. Evidence is quoted from public sources; check them before changing a figure. */
+export const FACTORY_DRIVERS = [
+	{
+		key: 'scale',
+		accent: 'green',
+		title: 'AI gains stall at the desk',
+		text: 'Assistants help people. Delivery needs the process to change.',
+		evidence: 'AI is an amplifier of existing strengths and weaknesses. Assistants alone give 10–15% productivity; paired with end-to-end process change, 25–30%.',
+		sources: [
+			{ name: 'DORA 2025', url: 'https://dora.dev/research/2025/dora-report/' },
+			{ name: 'Bain 2025', url: 'https://www.bain.com/insights/from-pilots-to-payoff-generative-ai-in-software-development-technology-report-2025/' },
+		],
+	},
+	{
+		key: 'toil',
+		accent: 'orange',
+		title: 'Toil eats the week',
+		text: 'Upgrades, triage and fixes crowd out new features.',
+		evidence: 'In a study of 484 Microsoft developers, coding filled about 11% of the actual week, meetings about 12% and debugging about 9%.',
+		sources: [
+			{ name: 'Microsoft Research 2025', url: 'https://www.microsoft.com/en-us/research/publication/time-warp-the-gap-between-developers-ideal-vs-actual-workweeks-in-an-ai-driven-era/' },
+		],
+	},
+	{
+		key: 'debt',
+		accent: 'pink',
+		title: 'Legacy and security debt pile up',
+		text: 'Modernisation and security fixes outpace the team.',
+		evidence: 'Agents cut Java 17 upgrades at Amazon from a typical 50 developer-days to a few hours. The average time to fix security flaws is up 47% since 2020.',
+		sources: [
+			{ name: 'Amazon 2024', url: 'https://www.linkedin.com/posts/andy-jassy-8b1615_one-of-the-most-tedious-but-critical-tasks-activity-7232374162185461760-AdSz' },
+			{ name: 'Veracode 2025', url: 'https://www.veracode.com/resources/analyst-reports/state-of-software-security-2025/' },
+		],
+	},
+	{
+		key: 'review',
+		accent: 'yellow',
+		title: 'Review becomes the bottleneck',
+		text: 'More code, faster, strains review and stability.',
+		evidence: 'AI adoption now lifts throughput but is still linked to lower delivery stability. 43.2M pull requests merge on GitHub every month, up 23% in a year.',
+		sources: [
+			{ name: 'DORA 2025', url: 'https://dora.dev/research/2025/dora-report/' },
+			{ name: 'Octoverse 2025', url: 'https://github.blog/news-insights/octoverse/octoverse-a-new-developer-joins-github-every-second-as-ai-leads-typescript-to-1/' },
+		],
+	},
+	{
+		key: 'govern',
+		accent: 'blue',
+		title: 'Agents need a platform to scale',
+		text: 'Pilots stall without identity, audit and cost control.',
+		evidence: 'Gartner predicts over 40% of agentic AI projects will be canceled by the end of 2027, over cost, unclear value or weak risk controls, and that control and validation move from the IDE to automated platforms.',
+		sources: [
+			{ name: 'Gartner 2025', url: 'https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027' },
+			{ name: 'Gartner 2026', url: 'https://www.gartner.com/en/newsroom/press-releases/2026-05-20-gartner-says-the-market-for-enterprise-ai-coding-agents-is-entering-a-new-phase-of-expansion-and-competitive-realignment' },
+		],
+	},
+] as const;
 
 export const PATTERNS = [
 	{

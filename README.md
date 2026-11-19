@@ -1,6 +1,6 @@
 # Bright Factory Framework
 
-Microsoft's opinionated framework for building agentic software factories: built on GitHub, better with Microsoft and open to the tools your teams already use. Ideas come to life, agents do the heavy lifting, humans monitor and control.
+Microsoft's opinionated framework for building agentic software factories: built on GitHub, amplified by Microsoft and open to the tools your teams already use. Ideas come to life, agents do the heavy lifting, humans monitor and control.
 
 **Read the docs: <https://aiappsgbb.github.io/bff/>**
 

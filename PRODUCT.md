@@ -18,7 +18,7 @@ The Bright Factory Framework (BFF) is Microsoft's opinionated framework for buil
 
 ## Positioning
 
-A bright factory is the opposite of a dark factory, where humans have no control. Humans set a reversible dimmer per work type (Low, Medium or High autonomy) and can dim back up at any time. The framework is built on GitHub, better with Microsoft, and open by design, so it meets customers where they are.
+A bright factory is the opposite of a dark factory, where humans have no control. Humans set a reversible dimmer per work type (Low, Medium or High autonomy) and can dim back up at any time. The framework is built on GitHub, amplified by Microsoft, and open by design, so it meets customers where they are.
 
 ## Operating Context
 

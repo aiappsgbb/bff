@@ -912,6 +912,24 @@
 .pz-spec dd {
 	color: var(--sl-color-gray-2);
 }
+.pz-cite {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.15em 0.9em;
+	margin-top: 0.2em;
+	font-size: 0.9em;
+}
+.pz-cite a {
+	color: var(--sl-color-gray-3);
+	text-decoration: underline;
+	text-decoration-color: var(--sl-color-hairline);
+	text-underline-offset: 0.2em;
+}
+.pz-cite a:hover,
+.pz-cite a:focus-visible {
+	color: var(--sl-color-white);
+	text-decoration-color: currentColor;
+}
 .pz-table {
 	width: 100%;
 	border-collapse: collapse;
@@ -1512,6 +1530,14 @@
 	}
 	.pz-root[data-tech='l400'] .pz-acts-deep li {
 		padding-block: 0.3em;
+	}
+	/* Dense slides on short stages (4:3 screens): tighter rows, citations run on. */
+	.pz-slide[data-dense] .pz-rows li {
+		padding-block: 0.24em;
+	}
+	.pz-slide[data-dense] .pz-cite {
+		display: inline-flex;
+		margin-left: 0.6em;
 	}
 }
 @container (max-height: 35.5rem) {

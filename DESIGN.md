@@ -142,7 +142,7 @@ Scene tokens are drawn on top of the LEGO renders, so they don't change with the
 
 ## Presentation mode
 
-`/present/` is a standalone page (no Starlight chrome) that presents the framework as 17 slides for field teams, customers and partners. It reuses `src/data/` content, so the slides never drift from the docs. Code: `src/pages/present/index.astro`, `src/components/present/Room.astro`, `src/styles/present.css`; renders in `src/assets/present/`.
+`/present/` is a standalone page (no Starlight chrome) that presents the framework as 18 slides for field teams, customers and partners. It reuses `src/data/` content, so the slides never drift from the docs. Code: `src/pages/present/index.astro`, `src/components/present/Room.astro`, `src/styles/present.css`; renders in `src/assets/present/`.
 
 - One public deck. No speaker notes; every slide ends in a **Read the docs** link to the page it summarises.
 - Visual first. One headline (at most two lines), one lede, one visual (chips, stations, steps or a control), never paragraphs. Body text stays at least 12px.

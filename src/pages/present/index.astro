@@ -1,6 +1,6 @@
 ---
 /**
- * Presentation mode: a 17-slide visual tour of the framework, built from the docs content.
+ * Presentation mode: an 18-slide visual tour of the framework, built from the docs content.
  *
  * Direction (PRODUCT.md, DESIGN.md "Imagery"): the LEGO building cutaway is the map. Cover,
  * big picture and close show the whole building; every other slide is a room in it. Moving
@@ -22,7 +22,7 @@ import { join } from 'node:path';
 import Room from '../../components/present/Room.astro';
 import VectorArt from '../../components/present/VectorArt.astro';
 import logo from '../../assets/logo.svg?raw';
-import { DEMO_ACTS, DIM_BACK_UP_STEPS, JOURNEY, MEASURE, MULTIPLAYER, PILLARS, PRINCIPLE_GROUPS, PRINCIPLES } from '../../data/content';
+import { DEMO_ACTS, DIM_BACK_UP_STEPS, FACTORY_DRIVERS, JOURNEY, MEASURE, MULTIPLAYER, PILLARS, PRINCIPLE_GROUPS, PRINCIPLES } from '../../data/content';
 import { data, DIM_BACK_UP_TRIGGERS, LEVEL_ORDER, LEVELS, withBase } from '../../data/site';
 import '../../styles/fonts.css';
 import '../../styles/theme.css';
@@ -42,6 +42,7 @@ interface SlideMeta {
 
 const SLIDES: SlideMeta[] = [
 	{ id: 'cover', art: 'building', zone: 'building', chapter: 'Why', label: 'Bright Factory Framework' },
+	{ id: 'why-factories', art: 'demand', zone: 'all', chapter: 'Why', label: 'Why software factories' },
 	{ id: 'why', art: 'why', zone: 'all', chapter: 'Why', label: 'Why the framework' },
 	{ id: 'bright', art: 'bright-dark', zone: 'all', chapter: 'Why', label: 'Bright, not dark' },
 	{ id: 'big-picture', art: 'building', zone: 'building', chapter: 'Why', label: 'The big picture' },
@@ -67,6 +68,7 @@ const imageFor = (key: string) => renders[`../../assets/present/${key}.png`]?.de
 
 const ALT: Record<string, string> = {
 	building: 'A LEGO building in cross-section: a bright orange Factory HQ on top, a lights-off factory floor of robots, blue foundations below and a purple engineering wing on the side.',
+	'why-factories': 'A cluttered LEGO workshop over capacity: crates of requests spill through the door, cats and robots work at separate benches, an old taped-up machine flashes a warning, and a blueprint of a bigger factory hangs on the wall.',
 	why: 'A LEGO entrance hall held up by green, blue and purple pillars, with cats and robots walking in together.',
 	bright: 'One factory room split in two: a dark half where robots work alone, and a lit half where a cat steers them.',
 	principles: 'Cats plan around a table in the HQ with an instruction booklet, a blueprint and trays of sorted bricks.',
@@ -271,7 +273,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 								<p class="pz-sub">Microsoft opinionated framework for building agentic software factories.</p>
 								<p class="pz-lede">Ideas come to life. Agents do the heavy lifting. Humans monitor and control.</p>
 								<div class="pz-ctas">
-									<button class="bff-btn bff-btn-primary" type="button" data-go="why">Start the tour <span aria-hidden="true">→</span></button>
+									<button class="bff-btn bff-btn-primary" type="button" data-go="why-factories">Start the tour <span aria-hidden="true">→</span></button>
 								</div>
 								<p class="pz-hint">
 									<span class="pz-hint-keys">Press <kbd>→</kbd> to advance, <kbd>O</kbd> for the overview, <kbd>V</kbd> for the visual style and <kbd>L</kbd> for the technical level.</span>
@@ -291,8 +293,53 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 						</Room>
 
 						<Room
+							{...slide('why-factories')}
+							title="Why build a software factory?"
+							lede="Most teams use AI to write code. Few get faster, safer delivery. Five pressures push them to build or buy a factory."
+							deepLede="What the research says, one public source per pressure."
+							href="/fundamentals/#why-teams-build-one-now"
+							dense
+						>
+							<ul class="pz-rows">
+								{
+									FACTORY_DRIVERS.map((d) => (
+										<li data-accent={d.accent}>
+											<span class="pz-sq" aria-hidden="true" />
+											<strong>{d.title}</strong>
+											<span>{d.text}</span>
+										</li>
+									))
+								}
+							</ul>
+							<Fragment slot="deep">
+								<dl class="pz-spec pz-spec-tight pz-cited">
+									{
+										FACTORY_DRIVERS.map((d) => (
+											<div data-accent={d.accent}>
+												<dt>
+													<span class="pz-sq" aria-hidden="true" />
+													{d.title}
+												</dt>
+												<dd>
+													{d.evidence}
+													<span class="pz-cite">
+														{d.sources.map((s) => (
+															<a href={s.url} target="_blank" rel="noopener">
+																{s.name}
+															</a>
+														))}
+													</span>
+												</dd>
+											</div>
+										))
+									}
+								</dl>
+							</Fragment>
+						</Room>
+
+						<Room
 							{...slide('why')}
-							title="Built on GitHub. Better with Microsoft. Open by design."
+							title="Built on GitHub. Amplified by Microsoft. Open by design."
 							lede="A software factory turns ideas into running software, continuously. Build one with agents, without taking people out of control."
 							deepLede="Each pillar maps to products you can switch on today, and to open standards you can swap them through."
 							href="/fundamentals/"
@@ -714,7 +761,7 @@ const description = 'A visual tour of the Bright Factory Framework: Microsoft op
 
 						<Room
 							{...slide('platform')}
-							title="Built on GitHub. Better with Microsoft."
+							title="Built on GitHub. Amplified by Microsoft."
 							lede="GitHub is where people and agents build together. Microsoft adds business context, a cloud to run on and control."
 							deepLede="A selection per layer. The products reference lists every product, by component and level."
 							href="/reference/products/"

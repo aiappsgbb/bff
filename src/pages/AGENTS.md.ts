@@ -9,7 +9,7 @@ export const GET: APIRoute = async ({ site }) => {
 	const lines = [
 		'# Bright Factory Framework',
 		'',
-		'> Microsoft opinionated framework for building agentic software factories on GitHub, better with Microsoft and open to the tools teams already use. Ideas come to life, agents do the heavy lifting, humans monitor and control.',
+		'> Microsoft opinionated framework for building agentic software factories on GitHub, amplified by Microsoft and open to the tools teams already use. Ideas come to life, agents do the heavy lifting, humans monitor and control.',
 		'',
 		'## Using these docs',
 		'',

@@ -8,7 +8,7 @@ tableOfContents: false
 ---
 import Scrolly from '../../../components/Scrolly.astro';
 import ScrollyStep from '../../../components/ScrollyStep.astro';
-import { PATTERNS, INDUSTRY_PILLARS, OUTCOMES } from '../../../data/content';
+import { FACTORY_DRIVERS, PATTERNS, INDUSTRY_PILLARS, OUTCOMES } from '../../../data/content';
 
 <Scrolly>
 <ScrollyStep frame="line">
@@ -20,6 +20,19 @@ A software factory is the system that turns ideas into running software: people,
 Every line has the same four stations. **Plan** turns intent into specs. **Build** turns specs into code. **Verify** turns code into evidence. **Observe** turns production signals into new work.
 
 Most teams already have this line, spread across trackers, chats, pipelines and scripts. The question is not whether you have a factory. It's how much of it you designed.
+
+</ScrollyStep>
+<ScrollyStep frame="line">
+
+## Why teams build one now
+
+Most teams already use AI to write code. Few have turned it into faster, safer delivery. The same five pressures come up again and again, and they push organisations to build a factory with their platform team, or to buy one through a partner.
+
+<ul>
+	{FACTORY_DRIVERS.map((d) => (
+		<li><strong>{d.title}.</strong> {d.text} <em>{d.evidence}</em> ({d.sources.map((s, i) => <>{i > 0 && ', '}<a href={s.url}>{s.name}</a></>)})</li>
+	))}
+</ul>
 
 </ScrollyStep>
 <ScrollyStep frame="agents">
