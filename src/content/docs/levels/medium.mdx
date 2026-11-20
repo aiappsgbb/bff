@@ -9,13 +9,17 @@ import LevelStages from '../../../components/LevelStages.astro';
 import Primitives from '../../../components/Primitives.astro';
 import LevelCompare from '../../../components/LevelCompare.astro';
 import { LEVELS } from '../../../data/site';
-import { LinkCard } from '@astrojs/starlight/components';
+import { LinkCard, Aside } from '@astrojs/starlight/components';
 
 <LevelIndicator level="medium" />
 
-At medium autonomy, agents do the work and people approve it. Agents draft specs from issues and signals, Copilot cloud agent builds tasks in parallel, and review agents test and fix. People set priorities, steer sessions and approve the merge.
+At medium autonomy, agents do the work and people approve it. An agent triages the issues people write, Copilot cloud agent builds the eligible ones in parallel, and agentic workflows take on bounded, lower-impact work such as proposing tests and docs. When a check fails and the fix is one of the agreed lower-impact corrections, an agent gets a limited number of tries to fix the code, and Azure SRE Agent tells people when the app has a problem. People set priorities, handle anything outside the agreed repairs, steer sessions and approve every merge and release.
 
 This level is about scale with control: more work in flight, approvals based on risk, and every agent with its own identity and budget.
+
+<Aside type="caution" title="Draft: being aligned">
+The stages, products and demo below still describe a broader medium level, including agents drafting specs from signals, an SRE agent and agents fixing failing gates. The [medium autonomy playbook](/playbooks/medium/) now defines a narrower flow: people write the issues, an agent fixes only agreed lower-impact failures within a limit, and Azure SRE Agent investigates and notifies but doesn't change anything. Agent-created issues, broader repair and SRE remediation move to [high autonomy](/playbooks/high/). The rest of the framework hasn't been realigned yet.
+</Aside>
 
 ## The line at this level
 
@@ -25,7 +29,7 @@ Who does what at each station, what the HQ puts in and gets back, and what the f
 
 ## How the team works
 
-Agents run in cloud sandboxes with Copilot cloud agent. Sessions are shared: anyone on the team can watch, steer or continue them in mission control, the Copilot app or GitHub Mobile. Work starts from issues, events, schedules and production signals. [How collaboration changes across the levels →](/framework/multiplayer/)
+Agents run in cloud sandboxes with Copilot cloud agent. Sessions are shared: anyone on the team can watch, steer or continue them in mission control, the Copilot app or GitHub Mobile. Work starts from issues people write, and scheduled agentic workflows propose supporting changes, such as tests and docs. [How collaboration changes across the levels →](/framework/multiplayer/)
 
 ## Primitives
 
@@ -43,4 +47,4 @@ The building blocks for this level, by layer. Products marked **new** are recent
 
 {LEVELS.medium.demo} [See the demo acts →](/get-started/demos/)
 
-<LinkCard title="Open the medium autonomy playbook" description="The steps for this level. Detailed instructions are coming soon." href="/playbooks/medium/" />
+<LinkCard title="Open the medium autonomy playbook" description="People write issues, an agent triages them, Copilot cloud agent builds the eligible ones, agentic workflows take on bounded supporting work such as tests and docs, an agent fixes agreed lower-impact failures within a limit, Azure SRE Agent notifies people about production problems, and people approve every change." href="/playbooks/medium/" />
