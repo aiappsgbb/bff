@@ -23,7 +23,7 @@ A bright factory is the opposite of a dark factory, where humans have no control
 ## Operating Context
 
 - Docs site at <https://aiappsgbb.github.io/bff/>: fundamentals, framework, autonomy levels, playbooks, getting started, reference.
-- A self-assessment that places one work type at a level, and draft playbooks per level.
+- A self-assessment that places one work type at a level, and playbooks per level.
 - Demos built with the GitHub Copilot app and GitHub automations.
 - PPTX decks (internal and customer versions) built from the same sources as `src/data/framework.json`.
 
@@ -31,7 +31,7 @@ A bright factory is the opposite of a dark factory, where humans have no control
 
 - Public and customer-safe.
 - Say "Copilot cloud agent".
-- Label preview features; playbooks are drafts.
+- Label preview features.
 - Use Low, Medium and High autonomy as level names.
 - Never mention OpenASF, GitHub Spark or GitHub Models.
 

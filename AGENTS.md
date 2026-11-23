@@ -10,7 +10,7 @@ Most people open this repo to plan or build their own factory, not to edit the s
 - **Terms.** Use the framework's terms as defined in `src/content/docs/reference/glossary.mdx`: factory HQ, factory floor, factory foundations, work type, dimmer, autonomy level, dim back up, evidence bundle.
 - **Self-assessment.** The eight questions and their answers are in `src/components/SelfAssessment.astro`; scoring is in `src/content/docs/get-started/find-your-level.mdx`. Assess one work type at a time and ask one question at a time.
 - **Levels.** Low, Medium and High autonomy are in `src/content/docs/levels/`. Layers, components, products and per-level stages are in `src/data/framework.json` and `src/data/site.ts`.
-- **Playbooks.** `src/content/docs/playbooks/` are drafts. Steps marked *Coming soon* have no instructions yet: say so, and use current official GitHub and Microsoft documentation instead.
+- **Playbooks.** `src/content/docs/playbooks/` say what to put in place and why, and link to GitHub and Microsoft docs for step-by-step setup. The high playbook's *Beyond this playbook* items have no steps: say so.
 - **Citing.** Link to the published page (`https://aiappsgbb.github.io/bff/<path>/`) rather than the source file.
 - **Accuracy.** Some capabilities are in preview; check availability for the user's plan and region before recommending them. Don't invent statistics. Say "Copilot cloud agent".
 - **Humans in control.** Propose changes as pull requests through the same gates people use, and don't raise a work type's autonomy level without the user's agreement.
@@ -24,6 +24,6 @@ Only when asked to edit this site. It's Astro + Starlight; the sidebar is `src/d
 - Internal links: Markdown links get the base path automatically; JSX `href`s must use `withBase()` from `src/data/site.ts`.
 - Styling follows `DESIGN.md`: use theme tokens for colour, type and radii; no side-tab or top accent bars.
 - `src/data/framework.json` is exported from the deck's sources (not in this repo) so the deck and docs stay consistent; don't edit it by hand.
-- Content rules: say "Copilot cloud agent"; no invented statistics; label preview features; the playbooks are drafts.
+- Content rules: say "Copilot cloud agent"; no invented statistics; label preview features.
 - Pushing to `main` publishes the site with `.github/workflows/deploy.yml`.
 - Astro docs: <https://docs.astro.build>

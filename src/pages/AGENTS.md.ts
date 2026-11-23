@@ -16,7 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
 		`- Every page below is available as Markdown. The full text is at ${root}/llms-full.txt.`,
 		`- Use framework terms as defined in the glossary: ${root}/markdown/reference/glossary.md.`,
 		'- Some capabilities are in preview; verify availability for the plan and region before recommending them.',
-		'- The playbooks are drafts.',
+		'- The playbooks link to GitHub and Microsoft docs for step-by-step setup.',
 	];
 	for (const group of NAV) {
 		lines.push('', `## ${group.label}`, '');
