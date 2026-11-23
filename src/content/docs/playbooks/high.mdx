@@ -6,7 +6,6 @@ accent: blue
 tableOfContents:
   maxHeadingLevel: 2
 ---
-import { Aside } from '@astrojs/starlight/components';
 import LevelIndicator from '../../../components/LevelIndicator.astro';
 import PlaybookProgress from '../../../components/PlaybookProgress.astro';
 import StepDone from '../../../components/StepDone.astro';
@@ -14,10 +13,6 @@ import StepDone from '../../../components/StepDone.astro';
 <LevelIndicator level="high" kind="playbooks" />
 
 <PlaybookProgress level="high" />
-
-<Aside type="caution" title="Draft playbook">
-This playbook is a draft and will change as we test it with teams. It describes what to put in place and why, with examples; the linked GitHub and Microsoft docs describe how to set each part up. Product screens and capabilities move: when this page and the docs disagree, follow the docs. Nothing on this page turns anything on for you.
-</Aside>
 
 At medium autonomy, people write the issues, an agent repairs only the lower-impact failures the work type owner has agreed, within a limit, Azure SRE Agent only notifies, and people review every change. At high autonomy, more decisions are delegated for one [work type](/reference/glossary/#work-type): agents also create work, repair what the gates and Copilot code review find, and a change that meets the merge policy can merge without a person reviewing it. People own the policy and the exceptions.
 
@@ -33,10 +28,6 @@ At medium autonomy, people write the issues, an agent repairs only the lower-imp
 8. **Azure SRE Agent** watches production, opens issues and runs approved runbooks, and its signals decide whether the work type dims back up.
 
 People stop being the engine of the work and become its owners: they set the policy, handle the exceptions and watch the line.
-
-<Aside type="note" title="What this playbook covers">
-This playbook covers the loop above for one work type. The [high autonomy level](/levels/high/) describes a broader end state: policy as code across agents, an agent registry, fleets, end-to-end evidence in ephemeral environments, and progressive delivery with automatic rollback. Those parts are listed under [Beyond this playbook](#beyond-this-playbook) and aren't written yet. Until they are, production releases stay under your existing release controls (step 11).
-</Aside>
 
 ## Why this is already a factory
 
@@ -420,7 +411,7 @@ Report these for the work type, never per developer or per reviewer. Show dates 
 
 ## Beyond this playbook
 
-*Coming soon:* the steps above run one work type from issue to a policy merge, with releases still under your release controls. The [high autonomy level](/levels/high/) goes further, and these parts aren't written yet:
+The steps above run one work type from issue to a policy merge, with releases still under your release controls. The [high autonomy level](/levels/high/) goes further. Once the loop holds, these are the next moves; use the linked level page and the current GitHub and Microsoft docs to plan them:
 
 1. **Write policy as code.** Turn guardrails, the merge policy and budgets into versioned policy that applies to every agent, not one workflow per repository.
 2. **Register and govern agents.** Register every agent, its owner, permissions and evals in one place.
