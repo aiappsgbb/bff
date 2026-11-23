@@ -6,7 +6,6 @@ accent: green
 tableOfContents:
   maxHeadingLevel: 2
 ---
-import { Aside } from '@astrojs/starlight/components';
 import LevelIndicator from '../../../components/LevelIndicator.astro';
 import PlaybookProgress from '../../../components/PlaybookProgress.astro';
 import StepDone from '../../../components/StepDone.astro';
@@ -14,10 +13,6 @@ import StepDone from '../../../components/StepDone.astro';
 <LevelIndicator level="medium" kind="playbooks" />
 
 <PlaybookProgress level="medium" />
-
-<Aside type="caution" title="Draft playbook">
-This playbook is a draft and will change as we test it with teams. It describes what to put in place and why, with examples; the linked GitHub and Microsoft docs describe how to set each part up. Product screens move: when this page and the docs disagree, follow the docs.
-</Aside>
 
 At low autonomy, a developer starts and directs each task. At medium autonomy, a few more decisions are delegated for one [work type](/reference/glossary/#work-type): an agent decides whether an issue is ready, the issue goes to Copilot cloud agent without anyone assigning it, agentic workflows take on bounded supporting work such as tests and docs, and some failed checks can get a limited agent repair before a person steps in. People still write the issues, handle everything outside the agreed repairs and decide what merges and what ships.
 

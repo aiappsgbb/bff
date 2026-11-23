@@ -39,9 +39,9 @@ export const NAV = [
 		label: 'Playbooks',
 		items: [
 			{ slug: 'playbooks' },
-			{ slug: 'playbooks/low', badge: { text: 'Draft', variant: 'caution' } },
-			{ slug: 'playbooks/medium', badge: { text: 'Draft', variant: 'caution' } },
-			{ slug: 'playbooks/high', badge: { text: 'Draft', variant: 'caution' } },
+			{ slug: 'playbooks/low' },
+			{ slug: 'playbooks/medium' },
+			{ slug: 'playbooks/high' },
 		],
 	},
 	{
