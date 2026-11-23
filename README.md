@@ -32,7 +32,7 @@ The docs are plain Markdown, so a coding agent can read them and help you plan a
    | Check a repo | `Review ../my-app against the factory HQ, floor and foundations, and list the gaps in priority order.` |
    | Plan your factory | `Using the playbook for our level, draft a plan to set up our first bright factory for ../my-app.` |
 
-The playbooks are drafts. Where a step isn't written yet, the agent will say so and use official GitHub and Microsoft documentation instead.
+The playbooks link to official GitHub and Microsoft documentation for step-by-step setup, and the agent uses it for the details.
 
 ### Without cloning
 
