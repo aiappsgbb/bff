@@ -2,8 +2,9 @@ import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
 import { NAV } from '../data/nav.mjs';
 import { pageId, siteRoot } from '../lib/markdown';
+import { markdownResponse } from '../lib/markdown-response';
 
-export const GET: APIRoute = async ({ site }) => {
+export const GET: APIRoute = async ({ site, url }) => {
 	const root = siteRoot(site);
 	const docs = new Map((await getCollection('docs')).map((e) => [pageId(e), e]));
 	const lines = [
@@ -27,5 +28,5 @@ export const GET: APIRoute = async ({ site }) => {
 			lines.push(`- [${e.data.title}](${root}/markdown/${slug}.md)${desc}`);
 		}
 	}
-	return new Response(`${lines.join('\n')}\n`, { headers: { 'Content-Type': 'text/markdown; charset=utf-8' } });
+	return markdownResponse(`${lines.join('\n')}\n`, url.pathname);
 };
