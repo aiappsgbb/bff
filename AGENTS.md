@@ -8,7 +8,7 @@ Most people open this repo to plan or build their own factory, not to edit the s
 
 - **Where the content is.** Pages are Markdown (MDX) in `src/content/docs/`; folders match the URLs. The reading order is in `src/data/nav.mjs`: fundamentals, the framework, autonomy levels, playbooks, build your factory, reference.
 - **Terms.** Use the framework's terms as defined in `src/content/docs/reference/glossary.mdx`: factory HQ, factory floor, factory foundations, work type, dimmer, autonomy level, dim back up, evidence bundle.
-- **Self-assessment.** The eight questions and their answers are in `src/components/SelfAssessment.astro`; scoring is in `src/content/docs/get-started/find-your-level.mdx`. Assess one work type at a time and ask one question at a time.
+- **Self-assessment.** The nine questions and their answers are in `src/components/SelfAssessment.astro`; scoring is in `src/content/docs/get-started/find-your-level.mdx`. Assess one work type at a time and ask one question at a time.
 - **Levels.** Low, Medium and High autonomy are in `src/content/docs/levels/`. Layers, components, products and per-level stages are in `src/data/framework.json` and `src/data/site.ts`.
 - **Playbooks.** `src/content/docs/playbooks/` say what to put in place and why, and link to GitHub and Microsoft docs for step-by-step setup. The high playbook's *Beyond this playbook* items have no steps: say so.
 - **Citing.** Link to the published page (`https://aiappsgbb.github.io/bff/<path>/`) rather than the source file.
