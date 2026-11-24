@@ -19,7 +19,6 @@ const other = kind === 'levels' ? 'playbooks' : 'levels';
 					<li>
 						<a href={withBase(`/${kind}/${k}/`)} aria-current={k === level ? 'page' : undefined} data-level-accent={k}>
 							<span class="bff-li-word">{LEVELS[k].short}</span>
-							<span class="bff-li-floor">{LEVELS[k].floor}</span>
 						</a>
 					</li>
 				))
@@ -122,11 +121,6 @@ const other = kind === 'levels' ? 'playbooks' : 'levels';
 	.bff-li-word {
 		font-size: var(--bff-text-sm);
 		font-weight: 700;
-	}
-	.bff-li-floor {
-		font-family: var(--bff-font-mono);
-		font-size: var(--bff-text-2xs);
-		opacity: 0.85;
 	}
 	.bff-li-meta {
 		display: flex;

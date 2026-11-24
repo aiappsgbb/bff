@@ -424,7 +424,7 @@ html:has(.bff-wide-page) {
 	border-radius: var(--bff-radius-md);
 }
 
-/* Tabs (UI / CLI tracks) */
+/* Tabs */
 starlight-tabs [role='tablist'] {
 	border-bottom: 1px solid var(--sl-color-hairline);
 }
